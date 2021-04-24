@@ -23,13 +23,9 @@ public final class Player implements Entity {
     public TimerHandle attackTimer;
     public TimerHandle shotTimer;
 
-    public Player(
-            final float width,
-            final float height,
-            final Body body
-    ) {
-        this.width = width;
-        this.height = height;
+    public Player(final Body body) {
+        this.width = 1.0f;
+        this.height = 1.0f;
         this.body = body;
         this.distanceTravelled = 0.0f;
         this.facingRight = true;
@@ -61,7 +57,7 @@ public final class Player implements Entity {
         body.createFixture(hbFixture);
         hitBox.dispose();
 
-        final var player = new Player(1.0f, 1.0f, body);
+        final var player = new Player(body);
         player.body.setUserData(player);
         return player;
     }

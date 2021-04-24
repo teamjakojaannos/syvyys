@@ -2,6 +2,7 @@ package fi.jakojaannos.syvyys;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.physics.box2d.World;
+import fi.jakojaannos.syvyys.entities.Demon;
 import fi.jakojaannos.syvyys.entities.Entity;
 import fi.jakojaannos.syvyys.entities.ParticleEmitter;
 import fi.jakojaannos.syvyys.stages.GameStage;
@@ -65,10 +66,19 @@ public class GameState {
     }
 
     public Color getBackgroundColor() {
-        return backgroundColor;
+        return this.backgroundColor;
     }
 
     public void setBackgroundColor(final Color color) {
         this.backgroundColor = color;
+    }
+
+    public boolean deletThis(final Entity entity) {
+        // FIXME: interface HasBody
+        if (entity instanceof Demon demon) {
+            this.physicsWorld.destroyBody(demon.body());
+        }
+
+        return this.entities.remove(entity);
     }
 }

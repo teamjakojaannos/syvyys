@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import fi.jakojaannos.syvyys.GameState;
+import fi.jakojaannos.syvyys.entities.Demon;
 import fi.jakojaannos.syvyys.entities.Entity;
 import fi.jakojaannos.syvyys.entities.Player;
 import fi.jakojaannos.syvyys.level.TileLevelGenerator;
@@ -32,6 +33,8 @@ public class FirstCircleStage implements GameStage {
         this.characterTick = new CharacterTickSystem();
 
         final List<Entity> entities = new ArrayList<>(level.getAllTiles());
+        entities.add(Demon.create(physicsWorld, new Vector2(8.0f, 4.0f)));
+
         entities.add(this.player);
         final var state = new GameState(physicsWorld, entities);
         state.setBackgroundColor(new Color(0.01f, 0f, 0f, 1.0f));

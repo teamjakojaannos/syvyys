@@ -4,10 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import fi.jakojaannos.syvyys.GameState;
-import fi.jakojaannos.syvyys.entities.Entity;
-import fi.jakojaannos.syvyys.entities.ParticleEmitter;
-import fi.jakojaannos.syvyys.entities.Player;
-import fi.jakojaannos.syvyys.entities.Tile;
+import fi.jakojaannos.syvyys.entities.*;
 import fi.jakojaannos.syvyys.entities.intro.IntroDemonicSpawn;
 import fi.jakojaannos.syvyys.renderer.intro.IntroDemonicSpawnRenderer;
 
@@ -33,7 +30,8 @@ public class Renderer implements AutoCloseable {
                 Map.entry(Player.class, new PlayerRenderer()),
                 Map.entry(Tile.class, new TileRenderer()),
                 Map.entry(ParticleEmitter.class, new ParticleEmitterRenderer()),
-                Map.entry(IntroDemonicSpawn.class, new IntroDemonicSpawnRenderer())
+                Map.entry(IntroDemonicSpawn.class, new IntroDemonicSpawnRenderer()),
+                Map.entry(Demon.class, new DemonRenderer())
         );
 
         this.physicsDebugRenderer = new Box2DDebugRenderer();

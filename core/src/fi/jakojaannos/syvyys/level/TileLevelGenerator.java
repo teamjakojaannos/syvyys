@@ -21,8 +21,8 @@ public class TileLevelGenerator extends LevelGenerator {
 
     @Override
     public Level generateLevel(final World world) {
-        final var worldStart = -10;
-        final var worldLength = 100;
+        final var worldStart = -150;
+        final var worldLength = 200;
         final List<Tile> tiles = new ArrayList<>();
 
         int generated = 0;
@@ -73,6 +73,10 @@ public class TileLevelGenerator extends LevelGenerator {
             final int stripTileY,
             final int previousStripTileY
     ) {
+        if (stripTileY == previousStripTileY) {
+            return;
+        }
+
         final var tileWidth = 0.5f;
         final var tileHeight = 0.5f;
 
