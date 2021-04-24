@@ -3,6 +3,7 @@ package fi.jakojaannos.syvyys;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -67,6 +68,8 @@ public class SyvyysGame extends ApplicationAdapter {
         tick(Gdx.graphics.getDeltaTime());
 
         ScreenUtils.clear(1, 0, 0, 1);
+
+        this.renderer.getCamera().lerpNewPosition(this.player.body().getPosition());
 
         this.renderer.render(this.physicsWorld, List.of(this.player));
     }

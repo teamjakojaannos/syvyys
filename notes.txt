@@ -47,14 +47,15 @@ level 6: heresy
   special features: flaming tombs, as you jump on them flames will burst out after a while
 
 level 7: violence
-  sin to commit: ???
+  sin to commit: you find a mushroom-headed figure at the end of a cave. "Sorry, the princess is in another castle"
+                 you are given the chance to shoot this guy in the face
   enemies: archer centaurs/demons
   special features: trees (hostile or friendly?)
 
 level 8: fraud
   sin to commit: steal a godly weapon
   enemies: snakes, large demons with big swords
-  special features:
+  special features: shady merchants?
 
 level 9: treachery
   sin to commit:

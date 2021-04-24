@@ -48,6 +48,7 @@ public class Renderer implements AutoCloseable {
                                          return a;
                                      });
 
+        this.camera.update();
         this.batch.setProjectionMatrix(this.camera.getProjectionMatrix());
         this.batch.setTransformMatrix(this.camera.getTransformMatrix());
         this.batch.begin();
@@ -72,5 +73,9 @@ public class Renderer implements AutoCloseable {
 
     public void onScreenResized(final int windowWidth, final int windowHeight) {
         this.camera.resize(windowWidth, windowHeight);
+    }
+
+    public Camera getCamera(){
+        return this.camera;
     }
 }
