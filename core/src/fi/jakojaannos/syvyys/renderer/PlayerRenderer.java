@@ -13,6 +13,7 @@ public class PlayerRenderer implements EntityRenderer<Player> {
     private final Texture texture;
     private final Animation<TextureRegion> idle;
     private final Animation<TextureRegion> run;
+    private final Animation<TextureRegion> shoot;
 
     private float currentTime;
 
@@ -24,6 +25,7 @@ public class PlayerRenderer implements EntityRenderer<Player> {
                                  .toArray(TextureRegion[]::new);
         final var idleFrames = new int[]{0};
         final var runFrames = new int[]{1, 2, 3, 4, 5, 6, 7, 8};
+        final var attackFrames = new int[]{9, 10, 11};
         this.run = new Animation<>(
                 1.0f / runFrames.length,
                 framesForAnimation(frames, runFrames),
@@ -33,6 +35,12 @@ public class PlayerRenderer implements EntityRenderer<Player> {
         this.idle = new Animation<>(
                 1.0f / idleFrames.length,
                 framesForAnimation(frames, idleFrames),
+                Animation.PlayMode.LOOP
+        );
+
+        this.shoot = new Animation<>(
+                1.0f / attackFrames.length,
+                framesForAnimation(frames, attackFrames),
                 Animation.PlayMode.LOOP
         );
     }

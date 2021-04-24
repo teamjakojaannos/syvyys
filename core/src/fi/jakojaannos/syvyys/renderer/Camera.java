@@ -9,12 +9,16 @@ public class Camera {
     private final float widthInUnits = 10.0f;
     private final OrthographicCamera camera;
 
+    private final Vector3 cameraPositionLerpTemporaryHolderVector3;
+
     public Camera(final int windowWidth, final int windowHeight) {
         final float aspectRatio = (float) windowHeight / windowWidth;
 
         final float heightInUnits = aspectRatio * this.widthInUnits;
 
         this.camera = new OrthographicCamera(this.widthInUnits, heightInUnits);
+
+        this.cameraPositionLerpTemporaryHolderVector3 = new Vector3();
     }
 
     public void resize(final int windowWidth, final int windowHeight) {
@@ -41,7 +45,8 @@ public class Camera {
     }
 
     public void lerpNewPosition(final Vector2 newPosition){
-        this.camera.position.lerp(new Vector3(newPosition, 0.0f), 0.075f);
+        this.cameraPositionLerpTemporaryHolderVector3.set(newPosition, 0.0f);
+        this.camera.position.lerp(this.cameraPositionLerpTemporaryHolderVector3, 0.075f);
     }
 
     public void update() {
