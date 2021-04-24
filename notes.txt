@@ -1,0 +1,62 @@
+Game ideas
+
+Deeper and deeper (a shit theme btw)
+
+2d side-scrolling roguelite
+Theme revolves around the player exploring circles of hell
+Enemies will get progressively stronger every level, but the player is offered a choice to commit a sin every level:
+  committing the sin will temporarily buff the player, give supplies etc
+  it will also almost completely reset the enemies level
+  however, at deeper levels enemies will level up faster
+
+the main objective in each level is to: ________ (maybe mine resources)
+
+levels:
+level 0: earth surface
+  enemies: ???
+  special features:
+
+level 1: limbo
+  sin to commit: renounce your god
+  enemies: lesser demons
+  special features: other pagan/faithless will aid you
+
+level 2: lust
+  sin to commit: get seduced by pretty woman (gives lucky buff)
+  enemies: sturdy stone guardians that crawl on the floor; the strong winds makes jumping over them difficult
+  special features: strong winds will make navigating difficult
+
+level 3: gluttony
+  sin to commit: eat at local McDemons (gives well fed buff)
+  enemies: blind enemies; they could have drug-like effect on contact
+  special features: floor is a thick slush that slows player
+
+level 4: greed (level design: corporate office)
+  sin to commit: get a loan in demon-bank (gives you some money)
+  enemies: demons in business suits
+  special features: dangerous boulders roll around
+
+level 5: wrath
+  sin to commit: kill the ceo in a fit of rage
+  enemies: enemies floating on water, but also enemies at the bottom of water
+  special features: water that can drown you, possibly a boat that you can hop on to
+
+level 6: heresy
+  sin to commit: worship a false god
+  enemies:
+  special features: flaming tombs, as you jump on them flames will burst out after a while
+
+level 7: violence
+  sin to commit: ???
+  enemies: archer centaurs/demons
+  special features: trees (hostile or friendly?)
+
+level 8: fraud
+  sin to commit: steal a godly weapon
+  enemies: snakes, large demons with big swords
+  special features:
+
+level 9: treachery
+  sin to commit:
+  enemies:
+  special features: cold air will freeze the player, he must seek shelter near campfires
