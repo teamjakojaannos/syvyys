@@ -33,6 +33,8 @@ public class SyvyysGame extends ApplicationAdapter {
     }
 
     private void tick(final float deltaSeconds) {
+        this.gameState.getTimers().tick(deltaSeconds);
+
         final float frameTime = Math.min(deltaSeconds, 0.25f);
         this.accumulator += frameTime;
         while (this.accumulator >= Constants.TIME_STEP) {
@@ -44,9 +46,16 @@ public class SyvyysGame extends ApplicationAdapter {
                     Gdx.input.isKeyPressed(Input.Keys.D)
                     ? 1 : 0;
 
-            final boolean jump = Gdx.input.isKeyJustPressed(Input.Keys.SPACE);
+            final boolean attackPressed = Gdx.input.isKeyPressed(Input.Keys.Z) ||
+                    Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT);
 
-            this.player.input = new Player.Input(rightPressed - leftPressed, false, jump);
+            final boolean jumpPressed = Gdx.input.isKeyJustPressed(Input.Keys.SPACE);
+
+            this.player.input = new Player.Input(
+                    rightPressed - leftPressed,
+                    attackPressed,
+                    jumpPressed
+            );
             Player.tick(List.of(this.player), this.gameState);
 
             this.physicsWorld.step(Constants.TIME_STEP, Constants.VELOCITY_ITERATIONS, Constants.POSITION_ITERATIONS);

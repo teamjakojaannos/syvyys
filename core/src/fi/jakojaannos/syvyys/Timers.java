@@ -7,12 +7,16 @@ import java.util.List;
 
 public class Timers {
     private final List<TimerHandle> timers = new ArrayList<>();
-    private final LongMap<TimerStatus> states = new LongMap<>();
+    private final LongMap<TimerState> states = new LongMap<>();
 
     private long idCounter = 0;
 
     public TimerHandle set(final float duration, final boolean looping, final Action action) {
-        return new TimerHandle(++this.idCounter, duration, action, looping);
+        final var timer = new TimerHandle(++this.idCounter, duration, action, looping);
+        this.timers.add(timer);
+        this.states.put(timer.id(), new TimerState());
+
+        return timer;
     }
 
     public void tick(final float delta) {
@@ -49,8 +53,8 @@ public class Timers {
         void execute();
     }
 
-    private static class TimerStatus {
-        float progress;
-        boolean paused;
+    private static class TimerState {
+        float progress = 0.0f;
+        boolean paused = false;
     }
 }

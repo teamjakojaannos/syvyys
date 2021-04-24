@@ -5,7 +5,9 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public final class Player implements Entity {
-    public final float attackDuration = 1.0f;
+    public final float attackDuration = 0.5f;
+    private final int shotsPerAttack = 3;
+
     private final float jumpForce = 5.0f;
     private final float width;
     private final float height;

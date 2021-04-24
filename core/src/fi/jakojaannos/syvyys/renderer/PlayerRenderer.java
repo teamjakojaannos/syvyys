@@ -62,12 +62,16 @@ public class PlayerRenderer implements EntityRenderer<Player> {
         entities.forEach(player -> {
             final var velocity = player.body().getLinearVelocity();
 
-            final var animation = Math.abs(velocity.x) > 0.0f
+            final var animation = player.attacking
+                    ? this.shoot
+                    : Math.abs(velocity.x) > 0.0f
                     ? this.run
                     : this.idle;
 
             final float stepLength = 16.0f * this.run.getKeyFrames().length;
-            final var animationProgress = Math.abs(velocity.x) > 0.0f
+            final var animationProgress = player.attacking
+                    ? (this.currentTime % player.attackDuration) / player.attackDuration
+                    : Math.abs(velocity.x) > 0.0f
                     ? player.distanceTravelled / stepLength
                     : this.currentTime;
             final var currentFrame = animation.getKeyFrame(animationProgress, true);
