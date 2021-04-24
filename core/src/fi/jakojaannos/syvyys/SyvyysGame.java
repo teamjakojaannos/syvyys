@@ -3,13 +3,12 @@ package fi.jakojaannos.syvyys;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.ScreenUtils;
+import fi.jakojaannos.syvyys.level.DefaultLevelGenerator;
 import fi.jakojaannos.syvyys.renderer.Renderer;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SyvyysGame extends ApplicationAdapter {
@@ -19,8 +18,7 @@ public class SyvyysGame extends ApplicationAdapter {
     private float accumulator;
 
     private World physicsWorld;
-
-    private List<Tile> level;
+    private GameState gameState;
 
     @Override
     public void create() {
@@ -29,34 +27,27 @@ public class SyvyysGame extends ApplicationAdapter {
         this.physicsWorld = new World(new Vector2(0.0f, -9.81f), true);
 
         this.player = Player.create(this.physicsWorld, new Vector2(3.0f, 3.0f));
+        this.gameState = new GameState();
 
-        this.level = new ArrayList<>();
-        for (int iy = 0; iy < 5; iy++) {
-            for (int ix = 0; ix < 10; ix++) {
-                if (iy != 0 && ix % 9 != 0) {
-                    continue;
-                }
-
-                final var tileWidth = 1.0f;
-                final var tileHeight = 1.0f;
-                this.level.add(Tile.create(this.physicsWorld,
-                                           tileWidth,
-                                           tileHeight,
-                                           new Vector2(ix * tileWidth,
-                                                       iy * tileHeight)));
-            }
-        }
+        new DefaultLevelGenerator(666).generateLevel(this.physicsWorld);
     }
 
     private void tick(final float deltaSeconds) {
         final float frameTime = Math.min(deltaSeconds, 0.25f);
         this.accumulator += frameTime;
         while (this.accumulator >= Constants.TIME_STEP) {
-            final int leftPressed = Gdx.input.isKeyPressed(Input.Keys.LEFT) ? 1 : 0;
-            final int rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT) ? 1 : 0;
+            final int leftPressed = Gdx.input.isKeyPressed(Input.Keys.LEFT) ||
+                    Gdx.input.isKeyPressed(Input.Keys.A)
+                    ? 1 : 0;
 
-            this.player.input = new Player.Input(rightPressed - leftPressed);
-            Player.tick(List.of(this.player));
+            final int rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT) ||
+                    Gdx.input.isKeyPressed(Input.Keys.D)
+                    ? 1 : 0;
+
+            final boolean jump = Gdx.input.isKeyJustPressed(Input.Keys.SPACE);
+
+            this.player.input = new Player.Input(rightPressed - leftPressed, false, jump);
+            Player.tick(List.of(this.player), this.gameState);
 
             this.physicsWorld.step(Constants.TIME_STEP, Constants.VELOCITY_ITERATIONS, Constants.POSITION_ITERATIONS);
             this.accumulator -= Constants.TIME_STEP;
