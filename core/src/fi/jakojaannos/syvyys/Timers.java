@@ -9,6 +9,8 @@ public class Timers {
     private final List<TimerHandle> timers = new ArrayList<>();
     private final LongMap<TimerState> states = new LongMap<>();
 
+    private final List<TimerHandle> timersPendingRemoval = new ArrayList<>();
+
     private long idCounter = 0;
 
     public TimerHandle set(final float duration, final boolean looping, final Action action) {
@@ -45,8 +47,18 @@ public class Timers {
         });
 
         // Clean up
+        expired.addAll(this.timersPendingRemoval);
         expired.forEach(timer -> this.states.remove(timer.id()));
         this.timers.removeAll(expired);
+        this.timersPendingRemoval.clear();
+    }
+
+    public void clear(final TimerHandle timer) {
+        if (!this.states.containsKey(timer.id())) {
+            throw new IllegalStateException("Tried clearing invalid timer handle!");
+        }
+
+        this.timersPendingRemoval.add(timer);
     }
 
     public interface Action {

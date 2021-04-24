@@ -1,14 +1,13 @@
 package fi.jakojaannos.syvyys;
 
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public final class Player implements Entity {
-    private static final float EPSILON = MathUtils.FLOAT_ROUNDING_ERROR;
+    private static final float EPSILON = 0.0001f;
 
-    public final float attackDuration = 0.5f;
+    public final float attackDuration = 0.6f;
     private final int shotsPerAttack = 3;
 
     private final float jumpForce = 5.0f;
@@ -21,6 +20,8 @@ public final class Player implements Entity {
     public Input input;
     public boolean facingRight;
     public boolean attacking;
+
+    private TimerHandle attackTimer;
 
     public Player(
             final float width,
@@ -61,22 +62,14 @@ public final class Player implements Entity {
 
     public static void tick(final Iterable<Player> entities, final GameState gameState) {
         entities.forEach(entity -> {
-            final float movementForce = 100.0f;
-            final float accelerationForce = movementForce * (entity.grounded
-                    ? 1.0f
-                    : 0.5f);
-            final float deceleration = 0.05f;
-            final float baseFriction = 0.05f;
-
-            final var position = entity.body().getPosition();
-
-            applyInputForceAndFriction(entity, accelerationForce, deceleration, baseFriction, position);
+            applyInputForceAndFriction(entity);
             limitMaxHorizontalSpeed(entity);
 
             final var velocity = entity.body().getLinearVelocity();
             entity.distanceTravelled += Math.abs(velocity.x);
 
-            if (Math.abs(entity.input.horizontalInput) > 0.0f) {
+            final boolean isMoving = Math.abs(velocity.x) > 0.0f;
+            if (Math.abs(entity.input.horizontalInput) > 0.0f && isMoving) {
                 entity.facingRight = velocity.x > 0.0f;
             }
 
@@ -85,8 +78,13 @@ public final class Player implements Entity {
                 entity.attacking = true;
 
                 final var timers = gameState.getTimers();
+                entity.attackTimer = timers.set(entity.attackDuration / entity.shotsPerAttack, true, () -> {
+                    System.out.println("BANG!");
+                });
+
                 timers.set(entity.attackDuration, false, () -> {
                     entity.attacking = false;
+                    timers.clear(entity.attackTimer);
                 });
             }
 
@@ -110,17 +108,22 @@ public final class Player implements Entity {
     }
 
     private static void applyInputForceAndFriction(
-            final Player entity,
-            final float accelerationForce,
-            final float deceleration,
-            final float baseFriction,
-            final Vector2 position
+            final Player entity
     ) {
-        final var velocity = entity.body().getLinearVelocity();
-        final var slowAmount = (Math.abs(velocity.x) * deceleration + baseFriction) * entity.body().getMass();
+        final float movementForce = 100.0f;
+        final float accelerationForce = movementForce * (entity.grounded
+                ? 1.0f
+                : 0.5f);
+        final float deceleration = 0.05f;
+        final float baseFriction = 0.05f;
 
-        final var noHorizontalInput = Math.abs(entity.input.horizontalInput) < EPSILON;
-        final var isAlmostStill = Math.abs(velocity.x * entity.body().getMass()) < slowAmount;
+        final var position = entity.body().getPosition();
+
+        final var velocity = entity.body().getLinearVelocity();
+        final var slowAmount = Math.max(baseFriction, Math.abs(velocity.x) * deceleration) * entity.body().getMass();
+
+        final var noHorizontalInput = entity.attacking || Math.abs(entity.input.horizontalInput) < EPSILON;
+        final var isAlmostStill = Math.abs(velocity.x) * entity.body().getMass() < slowAmount;
         if (noHorizontalInput && isAlmostStill) {
             entity.body().setLinearVelocity(0.0f, velocity.y);
         } else {
