@@ -4,8 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
-import fi.jakojaannos.syvyys.Entity;
-import fi.jakojaannos.syvyys.Player;
+import fi.jakojaannos.syvyys.entities.Entity;
+import fi.jakojaannos.syvyys.entities.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;

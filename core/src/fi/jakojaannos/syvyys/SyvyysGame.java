@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.ScreenUtils;
+import fi.jakojaannos.syvyys.entities.Player;
 import fi.jakojaannos.syvyys.level.DefaultLevelGenerator;
 import fi.jakojaannos.syvyys.physics.PhysicsContactListener;
 import fi.jakojaannos.syvyys.renderer.Renderer;

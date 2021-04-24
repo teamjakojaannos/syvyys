@@ -2,7 +2,7 @@ package fi.jakojaannos.syvyys.level;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import fi.jakojaannos.syvyys.Tile;
+import fi.jakojaannos.syvyys.entities.Tile;
 
 import java.util.Random;
 

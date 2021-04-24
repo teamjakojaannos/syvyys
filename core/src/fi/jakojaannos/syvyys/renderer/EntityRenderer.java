@@ -1,6 +1,6 @@
 package fi.jakojaannos.syvyys.renderer;
 
-import fi.jakojaannos.syvyys.Entity;
+import fi.jakojaannos.syvyys.entities.Entity;
 
 public interface EntityRenderer<T extends Entity> extends AutoCloseable {
     <I extends Iterable<T>> void render(final I entities, final RenderContext context);

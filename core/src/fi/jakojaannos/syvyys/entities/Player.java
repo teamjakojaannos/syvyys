@@ -1,8 +1,10 @@
-package fi.jakojaannos.syvyys;
+package fi.jakojaannos.syvyys.entities;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import fi.jakojaannos.syvyys.GameState;
+import fi.jakojaannos.syvyys.TimerHandle;
 
 public final class Player implements Entity {
     private static final float EPSILON = 0.0001f;

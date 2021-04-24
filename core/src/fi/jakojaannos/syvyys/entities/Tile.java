@@ -1,4 +1,4 @@
-package fi.jakojaannos.syvyys;
+package fi.jakojaannos.syvyys.entities;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
