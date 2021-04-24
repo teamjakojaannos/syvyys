@@ -24,7 +24,7 @@ public class SyvyysGame extends ApplicationAdapter {
     public void create() {
         this.renderer = new Renderer();
 
-        this.physicsWorld = new World(new Vector2(0.0f, -9.81f), true);
+        this.physicsWorld = new World(new Vector2(0.0f, -20.0f), true);
 
         this.player = Player.create(this.physicsWorld, new Vector2(3.0f, 3.0f));
         this.gameState = new GameState();
@@ -35,31 +35,34 @@ public class SyvyysGame extends ApplicationAdapter {
     private void tick(final float deltaSeconds) {
         this.gameState.getTimers().tick(deltaSeconds);
 
+        final int leftPressed = Gdx.input.isKeyPressed(Input.Keys.LEFT) ||
+                Gdx.input.isKeyPressed(Input.Keys.A)
+                ? 1 : 0;
+
+        final int rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT) ||
+                Gdx.input.isKeyPressed(Input.Keys.D)
+                ? 1 : 0;
+
+        final boolean attackPressed = Gdx.input.isKeyPressed(Input.Keys.Z) ||
+                Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT);
+
+        final boolean jumpPressed = Gdx.input.isKeyPressed(Input.Keys.SPACE);
+
+        this.player.input = new Player.Input(
+                rightPressed - leftPressed,
+                attackPressed,
+                jumpPressed
+        );
+
         final float frameTime = Math.min(deltaSeconds, 0.25f);
         this.accumulator += frameTime;
         while (this.accumulator >= Constants.TIME_STEP) {
-            final int leftPressed = Gdx.input.isKeyPressed(Input.Keys.LEFT) ||
-                    Gdx.input.isKeyPressed(Input.Keys.A)
-                    ? 1 : 0;
-
-            final int rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT) ||
-                    Gdx.input.isKeyPressed(Input.Keys.D)
-                    ? 1 : 0;
-
-            final boolean attackPressed = Gdx.input.isKeyPressed(Input.Keys.Z) ||
-                    Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT);
-
-            final boolean jumpPressed = Gdx.input.isKeyJustPressed(Input.Keys.SPACE);
-
-            this.player.input = new Player.Input(
-                    rightPressed - leftPressed,
-                    attackPressed,
-                    jumpPressed
-            );
             Player.tick(List.of(this.player), this.gameState);
 
             this.physicsWorld.step(Constants.TIME_STEP, Constants.VELOCITY_ITERATIONS, Constants.POSITION_ITERATIONS);
             this.accumulator -= Constants.TIME_STEP;
+
+            this.renderer.getCamera().lerpNewPosition(this.player.body().getPosition());
         }
     }
 
@@ -68,8 +71,6 @@ public class SyvyysGame extends ApplicationAdapter {
         tick(Gdx.graphics.getDeltaTime());
 
         ScreenUtils.clear(1, 0, 0, 1);
-
-        this.renderer.getCamera().lerpNewPosition(this.player.body().getPosition());
 
         this.renderer.render(this.physicsWorld, List.of(this.player));
     }

@@ -9,7 +9,7 @@ public class Camera {
     private final float widthInUnits = 10.0f;
     private final OrthographicCamera camera;
 
-    private final Vector3 cameraPositionLerpTemporaryHolderVector3;
+    private final Vector3 tmp;
 
     public Camera(final int windowWidth, final int windowHeight) {
         final float aspectRatio = (float) windowHeight / windowWidth;
@@ -18,7 +18,7 @@ public class Camera {
 
         this.camera = new OrthographicCamera(this.widthInUnits, heightInUnits);
 
-        this.cameraPositionLerpTemporaryHolderVector3 = new Vector3();
+        this.tmp = new Vector3();
     }
 
     public void resize(final int windowWidth, final int windowHeight) {
@@ -45,8 +45,13 @@ public class Camera {
     }
 
     public void lerpNewPosition(final Vector2 newPosition){
-        this.cameraPositionLerpTemporaryHolderVector3.set(newPosition, 0.0f);
-        this.camera.position.lerp(this.cameraPositionLerpTemporaryHolderVector3, 0.075f);
+        this.tmp.set(newPosition, 0.0f);
+
+        // Accurate lerp using Fused Multiply Add
+        final var alpha = 0.075f;
+        this.camera.position.x = Math.fma(alpha, (this.tmp.x - this.camera.position.x), this.camera.position.x);
+        this.camera.position.y = Math.fma(alpha, (this.tmp.y - this.camera.position.y), this.camera.position.y);
+        this.camera.position.z = Math.fma(alpha, (this.tmp.z - this.camera.position.z), this.camera.position.z);
     }
 
     public void update() {

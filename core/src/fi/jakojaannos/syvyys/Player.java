@@ -1,10 +1,13 @@
 package fi.jakojaannos.syvyys;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 public final class Player implements Entity {
+    private static final float EPSILON = MathUtils.FLOAT_ROUNDING_ERROR;
+
     public final float attackDuration = 0.5f;
     private final int shotsPerAttack = 3;
 
@@ -62,25 +65,15 @@ public final class Player implements Entity {
             final float accelerationForce = movementForce * (entity.grounded
                     ? 1.0f
                     : 0.5f);
+            final float deceleration = 0.05f;
+            final float baseFriction = 0.05f;
 
             final var position = entity.body().getPosition();
 
-            final var inputImpulseX = entity.input.horizontalInput * accelerationForce;
+            applyInputForceAndFriction(entity, accelerationForce, deceleration, baseFriction, position);
+            limitMaxHorizontalSpeed(entity);
 
-            // TODO: if h move input == nearly zero, decelerate
-            entity.body()
-                  .applyLinearImpulse(inputImpulseX, 0.0f,
-                                      position.x, position.y,
-                                      true);
-
-            final float maxSpeed = 5.0f;
             final var velocity = entity.body().getLinearVelocity();
-            if (Math.abs(velocity.x) > maxSpeed) {
-                entity.body()
-                      .setLinearVelocity(maxSpeed * Math.signum(velocity.x),
-                                         velocity.y);
-            }
-
             entity.distanceTravelled += Math.abs(velocity.x);
 
             if (Math.abs(entity.input.horizontalInput) > 0.0f) {
@@ -98,10 +91,47 @@ public final class Player implements Entity {
             }
 
             // Jump
-            if (entity.input.jump) {
-                entity.body.setLinearVelocity(velocity.x, entity.jumpForce);
+            if (entity.input.jump && entity.grounded) {
+                entity.body.setLinearVelocity(entity.body().getLinearVelocity().x, entity.jumpForce);
             }
         });
+    }
+
+    private static void limitMaxHorizontalSpeed(final Player entity) {
+        final var velocity = entity.body().getLinearVelocity();
+
+        final float maxSpeed = 5.0f;
+        if (Math.abs(velocity.x) > maxSpeed) {
+            entity.body()
+                  .setLinearVelocity(maxSpeed * Math.signum(velocity.x),
+                                     velocity.y);
+        }
+    }
+
+    private static void applyInputForceAndFriction(
+            final Player entity,
+            final float accelerationForce,
+            final float deceleration,
+            final float baseFriction,
+            final Vector2 position
+    ) {
+        final var velocity = entity.body().getLinearVelocity();
+        final var slowAmount = (Math.abs(velocity.x) * deceleration + baseFriction) * entity.body().getMass();
+
+        final var noHorizontalInput = Math.abs(entity.input.horizontalInput) < EPSILON;
+        final var isAlmostStill = Math.abs(velocity.x * entity.body().getMass()) < slowAmount;
+        if (noHorizontalInput && isAlmostStill) {
+            entity.body().setLinearVelocity(0.0f, velocity.y);
+        } else {
+            final var inputImpulseX = noHorizontalInput
+                    ? slowAmount * Math.signum(velocity.x) * -1.0f
+                    : entity.input.horizontalInput * accelerationForce;
+
+            entity.body()
+                  .applyLinearImpulse(inputImpulseX, 0.0f,
+                                      position.x, position.y,
+                                      true);
+        }
     }
 
     public float width() { return this.width; }
