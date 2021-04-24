@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.ScreenUtils;
 import fi.jakojaannos.syvyys.level.DefaultLevelGenerator;
+import fi.jakojaannos.syvyys.physics.PhysicsContactListener;
 import fi.jakojaannos.syvyys.renderer.Renderer;
 
 import java.util.List;
@@ -25,6 +26,7 @@ public class SyvyysGame extends ApplicationAdapter {
         this.renderer = new Renderer();
 
         this.physicsWorld = new World(new Vector2(0.0f, -20.0f), true);
+        this.physicsWorld.setContactListener(new PhysicsContactListener());
 
         this.player = Player.create(this.physicsWorld, new Vector2(3.0f, 3.0f));
         this.gameState = new GameState();

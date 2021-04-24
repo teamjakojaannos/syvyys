@@ -93,6 +93,7 @@ public final class Player implements Entity {
             // Jump
             if (entity.input.jump && entity.grounded) {
                 entity.body.setLinearVelocity(entity.body().getLinearVelocity().x, entity.jumpForce);
+                entity.grounded = false;
             }
         });
     }
