@@ -6,11 +6,14 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.ScreenUtils;
+import fi.jakojaannos.syvyys.entities.Entity;
 import fi.jakojaannos.syvyys.entities.Player;
 import fi.jakojaannos.syvyys.level.DefaultLevelGenerator;
 import fi.jakojaannos.syvyys.physics.PhysicsContactListener;
 import fi.jakojaannos.syvyys.renderer.Renderer;
+import fi.jakojaannos.syvyys.systems.CharacterTickSystem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SyvyysGame extends ApplicationAdapter {
@@ -22,6 +25,9 @@ public class SyvyysGame extends ApplicationAdapter {
     private World physicsWorld;
     private GameState gameState;
 
+    // Systems
+    private CharacterTickSystem characterTick;
+
     @Override
     public void create() {
         this.renderer = new Renderer();
@@ -30,9 +36,11 @@ public class SyvyysGame extends ApplicationAdapter {
         this.physicsWorld.setContactListener(new PhysicsContactListener());
 
         this.player = Player.create(this.physicsWorld, new Vector2(3.0f, 3.0f));
-        this.gameState = new GameState();
+        this.gameState = new GameState(this.physicsWorld);
 
         new DefaultLevelGenerator(666).generateLevel(this.physicsWorld);
+
+        this.characterTick = new CharacterTickSystem();
     }
 
     private void tick(final float deltaSeconds) {
@@ -60,7 +68,9 @@ public class SyvyysGame extends ApplicationAdapter {
         final float frameTime = Math.min(deltaSeconds, 0.25f);
         this.accumulator += frameTime;
         while (this.accumulator >= Constants.TIME_STEP) {
-            Player.tick(List.of(this.player), this.gameState);
+            this.gameState.updateTime(Constants.TIME_STEP);
+
+            this.characterTick.tick(List.of(this.player), this.gameState);
 
             this.physicsWorld.step(Constants.TIME_STEP, Constants.VELOCITY_ITERATIONS, Constants.POSITION_ITERATIONS);
             this.accumulator -= Constants.TIME_STEP;
@@ -73,9 +83,12 @@ public class SyvyysGame extends ApplicationAdapter {
     public void render() {
         tick(Gdx.graphics.getDeltaTime());
 
-        ScreenUtils.clear(1, 0, 0, 1);
+        ScreenUtils.clear(0, 0, 0, 1);
 
-        this.renderer.render(this.physicsWorld, List.of(this.player));
+        final var entities = new ArrayList<Entity>(this.gameState.getAllParticleEmitters());
+        entities.add(this.player);
+
+        this.renderer.render(this.gameState, entities);
     }
 
     @Override

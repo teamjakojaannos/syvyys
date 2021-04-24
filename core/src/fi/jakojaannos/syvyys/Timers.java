@@ -55,10 +55,18 @@ public class Timers {
 
     public void clear(final TimerHandle timer) {
         if (!this.states.containsKey(timer.id())) {
-            throw new IllegalStateException("Tried clearing invalid timer handle!");
+            throw new IllegalStateException("Tried clearing an invalid timer handle!");
         }
 
         this.timersPendingRemoval.add(timer);
+    }
+
+    public float getTimeElapsed(final TimerHandle timer) {
+        if (!this.states.containsKey(timer.id())) {
+            throw new IllegalStateException("Tried getting elapsed time of an invalid timer handle!");
+        }
+
+        return this.states.get(timer.id()).progress;
     }
 
     public interface Action {

@@ -3,8 +3,9 @@ package fi.jakojaannos.syvyys.renderer;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.World;
+import fi.jakojaannos.syvyys.GameState;
 import fi.jakojaannos.syvyys.entities.Entity;
+import fi.jakojaannos.syvyys.entities.ParticleEmitter;
 import fi.jakojaannos.syvyys.entities.Player;
 
 import java.util.ArrayList;
@@ -26,16 +27,17 @@ public class Renderer implements AutoCloseable {
         this.batch = new SpriteBatch();
 
         this.renderers = Map.ofEntries(
-                Map.entry(Player.class, new PlayerRenderer())
+                Map.entry(Player.class, new PlayerRenderer()),
+                Map.entry(ParticleEmitter.class, new ParticleEmitterRenderer())
         );
 
         this.physicsDebugRenderer = new Box2DDebugRenderer();
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public void render(final World physicsWorld, final Iterable<? extends Entity> entities) {
+    public void render(final GameState gameState, final Iterable<? extends Entity> entities) {
         final var entitiesByClass =
-                StreamSupport.stream(entities.spliterator(), true)
+                StreamSupport.stream(entities.spliterator(), false)
                              .reduce(new HashMap<Class<?>, List<Entity>>(), (results, entity) -> {
                                          final var clazz = entity.getClass();
                                          results.computeIfAbsent(clazz, key -> new ArrayList<>())
@@ -53,7 +55,7 @@ public class Renderer implements AutoCloseable {
         this.batch.setTransformMatrix(this.camera.getTransformMatrix());
         this.batch.begin();
 
-        final var context = new RenderContext(this.batch);
+        final var context = new RenderContext(this.batch, gameState);
         entitiesByClass.forEach((clazz, entitiesOfClazz) -> {
             final EntityRenderer renderer = this.renderers.get(clazz);
             if (renderer != null) {
@@ -63,7 +65,7 @@ public class Renderer implements AutoCloseable {
 
         this.batch.end();
 
-        this.physicsDebugRenderer.render(physicsWorld, this.camera.getCombinedMatrix());
+        this.physicsDebugRenderer.render(gameState.getPhysicsWorld(), this.camera.getCombinedMatrix());
     }
 
     @Override
@@ -75,7 +77,7 @@ public class Renderer implements AutoCloseable {
         this.camera.resize(windowWidth, windowHeight);
     }
 
-    public Camera getCamera(){
+    public Camera getCamera() {
         return this.camera;
     }
 }

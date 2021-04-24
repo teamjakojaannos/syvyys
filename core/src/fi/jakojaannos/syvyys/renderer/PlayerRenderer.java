@@ -45,13 +45,6 @@ public class PlayerRenderer implements EntityRenderer<Player> {
         );
     }
 
-    private static Array<TextureRegion> framesForAnimation(final TextureRegion[] frames, final int[] frameIndices) {
-        return Array.with(Arrays.stream(frameIndices)
-                                .sequential()
-                                .mapToObj(index -> frames[index])
-                                .toArray(TextureRegion[]::new));
-    }
-
     @Override
     public <I extends Iterable<Player>> void render(
             final I entities,
@@ -68,9 +61,10 @@ public class PlayerRenderer implements EntityRenderer<Player> {
                     ? this.run
                     : this.idle;
 
+            final var timers = context.gameState().getTimers();
             final float stepLength = 16.0f * this.run.getKeyFrames().length;
             final var animationProgress = player.attacking
-                    ? (this.currentTime % player.attackDuration) / player.attackDuration
+                    ? timers.getTimeElapsed(player.attackTimer) / player.attackDuration
                     : Math.abs(velocity.x) > 0.0f
                     ? player.distanceTravelled / stepLength
                     : this.currentTime;
@@ -83,6 +77,7 @@ public class PlayerRenderer implements EntityRenderer<Player> {
             final float originX = player.width() / 2.0f;
             final float originY = 0.0f;
             final float scaleX = player.facingRight ? 1.0f : -1.0f;
+            context.batch().setColor(1.0f, 1.0f, 1.0f, 1.0f);
             context.batch()
                    .draw(currentFrame,
                          x, y,
@@ -97,5 +92,12 @@ public class PlayerRenderer implements EntityRenderer<Player> {
     @Override
     public void close() {
         this.texture.dispose();
+    }
+
+    private static Array<TextureRegion> framesForAnimation(final TextureRegion[] frames, final int[] frameIndices) {
+        return Array.with(Arrays.stream(frameIndices)
+                                .sequential()
+                                .mapToObj(index -> frames[index])
+                                .toArray(TextureRegion[]::new));
     }
 }
