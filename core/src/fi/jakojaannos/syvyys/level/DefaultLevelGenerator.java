@@ -22,42 +22,20 @@ public class DefaultLevelGenerator extends LevelGenerator {
     }
 
     private void generateFloor(final World world) {
+        final int n = 500;
         final var tileWidth = 1.0f;
         final var tileHeight = 1.0f;
-        final var n = 500;
 
         final var graphs = new ArrayList<Graph>();
-        for (int i = 0; i < 50; i++) {
-            graphs.add(randomGraph());
+        for (int i = 0; i < 5; i++) {
+            graphs.add(Graph.randomGraph(this.random, 0.1));
         }
+        final var noise = new SinNoise(graphs);
 
         for (int x = 0; x < n; x++) {
-
-            double total = 0;
-            for (final var graph : graphs) {
-                total += graph.valueAt(x);
-            }
-            total = total / graphs.size();
-            final float yPos = (float) Math.max(total, -0.25) * 2;
-            Tile.create(world, tileWidth, tileHeight, new Vector2((x - n * 0.5f) * tileWidth, yPos));
-        }
-    }
-
-    private Graph randomGraph() {
-        return new Graph(
-                this.random.nextDouble(),
-                this.random.nextDouble() * 10,
-                this.random.nextDouble()
-        );
-    }
-
-    private record Graph(
-            double frequency,
-            double offset,
-            double multiplier
-    ) {
-        public double valueAt(final double x) {
-            return Math.sin(x * this.frequency + this.offset) * this.multiplier;
+            final var xPos = (x - n * 0.5f) * tileWidth;
+            final var yPos = Math.pow(noise.getProductAt(x), 2) + noise.getSumAt(x) * 7.5 - 15;
+            Tile.create(world, tileWidth, tileHeight, new Vector2(xPos, (float) yPos));
         }
     }
 }

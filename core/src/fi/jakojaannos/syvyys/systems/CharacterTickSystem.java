@@ -31,32 +31,53 @@ public class CharacterTickSystem implements EcsSystem<Player> {
                     final var barrelOffsetX = 0.33f * (entity.facingRight ? 1 : -1);
                     final var position = new Vector2(entity.body().getPosition())
                             .add(barrelOffsetX, -0.15f);
+
+                    final var facingVec = new Vector2(entity.facingRight ? 1.0f : -1.0f, 0.0f);
+
+                    // Calm smoke
+                    final var wind = 0.05f;
                     gameState.obtainParticleEmitter()
                              .spawnBurst(gameState.getCurrentTime(),
-                                         25,
+                                         5,
                                          position,
                                          0.01f,
-                                         Vector2.Y,
+                                         facingVec,
                                          0.025f,
-                                         0.25f, 0.5f,
-                                         1f, 1f,
-                                         2.5f, 5.0f,
-                                         0.0f, 0.01f,
+                                         0.0f, 0.025f,
+                                         2.5f, 10.0f,
                                          0.5f, 0.75f,
-                                         new Color(1.0f, 1.0f, 1.0f, 1.0f),
-                                         new Color(1.0f, 1.0f, 1.0f, 1.0f),
-                                         new Vector2(0.25f, 0.0f)
+                                         0.0f, 0.125f,
+                                         new Color(0.75f, 0.75f, 0.75f, 1.0f),
+                                         new Color(0.75f, 0.75f, 0.75f, 1.0f),
+                                         new Vector2(wind, 0.25f)
                              );
 
+                    // Burst smoke
+                    gameState.obtainParticleEmitter()
+                             .spawnBurst(gameState.getCurrentTime(),
+                                         10,
+                                         position,
+                                         0.01f,
+                                         facingVec,
+                                         0.25f,
+                                         0.1f, 0.75f,
+                                         2.5f, 5.0f,
+                                         0.5f, 0.75f,
+                                         0.0f, 0.125f,
+                                         new Color(1.0f, 1.0f, 1.0f, 1.0f),
+                                         new Color(1.0f, 1.0f, 1.0f, 1.0f),
+                                         new Vector2(wind, 0.25f)
+                             );
+
+                    // Muzzle flash
                     gameState.obtainParticleEmitter()
                              .spawnBurst(gameState.getCurrentTime(),
                                          10,
                                          position,
                                          0.0f,
-                                         new Vector2(entity.facingRight ? 1.0f : -1.0f, 0.0f),
+                                         facingVec,
                                          0.125f,
                                          0.5f, 2.5f,
-                                         1f, 1f,
                                          0.1f, 0.2f,
                                          1.0f, 0.9f,
                                          0.0f, 0.0f,

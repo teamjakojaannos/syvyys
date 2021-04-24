@@ -26,8 +26,6 @@ public class ParticleEmitter implements Entity {
             final float angleNoise,
             final float velocityMin,
             final float velocityMax,
-            final float scaleMin,
-            final float scaleMax,
             final float lifetimeMin,
             final float lifetimeMax,
             final float startAlphaMin,
@@ -61,7 +59,6 @@ public class ParticleEmitter implements Entity {
             particle.velocity.set(direction)
                              .scl(MathUtils.random(velocityMin, velocityMax))
                              .add(tmpDirNormal.scl(MathUtils.random(-angleNoise, angleNoise)));
-            particle.scale = MathUtils.random(scaleMin, scaleMax);
             particle.lifetime = MathUtils.random(lifetimeMin, lifetimeMax);
             particle.frameIndex = MathUtils.random(Integer.MAX_VALUE - 1);
             particle.startAlpha = MathUtils.random(startAlphaMin, startAlphaMax);
@@ -83,7 +80,6 @@ public class ParticleEmitter implements Entity {
         private final Vector2 startPosition = new Vector2();
         private final Vector2 velocity = new Vector2();
         private Color color = new Color();
-        private float scale;
         private float lifetime;
         private float startAlpha;
         private float endAlpha;
@@ -99,10 +95,6 @@ public class ParticleEmitter implements Entity {
 
         public Vector2 velocity() {
             return this.velocity;
-        }
-
-        public float scale() {
-            return this.scale;
         }
 
         public int frameIndex() {

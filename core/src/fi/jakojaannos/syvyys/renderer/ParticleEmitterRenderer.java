@@ -52,8 +52,6 @@ public class ParticleEmitterRenderer implements EntityRenderer<ParticleEmitter> 
                          final var y = pos.y - height / 2.0f;
                          final var originX = width / 2.0f;
                          final var originY = height / 2.0f;
-                         final var scaleX = particle.scale();
-                         final var scaleY = particle.scale();
                          final var alpha = particle.alphaAt(currentTime);
                          PARTICLE_ROT_RANDOM.setSeed(particle.frameIndex());
                          final var angle = PARTICLE_ROT_RANDOM.nextFloat() * 360.0f;
@@ -67,7 +65,7 @@ public class ParticleEmitterRenderer implements EntityRenderer<ParticleEmitter> 
                                       x, y,
                                       originX, originY,
                                       width, height,
-                                      scaleX, scaleY,
+                                      1.0f, 1.0f,
                                       angle);
                      });
     }
