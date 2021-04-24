@@ -1,8 +1,10 @@
-package fi.jakojaannos.syvyys.level;
+package fi.jakojaannos.syvyys.level.garbage;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import fi.jakojaannos.syvyys.entities.Tile;
+import fi.jakojaannos.syvyys.level.Level;
+import fi.jakojaannos.syvyys.level.LevelGenerator;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -22,9 +24,9 @@ public class DefaultLevelGenerator extends LevelGenerator {
     }
 
     private void generateFloor(final World world) {
-        final int n = 500;
-        final var tileWidth = 1.0f;
-        final var tileHeight = 1.0f;
+        final int n = 5000;
+        final var tileWidth = 0.1f;
+        final var tileHeight = 0.10f;
 
         final var graphs = new ArrayList<Graph>();
         for (int i = 0; i < 5; i++) {
@@ -34,8 +36,16 @@ public class DefaultLevelGenerator extends LevelGenerator {
 
         for (int x = 0; x < n; x++) {
             final var xPos = (x - n * 0.5f) * tileWidth;
-            final var yPos = Math.pow(noise.getProductAt(x), 2) + noise.getSumAt(x) * 7.5 - 15;
-            Tile.create(world, tileWidth, tileHeight, new Vector2(xPos, (float) yPos));
+            var yPos = Math.pow(noise.getProductAt(x), 2) + noise.getSumAt(x);
+            yPos = yPos * 7.5;
+
+            var mountainPos = noise.getProductAt(x) * 2;
+            mountainPos = mountainPos * mountainPos * 125;
+            if (mountainPos > yPos) {
+                yPos = mountainPos;
+            }
+
+            Tile.create(world, tileWidth, tileHeight, new Vector2(xPos, (float) yPos), 0);
         }
     }
 }

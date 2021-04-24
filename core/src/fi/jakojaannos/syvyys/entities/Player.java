@@ -8,7 +8,7 @@ import fi.jakojaannos.syvyys.TimerHandle;
 public final class Player implements Entity {
     public final float attackDuration = 0.6f;
     public final int shotsPerAttack = 3;
-    public final float jumpForce = 5.0f;
+    public final float jumpForce = 10.0f;
     public final float width;
     public final float height;
 

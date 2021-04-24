@@ -7,12 +7,15 @@ import fi.jakojaannos.syvyys.GameState;
 import fi.jakojaannos.syvyys.entities.Entity;
 import fi.jakojaannos.syvyys.entities.ParticleEmitter;
 import fi.jakojaannos.syvyys.entities.Player;
+import fi.jakojaannos.syvyys.entities.Tile;
+import fi.jakojaannos.syvyys.entities.intro.IntroDemonicSpawn;
+import fi.jakojaannos.syvyys.renderer.intro.IntroDemonicSpawnRenderer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.StreamSupport;
+import java.util.stream.Stream;
 
 public class Renderer implements AutoCloseable {
     private final Camera camera;
@@ -28,27 +31,28 @@ public class Renderer implements AutoCloseable {
 
         this.renderers = Map.ofEntries(
                 Map.entry(Player.class, new PlayerRenderer()),
-                Map.entry(ParticleEmitter.class, new ParticleEmitterRenderer())
+                Map.entry(Tile.class, new TileRenderer()),
+                Map.entry(ParticleEmitter.class, new ParticleEmitterRenderer()),
+                Map.entry(IntroDemonicSpawn.class, new IntroDemonicSpawnRenderer())
         );
 
         this.physicsDebugRenderer = new Box2DDebugRenderer();
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public void render(final GameState gameState, final Iterable<? extends Entity> entities) {
+    public void render(final GameState gameState, final Stream<Entity> entities) {
         final var entitiesByClass =
-                StreamSupport.stream(entities.spliterator(), false)
-                             .reduce(new HashMap<Class<?>, List<Entity>>(), (results, entity) -> {
-                                         final var clazz = entity.getClass();
-                                         results.computeIfAbsent(clazz, key -> new ArrayList<>())
-                                                .add(entity);
-                                         return results;
-                                     },
-                                     (a, b) -> {
-                                         b.forEach((clazz, entry) -> a.computeIfAbsent(clazz, key -> new ArrayList<>())
-                                                                      .addAll(entry));
-                                         return a;
-                                     });
+                entities.reduce(new HashMap<Class<?>, List<Entity>>(), (results, entity) -> {
+                                    final var clazz = entity.getClass();
+                                    results.computeIfAbsent(clazz, key -> new ArrayList<>())
+                                           .add(entity);
+                                    return results;
+                                },
+                                (a, b) -> {
+                                    b.forEach((clazz, entry) -> a.computeIfAbsent(clazz, key -> new ArrayList<>())
+                                                                 .addAll(entry));
+                                    return a;
+                                });
 
         this.camera.update();
         this.batch.setProjectionMatrix(this.camera.getProjectionMatrix());
@@ -65,7 +69,7 @@ public class Renderer implements AutoCloseable {
 
         this.batch.end();
 
-        this.physicsDebugRenderer.render(gameState.getPhysicsWorld(), this.camera.getCombinedMatrix());
+        //this.physicsDebugRenderer.render(gameState.getPhysicsWorld(), this.camera.getCombinedMatrix());
     }
 
     @Override

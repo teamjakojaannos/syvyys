@@ -1,4 +1,4 @@
-package fi.jakojaannos.syvyys.level;
+package fi.jakojaannos.syvyys.level.garbage;
 
 import java.util.ArrayList;
 import java.util.List;

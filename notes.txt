@@ -9,7 +9,10 @@ Enemies will get progressively stronger every level, but the player is offered a
   it will also almost completely reset the enemies level
   however, at deeper levels enemies will level up faster
 
-the main objective in each level is to: ________ (maybe mine resources)
+the main objective in each level is to:
+ you need to kill the devil, or mine enough resources to build something :tm:. You could just rush to the end to
+ fight the devil, but he's very tough and you will most likely lose. You will therefore need to get better gear:
+ to unlock new weapons you need to mine resources, and new resources unlock at each new tier
 
 levels:
 level 0: earth surface

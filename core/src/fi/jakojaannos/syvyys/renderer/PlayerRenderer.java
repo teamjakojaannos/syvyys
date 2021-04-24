@@ -4,8 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.utils.Array;
 import fi.jakojaannos.syvyys.entities.Player;
+import fi.jakojaannos.syvyys.util.Animations;
 
 import java.util.Arrays;
 
@@ -28,19 +28,19 @@ public class PlayerRenderer implements EntityRenderer<Player> {
         final var attackFrames = new int[]{9, 10, 11};
         this.run = new Animation<>(
                 1.0f / runFrames.length,
-                framesForAnimation(frames, runFrames),
+                Animations.framesForAnimation(frames, runFrames),
                 Animation.PlayMode.LOOP
         );
 
         this.idle = new Animation<>(
                 1.0f / idleFrames.length,
-                framesForAnimation(frames, idleFrames),
+                Animations.framesForAnimation(frames, idleFrames),
                 Animation.PlayMode.LOOP
         );
 
         this.shoot = new Animation<>(
                 1.0f / attackFrames.length,
-                framesForAnimation(frames, attackFrames),
+                Animations.framesForAnimation(frames, attackFrames),
                 Animation.PlayMode.LOOP
         );
     }
@@ -92,12 +92,5 @@ public class PlayerRenderer implements EntityRenderer<Player> {
     @Override
     public void close() {
         this.texture.dispose();
-    }
-
-    private static Array<TextureRegion> framesForAnimation(final TextureRegion[] frames, final int[] frameIndices) {
-        return Array.with(Arrays.stream(frameIndices)
-                                .sequential()
-                                .mapToObj(index -> frames[index])
-                                .toArray(TextureRegion[]::new));
     }
 }

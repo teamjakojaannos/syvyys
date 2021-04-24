@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 public class Camera {
-    private final float widthInUnits = 1000.0f;
+    private final float widthInUnits = 10.0f;
     private final OrthographicCamera camera;
 
     private final Vector3 tmp;

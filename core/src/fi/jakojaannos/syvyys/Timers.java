@@ -22,11 +22,13 @@ public class Timers {
     }
 
     public void tick(final float delta) {
-        final var expired = new ArrayList<TimerHandle>();
-        this.timers.forEach(timer -> {
+        // Copy to avoid ConcurrentModificationException
+        final var oldTimers = List.copyOf(this.timers);
+        oldTimers.forEach(timer -> {
             final var state = this.states.get(timer.id());
             if (state == null) {
-                expired.add(timer);
+                System.err.println("Encountered invalidated/stateless timer!");
+                this.timers.remove(timer);
                 return;
             }
 
@@ -39,17 +41,17 @@ public class Timers {
                     timer.action().execute();
 
                     if (!timer.looping()) {
-                        expired.add(timer);
+                        this.states.remove(timer.id());
+                        this.timers.remove(timer);
                         break;
                     }
                 }
             }
         });
 
-        // Clean up
-        expired.addAll(this.timersPendingRemoval);
-        expired.forEach(timer -> this.states.remove(timer.id()));
-        this.timers.removeAll(expired);
+        // Clean up any pending removals
+        this.timersPendingRemoval.forEach(timer -> this.states.remove(timer.id()));
+        this.timers.removeAll(this.timersPendingRemoval);
         this.timersPendingRemoval.clear();
     }
 

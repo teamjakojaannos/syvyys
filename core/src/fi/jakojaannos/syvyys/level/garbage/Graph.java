@@ -1,4 +1,4 @@
-package fi.jakojaannos.syvyys.level;
+package fi.jakojaannos.syvyys.level.garbage;
 
 import java.util.Random;
 
@@ -13,5 +13,4 @@ public record Graph(double frequency, double offset) {
                 random.nextDouble() * frequencyMultiplier,
                 random.nextDouble() * 10);
     }
-
 }
