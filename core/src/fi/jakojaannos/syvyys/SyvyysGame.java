@@ -94,5 +94,18 @@ public class SyvyysGame extends ApplicationAdapter {
         // Debug
         public static final boolean DEBUG_PHYSICS = false;
         public static final boolean DEBUG_ATTACK_RAYCAST = false;
+        public static final boolean SATANMODE = true; // Can't be "Godmode" cuz' we're in hell
+
+        public static class Collision {
+            public static final short CATEGORY_TERRAIN = 0x0001;
+            public static final short CATEGORY_PLAYER = 0x0002;
+            public static final short CATEGORY_ENEMY = 0x0004;
+            public static final short CATEGORY_PROJECTILE_PLAYER = 0x0008;
+            public static final short CATEGORY_PROJECTILE_ENEMY = 0x0010;
+
+            public static final short MASK_PLAYER = ~(CATEGORY_PLAYER | CATEGORY_PROJECTILE_PLAYER);
+            public static final short MASK_ENEMY = ~(CATEGORY_ENEMY | CATEGORY_PROJECTILE_ENEMY);
+            public static final short MASK_TERRAIN = ~CATEGORY_TERRAIN;
+        }
     }
 }

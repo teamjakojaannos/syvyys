@@ -28,6 +28,8 @@ public final class Player extends GameCharacter {
         hitBox.setRadius(0.5f);
 
         final var hbFixture = new FixtureDef();
+        hbFixture.filter.categoryBits = SyvyysGame.Constants.Collision.CATEGORY_PLAYER;
+        hbFixture.filter.maskBits = SyvyysGame.Constants.Collision.MASK_PLAYER;
         hbFixture.shape = hitBox;
         hbFixture.density = 80.0f;
         hbFixture.friction = 0.15f;

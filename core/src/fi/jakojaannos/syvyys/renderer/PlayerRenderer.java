@@ -15,6 +15,7 @@ public class PlayerRenderer implements EntityRenderer<Player> {
     private final Animation<TextureRegion> run;
     private final Animation<TextureRegion> shoot;
     private final Animation<TextureRegion> death;
+    private final Animation<TextureRegion> falling;
 
     private float currentTime;
 
@@ -32,6 +33,7 @@ public class PlayerRenderer implements EntityRenderer<Player> {
         this.idle = Animations.animationFromFrames(frames, idleFrames);
         this.shoot = Animations.animationFromFrames(frames, attackFrames);
         this.death = Animations.animationFromFrames(frames, deathFrames);
+        this.falling = Animations.animationFromFrames(frames, runFrames);
     }
 
     @Override
@@ -46,8 +48,10 @@ public class PlayerRenderer implements EntityRenderer<Player> {
 
             final var animation = player.dead()
                     ? this.death
-                    : player.attacking
+                    : player.attacking()
                     ? this.shoot
+                    : !player.grounded()
+                    ? this.falling
                     : Math.abs(velocity.x) > 0.0f
                     ? this.run
                     : this.idle;
@@ -56,11 +60,12 @@ public class PlayerRenderer implements EntityRenderer<Player> {
             final float stepLength = 16.0f * this.run.getKeyFrames().length;
             final var animationProgress = player.dead()
                     ? deathProgress(player, timers)
-                    : player.attacking
-                    ? timers.getTimeElapsed(player.attackTimer) / player.attackDuration()
-                    : Math.abs(velocity.x) > 0.0f
-                    ? player.distanceTravelled / stepLength
-                    : this.currentTime;
+                    : player.attacking()
+                    ? timers.getTimeElapsed(player.attackTimer()) / player.attackDuration()
+                    : player.grounded() && Math.abs(velocity.x) > 0.0f
+                    ? player.distanceTravelled() / stepLength
+                    : this.currentTime * (player.grounded() ? 1.0f : 0.25f);
+
             final var currentFrame = animation.getKeyFrame(animationProgress, true);
 
             final var position = player.body().getPosition();

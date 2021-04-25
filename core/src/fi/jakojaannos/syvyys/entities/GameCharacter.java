@@ -1,6 +1,7 @@
 package fi.jakojaannos.syvyys.entities;
 
 import com.badlogic.gdx.physics.box2d.Body;
+import fi.jakojaannos.syvyys.SyvyysGame;
 import fi.jakojaannos.syvyys.TimerHandle;
 import fi.jakojaannos.syvyys.systems.CharacterTickSystem;
 
@@ -140,6 +141,11 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
 
     @Override
     public void dealDamage(final float amount) {
+        //noinspection InstanceofThis
+        if (this instanceof Player && SyvyysGame.Constants.SATANMODE) {
+            return;
+        }
+
         this.health -= amount;
     }
 

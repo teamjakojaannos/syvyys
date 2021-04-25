@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import fi.jakojaannos.syvyys.GameState;
+import fi.jakojaannos.syvyys.SyvyysGame;
 
 public class Demon extends GameCharacter {
     public final float maxChaseDistance = 15f;
@@ -29,6 +30,8 @@ public class Demon extends GameCharacter {
         hitBox.setRadius(0.5f);
 
         final var hbFixture = new FixtureDef();
+        hbFixture.filter.categoryBits = SyvyysGame.Constants.Collision.CATEGORY_ENEMY;
+        hbFixture.filter.maskBits = SyvyysGame.Constants.Collision.MASK_ENEMY;
         hbFixture.shape = hitBox;
         hbFixture.density = 80.0f;
         hbFixture.friction = 0.15f;

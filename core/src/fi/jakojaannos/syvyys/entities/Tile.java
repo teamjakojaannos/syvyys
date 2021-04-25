@@ -1,10 +1,8 @@
 package fi.jakojaannos.syvyys.entities;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
+import fi.jakojaannos.syvyys.SyvyysGame;
 
 public record Tile(
         float width,
@@ -28,7 +26,12 @@ public record Tile(
         final var hitBox = new PolygonShape();
         hitBox.setAsBox(width / 2.0f, height / 2.0f);
 
-        body.createFixture(hitBox, 0.0f);
+        final var hbFixture = new FixtureDef();
+        hbFixture.shape = hitBox;
+        hbFixture.density = 0.0f;
+        hbFixture.filter.categoryBits = SyvyysGame.Constants.Collision.CATEGORY_TERRAIN;
+        hbFixture.filter.maskBits = SyvyysGame.Constants.Collision.MASK_TERRAIN;
+        body.createFixture(hbFixture);
         hitBox.dispose();
 
         final var tile = new Tile(width, height, body, tileIndex);
