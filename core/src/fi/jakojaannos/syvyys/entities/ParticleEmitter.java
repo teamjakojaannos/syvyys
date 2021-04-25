@@ -13,6 +13,7 @@ public class ParticleEmitter implements Entity {
     private final Vector2 gravity = new Vector2();
 
     private float burstTimestamp;
+    private float lifetime;
 
     /**
      * FIXME: angleNoise IS NOT IN DEGREES/RADIANS (it is actually max deviation from direction in units after travelling distance of 1.0 units)
@@ -49,31 +50,44 @@ public class ParticleEmitter implements Entity {
         final var dirNormalOrig = new Vector2(direction).rotate90(-1);
         final var tmpDirNormal = new Vector2();
 
-        for (int i = 0; i < count; i++) {
-            tmpDirNormal.set(dirNormalOrig);
-
+        float maxLifetime = lifetimeMin;
+        for (int i = 0; i < this.particles.size(); i++) {
             final var particle = this.particles.get(i);
-            particle.startPosition.setToRandomDirection()
-                                  .scl(MathUtils.random(spawnRadius))
-                                  .add(position);
-            particle.velocity.set(direction)
-                             .scl(MathUtils.random(velocityMin, velocityMax))
-                             .add(tmpDirNormal.scl(MathUtils.random(-angleNoise, angleNoise)));
-            particle.lifetime = MathUtils.random(lifetimeMin, lifetimeMax);
-            particle.frameIndex = MathUtils.random(Integer.MAX_VALUE - 1);
-            particle.startAlpha = MathUtils.random(startAlphaMin, startAlphaMax);
-            particle.endAlpha = MathUtils.random(endAlphaMin, endAlphaMax);
-            particle.color = new Color(
-                    MathUtils.random(colorRangeMin.r, colorRangeMax.r),
-                    MathUtils.random(colorRangeMin.g, colorRangeMax.g),
-                    MathUtils.random(colorRangeMin.b, colorRangeMax.b),
-                    MathUtils.random(colorRangeMin.a, colorRangeMax.a)
-            );
+            if (i < count) {
+                tmpDirNormal.set(dirNormalOrig);
+
+                particle.startPosition.setToRandomDirection()
+                                      .scl(MathUtils.random(spawnRadius))
+                                      .add(position);
+                particle.velocity.set(direction)
+                                 .scl(MathUtils.random(velocityMin, velocityMax))
+                                 .add(tmpDirNormal.scl(MathUtils.random(-angleNoise, angleNoise)));
+                particle.lifetime = MathUtils.random(lifetimeMin, lifetimeMax);
+                particle.frameIndex = MathUtils.random(Integer.MAX_VALUE - 1);
+                particle.startAlpha = MathUtils.random(startAlphaMin, startAlphaMax);
+                particle.endAlpha = MathUtils.random(endAlphaMin, endAlphaMax);
+                particle.color = new Color(
+                        MathUtils.random(colorRangeMin.r, colorRangeMax.r),
+                        MathUtils.random(colorRangeMin.g, colorRangeMax.g),
+                        MathUtils.random(colorRangeMin.b, colorRangeMax.b),
+                        MathUtils.random(colorRangeMin.a, colorRangeMax.a)
+                );
+
+                maxLifetime = Math.max(particle.lifetime, maxLifetime);
+            } else {
+                particle.clear();
+            }
         }
+
+        this.lifetime = maxLifetime;
     }
 
     public Stream<Particle> getParticles() {
         return this.particles.stream();
+    }
+
+    public boolean hasExpired(final float currentTime) {
+        return currentTime >= this.burstTimestamp + this.lifetime;
     }
 
     public final class Particle {
@@ -115,6 +129,16 @@ public class ParticleEmitter implements Entity {
 
         public Vector2 gravity() {
             return ParticleEmitter.this.gravity;
+        }
+
+        public void clear() {
+            this.startPosition.set(Vector2.Zero);
+            this.velocity.set(Vector2.Zero);
+            this.color.set(0);
+            this.lifetime = 0.0f;
+            this.startAlpha = 0.0f;
+            this.endAlpha = 0.0f;
+            this.frameIndex = 0;
         }
     }
 }

@@ -32,6 +32,7 @@ public class SyvyysGame extends ApplicationAdapter {
         this.currentStage = stage;
         this.gameState = this.currentStage.createState(this.currentStage, this.renderer.getCamera());
         this.gameState.spawnEntities();
+        this.gameState.purgeEntities();
 
         this.renderer.getCamera().update();
     }
@@ -49,6 +50,7 @@ public class SyvyysGame extends ApplicationAdapter {
             this.currentStage.systemTick(this.gameState);
 
             this.gameState.spawnEntities();
+            this.gameState.purgeEntities();
 
             this.gameState.getPhysicsWorld()
                           .step(Constants.TIME_STEP,

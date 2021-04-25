@@ -19,11 +19,12 @@ public class GameState {
 
     private final List<Entity> entities;
     private final List<Entity> entitiesToBeSpawned = new ArrayList<>();
+    private final List<Entity> entitiesToBeRemoved = new ArrayList<>();
 
     private final Camera camera;
+    private final List<ParticleEmitter> particleEmittersPool = new ArrayList<>();
     private Player player;
     private float currentTime;
-
     private GameStage nextStage;
     private Color backgroundColor = new Color(0.3f, 0.3f, 0.3f, 1.0f);
 
@@ -65,11 +66,19 @@ public class GameState {
     }
 
     public ParticleEmitter obtainParticleEmitter() {
-        // FIXME: pool these
-        final var emitter = new ParticleEmitter();
-        this.entitiesToBeSpawned.add(emitter);
+        if (this.particleEmittersPool.isEmpty()) {
+            final var emitter = new ParticleEmitter();
+            this.entitiesToBeSpawned.add(emitter);
 
-        return emitter;
+            return emitter;
+        }
+
+        return this.particleEmittersPool.remove(this.particleEmittersPool.size() - 1);
+    }
+
+    public void returnToPool(final ParticleEmitter emitter) {
+        this.particleEmittersPool.add(emitter);
+        this.entitiesToBeRemoved.remove(emitter);
     }
 
     public Stream<Entity> getAllEntities() {
@@ -97,12 +106,8 @@ public class GameState {
         this.backgroundColor = color;
     }
 
-    public boolean deletThis(final Entity entity) {
-        if (entity instanceof HasBody bodyOwner) {
-            this.physicsWorld.destroyBody(bodyOwner.body());
-        }
-
-        return this.entities.remove(entity);
+    public void deletThis(final Entity entity) {
+        this.entitiesToBeRemoved.add(entity);
     }
 
     public Optional<Player> getPlayer() {
@@ -124,5 +129,16 @@ public class GameState {
     public void spawnEntities() {
         this.entities.addAll(this.entitiesToBeSpawned);
         this.entitiesToBeSpawned.clear();
+    }
+
+    public void purgeEntities() {
+        this.entitiesToBeRemoved.forEach(entity -> {
+            if (entity instanceof HasBody bodyOwner) {
+                this.physicsWorld.destroyBody(bodyOwner.body());
+            }
+        });
+
+        this.entities.removeAll(this.entitiesToBeRemoved);
+        this.entitiesToBeRemoved.clear();
     }
 }
