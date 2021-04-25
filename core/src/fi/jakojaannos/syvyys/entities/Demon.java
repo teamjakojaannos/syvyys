@@ -2,28 +2,15 @@ package fi.jakojaannos.syvyys.entities;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import fi.jakojaannos.syvyys.GameState;
 
-public class Demon implements Entity {
-    private final Body body;
-    private final float width;
-    private final float height;
+public class Demon extends GameCharacter {
+    public final float maxChaseDistance = 50f;
+    public final float attackDistance = 5f;
+
 
     public Demon(final Body body) {
-        this.width = 1.0f;
-        this.height = 1.0f;
-        this.body = body;
-    }
-
-    public Body body() {
-        return this.body;
-    }
-
-    public float width() {
-        return this.width;
-    }
-
-    public float height() {
-        return this.height;
+        super(body);
     }
 
     public static Demon create(final World physicsWorld, final Vector2 position) {
@@ -45,7 +32,11 @@ public class Demon implements Entity {
         hitBox.dispose();
 
         final var demon = new Demon(body);
-        demon.body.setUserData(demon);
+        demon.body().setUserData(demon);
         return demon;
+    }
+
+    public static void tickAttack(final GameState gameState, final Demon demon) {
+        // TODO
     }
 }

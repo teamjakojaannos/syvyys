@@ -10,15 +10,19 @@ public class SoulTrapTickSystem implements EcsSystem<SoulTrap> {
     public void tick(final Iterable<SoulTrap> soulTraps, final GameState gameState) {
         final var timers = gameState.getTimers();
         StreamSupport.stream(soulTraps.spliterator(), false)
-                     .filter(SoulTrap::isBubbling)
                      .forEach(trap -> {
                          final var isTicking = timers.isActiveAndValid(trap.stateTimer);
-                         if (!isTicking) {
+                         if (!isTicking && trap.isBubbling()) {
                              trap.stateTimer = timers.set(trap.bubblingDuration, false, () -> {
                                  trap.state = SoulTrap.State.I_WANT_OUT;
 
                                  trap.stateTimer = timers.set(trap.attackDuration, false, () -> {
                                      trap.state = SoulTrap.State.IDLE;
+                                 });
+
+                                 trap.damageTimer = timers.set(trap.damageTickInterval, true, () -> {
+                                     gameState.getPlayer()
+                                              .ifPresent(player -> player.dealDamage(5.0f));
                                  });
                              });
                          }

@@ -44,11 +44,14 @@ public class MessageBoxRenderer implements EntityRenderer<MessageBox> {
         context.batch().begin();
 
         StreamSupport.stream(messages.spliterator(), false).findFirst().ifPresent(message -> {
-            drawBox(context);
-            final var screenHeight = context.screenHeight();
+            if (message.text != null) {
+                final var screenHeight = context.screenHeight();
+                final var screenWidth = context.screenWidth();
+                drawBox(context, 0, screenHeight - 100.0f, screenWidth, 100.0f);
 
-            this.fontRegular.setColor(0f, 0f, 0f, 1.0f);
-            this.fontRegular.draw(context.batch(), message.text, 25, screenHeight - 25);
+                this.fontRegular.setColor(0f, 0f, 0f, 1.0f);
+                this.fontRegular.draw(context.batch(), message.text, 25, screenHeight - 25);
+            }
         });
 
         context.batch().end();
@@ -58,22 +61,18 @@ public class MessageBoxRenderer implements EntityRenderer<MessageBox> {
         context.batch().begin();
     }
 
-    private void drawBox(final RenderContext context) {
-        final var screenHeight = context.screenHeight();
-        final var screenWidth = context.screenWidth();
-
+    private void drawBox(final RenderContext context, final float x, final float y, final float width, final float height) {
         final var unit = 5.0f;
         final var margin = 5.0f;
-        final var boxHeight = 100.0f;
 
         final var cornerSize = unit * 2;
 
-        final var leftCorner = margin;
-        final var rightCorner = screenWidth - leftCorner - margin - cornerSize;
+        final var leftCorner = x + margin;
+        final var rightCorner = x + width - leftCorner - margin - cornerSize;
         final var middle = leftCorner + cornerSize;
-        final var middleWidth = screenWidth - cornerSize * 2 - margin * 2;
-        final var middleHeight = boxHeight - cornerSize * 2 - margin * 2;
-        final var startY = screenHeight - margin - cornerSize;
+        final var middleWidth = width - cornerSize * 2 - margin * 2;
+        final var middleHeight = height - cornerSize * 2 - margin * 2;
+        final var startY = y + height - margin - cornerSize;
 
         context.batch().draw(this.frames[0], leftCorner, startY, cornerSize, cornerSize);
         context.batch().draw(this.frames[1], middle, startY, middleWidth, cornerSize);

@@ -64,7 +64,7 @@ public class PlayerRenderer implements EntityRenderer<Player> {
             final var timers = context.gameState().getTimers();
             final float stepLength = 16.0f * this.run.getKeyFrames().length;
             final var animationProgress = player.attacking
-                    ? timers.getTimeElapsed(player.attackTimer) / player.attackDuration
+                    ? timers.getTimeElapsed(player.attackTimer) / player.attackDuration()
                     : Math.abs(velocity.x) > 0.0f
                     ? player.distanceTravelled / stepLength
                     : this.currentTime;

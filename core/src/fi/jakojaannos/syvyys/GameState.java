@@ -2,9 +2,10 @@ package fi.jakojaannos.syvyys;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.physics.box2d.World;
-import fi.jakojaannos.syvyys.entities.Demon;
 import fi.jakojaannos.syvyys.entities.Entity;
+import fi.jakojaannos.syvyys.entities.HasBody;
 import fi.jakojaannos.syvyys.entities.ParticleEmitter;
+import fi.jakojaannos.syvyys.entities.Player;
 import fi.jakojaannos.syvyys.stages.GameStage;
 
 import java.util.ArrayList;
@@ -18,15 +19,17 @@ public class GameState {
     private final World physicsWorld;
 
     private final List<Entity> entities;
+    private final Player player;
 
     private float currentTime;
 
     private GameStage nextStage;
     private Color backgroundColor = new Color(0.3f, 0.3f, 0.3f, 1.0f);
 
-    public GameState(final World physicsWorld, final Collection<Entity> entities) {
+    public GameState(final World physicsWorld, final Collection<Entity> entities, final Player player) {
         this.physicsWorld = physicsWorld;
         this.entities = new ArrayList<>(entities);
+        this.player = player;
     }
 
     public void changeStage(final GameStage nextStage) {
@@ -74,11 +77,14 @@ public class GameState {
     }
 
     public boolean deletThis(final Entity entity) {
-        // FIXME: interface HasBody
-        if (entity instanceof Demon demon) {
-            this.physicsWorld.destroyBody(demon.body());
+        if (entity instanceof HasBody bodyOwner) {
+            this.physicsWorld.destroyBody(bodyOwner.body());
         }
 
         return this.entities.remove(entity);
+    }
+
+    public Optional<Player> getPlayer() {
+        return Optional.ofNullable(this.player);
     }
 }

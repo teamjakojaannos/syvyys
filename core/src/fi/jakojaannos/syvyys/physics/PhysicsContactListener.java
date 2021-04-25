@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import fi.jakojaannos.syvyys.entities.Player;
 import fi.jakojaannos.syvyys.entities.SoulTrap;
 import fi.jakojaannos.syvyys.entities.Tile;
+import fi.jakojaannos.syvyys.systems.HasCharacterState;
 
 public class PhysicsContactListener implements ContactListener {
     @Override
@@ -13,31 +14,34 @@ public class PhysicsContactListener implements ContactListener {
         final var dataB = contact.getFixtureB().getBody().getUserData();
 
         final var manifold = contact.getWorldManifold();
-        if (resolveContact(manifold, dataA, dataB)) {
+        if (resolveBeginContact(manifold, dataA, dataB)) {
             return;
         }
-        if (resolveContact(manifold, dataB, dataA)) {
+        if (resolveBeginContact(manifold, dataB, dataA)) {
             return;
         }
 
-        System.out.printf("Unhandled contact: %s -> %s%n", dataA, dataB);
+        System.out.printf("Unhandled begin contact: %s -> %s%n", dataA, dataB);
     }
 
-    private boolean resolveContact(final WorldManifold manifold, final Object dataA, final Object dataB) {
-        if (dataA instanceof Player player && dataB instanceof Tile) {
+    private boolean resolveBeginContact(final WorldManifold manifold, final Object dataA, final Object dataB) {
+        if (dataA instanceof HasCharacterState character && dataB instanceof Tile) {
             final var contactNormal = manifold.getNormal();
             final var directionUp = Vector2.Y;
 
             final float upwardsness = contactNormal.dot(directionUp);
             if (upwardsness > 0.5f) {
-                player.grounded = true;
+                character.grounded(true);
             }
 
             return true;
         } else if (dataA instanceof Player && dataB instanceof SoulTrap trap) {
             if (trap.state == SoulTrap.State.IDLE) {
                 trap.state = SoulTrap.State.BUBBLING;
+                trap.isInContactWithPlayer = true;
             }
+
+            return true;
         }
 
         return false;
@@ -45,6 +49,28 @@ public class PhysicsContactListener implements ContactListener {
 
     @Override
     public void endContact(final Contact contact) {
+        final var dataA = contact.getFixtureA().getBody().getUserData();
+        final var dataB = contact.getFixtureB().getBody().getUserData();
+
+        final var manifold = contact.getWorldManifold();
+        if (resolveEndContact(manifold, dataA, dataB)) {
+            return;
+        }
+        if (resolveEndContact(manifold, dataB, dataA)) {
+            return;
+        }
+
+        System.out.printf("Unhandled end contact: %s -> %s%n", dataA, dataB);
+    }
+
+    private boolean resolveEndContact(final WorldManifold manifold, final Object dataA, final Object dataB) {
+        if (dataA instanceof Player && dataB instanceof SoulTrap trap) {
+            trap.isInContactWithPlayer = false;
+
+            return true;
+        }
+
+        return false;
     }
 
     @Override

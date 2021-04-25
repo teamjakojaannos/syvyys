@@ -28,7 +28,7 @@ public class IntroStage implements GameStage {
                 demonicSpawn,
                 player,
                 message
-        ));
+        ), player);
         player.facingRight = false;
 
         this.ukkoKuoriutuuPisteWav = Gdx.audio.newSound(Gdx.files.internal("ukko_kuoriutuu.wav"));

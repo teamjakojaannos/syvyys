@@ -11,14 +11,18 @@ public class SoulTrap implements Entity {
 
     public State state;
     public TimerHandle stateTimer;
+    public TimerHandle damageTimer;
     public float bubblingDuration;
     public float attackDuration;
+    public boolean isInContactWithPlayer;
+    public float damageTickInterval;
 
     public SoulTrap(final Body body) {
         this.body = body;
         this.state = State.IDLE;
         this.bubblingDuration = 1.0f;
         this.attackDuration = 2.0f;
+        this.damageTickInterval = 0.1f;
     }
 
     public Body body() {
