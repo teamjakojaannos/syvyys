@@ -8,12 +8,14 @@ import fi.jakojaannos.syvyys.GameState;
 import fi.jakojaannos.syvyys.SyvyysGame;
 
 public final class Player extends GameCharacter {
+    public boolean justAttacked;
+
     public Player(final Body body) {
         super(body,
               1.0f, 1.0f,
               10.0f,
               100.0f,
-              0.6f, 3,
+              0.4f, 3,
               0.0f,
               3.0f);
     }

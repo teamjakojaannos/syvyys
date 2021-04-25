@@ -5,6 +5,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import fi.jakojaannos.syvyys.entities.SoulTrap;
 import fi.jakojaannos.syvyys.util.Animations;
 
@@ -75,7 +76,7 @@ public class SoulTrapRenderer implements EntityRenderer<SoulTrap> {
         });
 
         if (shouldStartScreaming.get()) {
-            this.goToHell.play(0.5f);
+            this.goToHell.play(0.5f, MathUtils.random(0.5f, 2.0f), MathUtils.random(-0.2f, 0.2f));
         }
     }
 

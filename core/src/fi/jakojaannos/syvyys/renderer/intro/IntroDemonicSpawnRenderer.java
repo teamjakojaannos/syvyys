@@ -31,7 +31,7 @@ public class IntroDemonicSpawnRenderer implements EntityRenderer<IntroDemonicSpa
         final var tremblingFrames = new int[]{2, 3, 4};
         final var hatsOffFrames = new int[]{5, 6, 7, 8, 8, 9, 9, 9, 9};
         final var splitFrames = new int[]{10, 11, 12, 13, 14, 15, 16, 16, 16, 16, 16, 17, 18, 19, 19, 19, 19, 19, 19, 19};
-        final var splurtFrames = new int[]{20, 21, 22, 23, 24, 25, 25, 25};
+        final var splurtFrames = new int[]{20, 21, 22, 23, 24, 25, 25, 25, 25, 25, 25};
         final var hatchingFrames = new int[]{26, 26, 26, 26, 27, 27, 27, 28, 29, 30, 31, 32};
         final var hatchedFrames = new int[]{32};
         this.idle = Animations.animationFromFrames(frames, idleFrames);
@@ -61,7 +61,7 @@ public class IntroDemonicSpawnRenderer implements EntityRenderer<IntroDemonicSpa
             };
 
             final var loops = switch (entity.stage) {
-                case TIMPPA_HUOLLOSTA -> entity.stageTimer.duration();
+                case TIMPPA_HUOLLOSTA -> 1.1f;
                 case TREMBLING -> entity.stageTimer.duration() * 2;
                 case HATS_OFF, SPLIT, SPLURT, HATCHING, IDLE_HATCHED -> 1;
             };
@@ -69,6 +69,8 @@ public class IntroDemonicSpawnRenderer implements EntityRenderer<IntroDemonicSpa
             final var timers = context.gameState().getTimers();
             final var stageProgress = entity.stage == IntroDemonicSpawn.Stage.IDLE_HATCHED
                     ? 0.0f
+                    : entity.stage == IntroDemonicSpawn.Stage.TIMPPA_HUOLLOSTA ?
+                    context.gameState().getCurrentTime()
                     : timers.getTimeElapsed(entity.stageTimer) / entity.stageTimer.duration();
 
             final var frame = animation.getKeyFrame(stageProgress * loops, true);

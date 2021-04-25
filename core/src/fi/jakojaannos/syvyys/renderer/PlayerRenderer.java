@@ -1,9 +1,11 @@
 package fi.jakojaannos.syvyys.renderer;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import fi.jakojaannos.syvyys.Timers;
 import fi.jakojaannos.syvyys.entities.Player;
 import fi.jakojaannos.syvyys.util.Animations;
@@ -17,11 +19,13 @@ public class PlayerRenderer implements EntityRenderer<Player> {
     private final Animation<TextureRegion> shoot;
     private final Animation<TextureRegion> death;
     private final Animation<TextureRegion> falling;
+    private final Sound pew;
 
     private float currentTime;
 
     public PlayerRenderer() {
         this.texture = new Texture("miner.png");
+        this.pew = Gdx.audio.newSound(Gdx.files.internal("Blast4.ogg"));
 
         final var frames = Arrays.stream(TextureRegion.split(this.texture, 16, 16))
                                  .flatMap(Arrays::stream)
@@ -45,6 +49,11 @@ public class PlayerRenderer implements EntityRenderer<Player> {
         this.currentTime += Gdx.graphics.getDeltaTime();
 
         entities.forEach(player -> {
+            if (player.justAttacked) {
+                this.pew.play(0.5f, 1.75f + MathUtils.random(0.0f, 0.25f), 0.0f);
+                player.justAttacked = false;
+            }
+
             final var velocity = player.body().getLinearVelocity();
 
             final var animation = player.dead()
@@ -105,5 +114,6 @@ public class PlayerRenderer implements EntityRenderer<Player> {
     @Override
     public void close() {
         this.texture.dispose();
+        this.pew.dispose();
     }
 }

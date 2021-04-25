@@ -46,6 +46,7 @@ public class CharacterTickSystem implements EcsSystem<CharacterTickSystem.InputE
         entity.attackDelayTimer(timers.set(entity.attackDelay(), false, () -> {
             entity.shotTimer(timers.set(entity.attackDuration() / entity.shotsPerAttack(), true, () -> {
                 if (entity instanceof Player player) {
+                    player.justAttacked = true;
                     Player.tickAttack(gameState, player);
                 } else if (entity instanceof Demon demon) {
                     Demon.tickAttack(gameState, demon);
