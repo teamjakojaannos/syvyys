@@ -18,9 +18,10 @@ public class GameState {
     private final World physicsWorld;
 
     private final List<Entity> entities;
-    private final Player player;
-    private final Camera camera;
+    private final List<Entity> entitiesToBeSpawned = new ArrayList<>();
 
+    private final Camera camera;
+    private Player player;
     private float currentTime;
 
     private GameStage nextStage;
@@ -66,7 +67,7 @@ public class GameState {
     public ParticleEmitter obtainParticleEmitter() {
         // FIXME: pool these
         final var emitter = new ParticleEmitter();
-        this.entities.add(emitter);
+        this.entitiesToBeSpawned.add(emitter);
 
         return emitter;
     }
@@ -108,11 +109,20 @@ public class GameState {
         return Optional.ofNullable(this.player);
     }
 
+    public void setPlayer(final Player player) {
+        this.player = player;
+    }
+
     public Camera getCamera() {
-        return camera;
+        return this.camera;
     }
 
     public GameStage getCurrentStage() {
         return this.gameStage;
+    }
+
+    public void spawnEntities() {
+        this.entities.addAll(this.entitiesToBeSpawned);
+        this.entitiesToBeSpawned.clear();
     }
 }

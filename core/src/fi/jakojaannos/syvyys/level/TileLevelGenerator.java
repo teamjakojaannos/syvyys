@@ -2,6 +2,7 @@ package fi.jakojaannos.syvyys.level;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import fi.jakojaannos.syvyys.entities.Demon;
 import fi.jakojaannos.syvyys.entities.Entity;
 import fi.jakojaannos.syvyys.entities.SoulTrap;
 import fi.jakojaannos.syvyys.entities.Tile;
@@ -17,11 +18,13 @@ public class TileLevelGenerator extends LevelGenerator {
 
     private final Random random;
     private final float createTrapChance;
+    private final float spawnDemonChance;
     private final int worldLength;
 
-    public TileLevelGenerator(final long seed, final float createTrapChance, final int worldLength) {
+    public TileLevelGenerator(final long seed, final float createTrapChance, final float spawnDemonChance, final int worldLength) {
         this.random = new Random(seed);
         this.createTrapChance = createTrapChance;
+        this.spawnDemonChance = spawnDemonChance;
         this.worldLength = worldLength;
     }
 
@@ -68,11 +71,16 @@ public class TileLevelGenerator extends LevelGenerator {
             final var tileX = (stripStartTileX + x);
             final var position = new Vector2(tileX * tileWidth, stripTileY * tileHeight);
 
-            final var isNotInSpawn = Math.abs(position.x) > 10.0f;
+            final var isNotInSpawn = Math.abs(position.x) > 15.0f;
             final var isNotOnEdge = x > 3 && x + 3 < n;
-            final var isSuitablePosition = isNotInSpawn && isNotOnEdge;
-            if (isSuitablePosition && this.random.nextFloat() < this.createTrapChance) {
+            final var isSuitablePositionForTrap = isNotInSpawn && isNotOnEdge;
+            if (isSuitablePositionForTrap && this.random.nextFloat() < this.createTrapChance) {
                 entities.add(SoulTrap.create(world, new Vector2(position).add(0.0f, tileHeight)));
+            }
+
+            final var isSuitablePositionForDemon = isNotInSpawn;
+            if (isSuitablePositionForDemon && this.random.nextFloat() < this.spawnDemonChance) {
+                entities.add(Demon.create(world, new Vector2(position).add(0.0f, tileHeight)));
             }
 
             tiles.add(Tile.create(

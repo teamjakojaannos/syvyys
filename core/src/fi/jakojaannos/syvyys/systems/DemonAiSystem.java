@@ -1,6 +1,7 @@
 package fi.jakojaannos.syvyys.systems;
 
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import fi.jakojaannos.syvyys.GameState;
 import fi.jakojaannos.syvyys.entities.CharacterInput;
@@ -22,6 +23,20 @@ public class DemonAiSystem implements EcsSystem<Demon> {
             } else {
                 doWanderMovement(gameState, demon);
             }
+
+            gameState.obtainParticleEmitter()
+                     .spawnBurst(gameState.getCurrentTime(),
+                                 1, demon.body().getPosition(),
+                                 0.5f,
+                                 new Vector2(0.0f, -1.0f),
+                                 1.0f,
+                                 0.1f, 0.5f,
+                                 0.5f, 1.0f,
+                                 0.4f, 0.7f,
+                                 0.0f, 0.0f,
+                                 new Color(1.0f, 0.2f, 0.2f, 1.0f),
+                                 new Color(0.2f, 0.2f, 0.2f, 1.0f),
+                                 new Vector2(0.0f, 0.0f));
         });
     }
 

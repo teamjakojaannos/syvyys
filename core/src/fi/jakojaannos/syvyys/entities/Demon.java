@@ -6,7 +6,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import fi.jakojaannos.syvyys.GameState;
 
 public class Demon extends GameCharacter {
-    public final float maxChaseDistance = 50f;
+    public final float maxChaseDistance = 15f;
     public final float attackDistance = 5f;
 
     public Demon(final Body body) {

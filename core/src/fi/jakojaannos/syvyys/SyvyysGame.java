@@ -4,8 +4,8 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.ScreenUtils;
 import fi.jakojaannos.syvyys.renderer.Renderer;
-import fi.jakojaannos.syvyys.stages.RegularCircleStage;
 import fi.jakojaannos.syvyys.stages.GameStage;
+import fi.jakojaannos.syvyys.stages.RegularCircleStage;
 
 public class SyvyysGame extends ApplicationAdapter {
     private Renderer renderer;
@@ -31,6 +31,8 @@ public class SyvyysGame extends ApplicationAdapter {
 
         this.currentStage = stage;
         this.gameState = this.currentStage.createState(this.currentStage, this.renderer.getCamera());
+        this.gameState.spawnEntities();
+
         this.renderer.getCamera().update();
     }
 
@@ -45,6 +47,8 @@ public class SyvyysGame extends ApplicationAdapter {
             this.gameState.updateTime(Constants.TIME_STEP);
 
             this.currentStage.systemTick(this.gameState);
+
+            this.gameState.spawnEntities();
 
             this.gameState.getPhysicsWorld()
                           .step(Constants.TIME_STEP,

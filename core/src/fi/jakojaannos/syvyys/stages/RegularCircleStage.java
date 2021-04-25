@@ -42,6 +42,7 @@ public class RegularCircleStage implements GameStage {
 
         final var level = new TileLevelGenerator(
                 666L * this.circleN,
+                0.10f + this.circleN * 0.01f,
                 0.15f + this.circleN * 0.01f,
                 200 + 15 * this.circleN
         ).generateLevel(physicsWorld);
@@ -61,7 +62,9 @@ public class RegularCircleStage implements GameStage {
         ui.messageText = null;
         entities.add(ui);
 
-        final var state = new GameState(gameStage, physicsWorld, entities, this.player, camera);
+        // Pass null player to disable AI for the "fall sequence". Player is set in TransitionStageSystem once
+        // the player touches down.
+        final var state = new GameState(gameStage, physicsWorld, entities, null, camera);
         state.setBackgroundColor(new Color(0.01f, 0f, 0f, 1.0f));
         return state;
     }

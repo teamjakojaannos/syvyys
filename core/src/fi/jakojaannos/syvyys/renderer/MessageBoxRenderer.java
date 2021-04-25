@@ -70,7 +70,7 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
                 this.fontRegular.draw(context.batch(), ui.messageText, 25, screenHeight - 25);
             }
 
-            if (ui.showPlayerHp) {
+            if (ui.showPlayerHp && context.gameState().getPlayer().isPresent()) {
                 final var height = screenHeight / 15.0f;
                 final var width = screenWidth / 4.0f;
                 final var unit = height / 9.0f;

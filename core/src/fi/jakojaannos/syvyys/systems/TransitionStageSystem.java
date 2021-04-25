@@ -21,6 +21,7 @@ public class TransitionStageSystem implements EcsSystem<Player> {
 
             if (player.grounded()) {
                 gameState.getCamera().lockedToPlayer = false;
+                gameState.setPlayer(player);
             } else if (gameState.getCamera().lockedToPlayer) {
                 player.body().setLinearVelocity(0.0f, -20.0f);
             }
