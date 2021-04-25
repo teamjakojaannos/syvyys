@@ -25,20 +25,24 @@ public class TileLevelGenerator extends LevelGenerator {
 
     @Override
     public Level generateLevel(final World world) {
-        final var worldStart = -10;
+        final var worldStart = -7;
         final var worldLength = 200;
         final List<Tile> tiles = new ArrayList<>();
         final List<Entity> entities = new ArrayList<>();
 
         int generated = 0;
-        int previousHeight = 30;
+        int previousHeight = 200;
+        int lastEndX = worldStart;
         while (generated < worldLength) {
             final var startX = worldStart + generated;
             final var stripLength = this.random.nextInt(16) + 4;
             previousHeight = generateStrip(world, tiles, entities, startX, startX + stripLength, previousHeight);
 
             generated += stripLength;
+            lastEndX = startX + stripLength;
         }
+
+        generateWall(world, tiles, lastEndX, -300, previousHeight);
 
         return new Level(tiles, entities);
     }

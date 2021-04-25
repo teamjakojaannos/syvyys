@@ -52,7 +52,7 @@ public class FirstCircleStage implements GameStage {
         final List<Entity> entities = new ArrayList<>(level.getAllTiles());
         entities.addAll(level.getAllEntities());
 
-        entities.add(Demon.create(physicsWorld, new Vector2(8.0f, 4.0f)));
+        entities.add(Demon.create(physicsWorld, new Vector2(20.0f, 4.0f)));
 
         entities.add(this.player);
         final var ui = new UI();
@@ -96,7 +96,7 @@ public class FirstCircleStage implements GameStage {
         this.soulTrapTick.tick(gameState.getEntities(SoulTrap.class), gameState);
         this.demonAiTick.tick(gameState.getEntities(Demon.class), gameState);
         this.reaperTick.tick(gameState.getEntities(HasHealth.class, true), gameState);
-        this.transitionTick.tick(gameState.getEntities(Player.class), gameState);
+        this.transitionTick.tick(gameState.getEntities(Player.class, true), gameState);
     }
 
     @Override

@@ -26,8 +26,15 @@ public class TileRenderer implements EntityRenderer<Tile> {
             final var frameIndex = Math.abs(tile.tileIndex()) % this.frames.length;
             final var frame = this.frames[frameIndex];
             final var position = tile.body().getPosition();
-            context.batch()
-                   .setColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+            final var fadeStart = 20.0f;
+            final var fadeEnd = 50.0f;
+
+            final var distance = Math.abs(position.y) - fadeStart;
+            final var rgb = distance < 0
+                    ? 1.0f
+                    : (1.0f - ((distance - fadeStart) / (fadeEnd - fadeStart)));
+            context.batch().setColor(rgb, rgb, rgb, 1.0f);
             context.batch()
                    .draw(frame,
                          position.x - tile.width() / 2.0f,

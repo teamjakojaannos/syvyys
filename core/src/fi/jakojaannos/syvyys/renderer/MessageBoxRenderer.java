@@ -55,6 +55,7 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
         final var proj = new Matrix4(context.batch().getProjectionMatrix());
         context.batch().end();
 
+        context.batch().setColor(1.0f, 1.0f, 1.0f, 1.0f);
         context.batch().setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0, context.screenWidth(), context.screenHeight()));
         context.batch().begin();
 
@@ -96,22 +97,32 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
                 context.batch().draw(this.healthBarFrames[2], startX + unit + currentHpWidth, startY, missingHpWidth, height);
             }
 
+            final var circleN = context.gameState().getCurrentStage() instanceof FirstCircleStage circleStage
+                    ? circleStage.circleN
+                    : 1;
+
+            final var postfix = switch (circleN % 10) {
+                case 1 -> "st";
+                case 2 -> "nd";
+                case 3 -> "rd";
+                default -> "th";
+            };
+
             if (context.gameState().getCamera().lockedToPlayer) {
                 this.fontGothic.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-                final var circleN = context.gameState().getCurrentStage() instanceof FirstCircleStage circleStage
-                        ? circleStage.circleN
-                        : 1;
-
-                final var postfix = switch (circleN % 10) {
-                    case 1 -> "st";
-                    case 2 -> "nd";
-                    case 3 -> "rd";
-                    default -> "th";
-                };
-
                 final var y = screenHeight * 0.8f;
                 this.fontGothic.draw(context.batch(), String.format("%d%s Circle of Hell", circleN, postfix), 0.0f, y, screenWidth, Align.center, false);
+            }
+
+            if (context.gameState().getPlayer().map(GameCharacter::dead).orElse(false)) {
+                this.fontGothic.setColor(0.7f, 0.1f, 0.1f, 1.0f);
+                this.fontRegular.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+                final var y = screenHeight * 0.8f;
+                final var y2 = screenHeight * 0.2f;
+                this.fontGothic.draw(context.batch(), String.format("You were slain on the %d%s Circle", circleN, postfix), 0.0f, y, screenWidth, Align.center, true);
+                this.fontRegular.draw(context.batch(), "Press space to continue", 0.0f, y2, screenWidth, Align.center, false);
             }
         });
 
