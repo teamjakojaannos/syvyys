@@ -14,7 +14,6 @@ public class EntityReaperSystem implements EcsSystem<HasHealth> {
                 entity.deathTimer(timers.set(entity.deathAnimationDuration(), false, () -> {
                     entity.deathSequenceHasFinished(true);
                     entity.onDeadCallback();
-                    timers.clear(entity.deathTimer());
                 }));
             }
         });

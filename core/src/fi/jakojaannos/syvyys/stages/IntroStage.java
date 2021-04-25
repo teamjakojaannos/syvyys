@@ -6,8 +6,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import fi.jakojaannos.syvyys.GameState;
-import fi.jakojaannos.syvyys.entities.UI;
 import fi.jakojaannos.syvyys.entities.Player;
+import fi.jakojaannos.syvyys.entities.SoulTrap;
+import fi.jakojaannos.syvyys.entities.UI;
 import fi.jakojaannos.syvyys.entities.intro.IntroDemonicSpawn;
 import fi.jakojaannos.syvyys.renderer.Camera;
 import fi.jakojaannos.syvyys.renderer.Renderer;
@@ -18,26 +19,31 @@ public class IntroStage implements GameStage {
     private Sound ukkoKuoriutuuPisteWav;
 
     @Override
-    public GameState createState(GameStage gameStage, final Camera camera) {
+    public GameState createState(final GameStage gameStage, final Camera camera) {
         final var physicsWorld = new World(new Vector2(0.0f, 0.0f), true);
-        final var player = Player.create(physicsWorld, new Vector2(6.0f, 1.0f));
-        final var demonicSpawn = new IntroDemonicSpawn(new Vector2(4.0f, 0.5f));
+        final var player = Player.create(physicsWorld, new Vector2(1.2f, 1.0f));
+        player.grounded(true);
+        player.facingRight(false);
 
-        final var message = new UI();
-        message.messageText = "Hello world!";
+        final var demonicSpawn = new IntroDemonicSpawn(new Vector2(-1.2f, 0.5f));
+
+        final var ui = new UI();
+        ui.showPlayerHp = false;
+        ui.messageText = "Hello world!";
         final var state = new GameState(gameStage, physicsWorld, List.of(
                 demonicSpawn,
                 player,
-                message
+                ui
         ), player, camera);
-        player.facingRight = false;
+        camera.setLocation(new Vector2(0, 2));
+        System.out.println(camera.getLocation());
 
         this.ukkoKuoriutuuPisteWav = Gdx.audio.newSound(Gdx.files.internal("ukko_kuoriutuu.wav"));
 
         final var timers = state.getTimers();
 
         state.setBackgroundColor(new Color(0.3f, 0.3f, 0.3f, 1.0f));
-        demonicSpawn.stageTimer = timers.set(7.5f, false, () -> {
+        demonicSpawn.stageTimer = timers.set(15f, false, () -> {
             demonicSpawn.stage = IntroDemonicSpawn.Stage.TREMBLING;
 
             demonicSpawn.flashTimer = timers.set(1.0f, false, () -> tremblingFlash(demonicSpawn, state));
@@ -59,13 +65,32 @@ public class IntroStage implements GameStage {
 
                         demonicSpawn.stage = IntroDemonicSpawn.Stage.SPLURT;
 
+
                         demonicSpawn.stageTimer = timers.set(1.5f, false, () -> {
                             demonicSpawn.stage = IntroDemonicSpawn.Stage.HATCHING;
+                            final var soulTrap = SoulTrap.create(
+                                    state.getPhysicsWorld(),
+                                    new Vector2(player.body().getPosition())
+                                            .add(-1.0f, -0.5f)
+                            );
+                            timers.set(1.5f, false, () -> {
+                                state.spawn(soulTrap);
+                            });
+
+                            timers.set(2.5f, false, () -> {
+                                soulTrap.state = SoulTrap.State.BUBBLING;
+                            });
 
                             demonicSpawn.stageTimer = timers.set(5.0f, false, () -> {
                                 demonicSpawn.stage = IntroDemonicSpawn.Stage.IDLE_HATCHED;
+                                soulTrap.state = SoulTrap.State.I_WANT_OUT;
 
-                                timers.set(5.0f, false, () -> state.changeStage(new RegularCircleStage(1)));
+                                player.dealDamage(999999.0f);
+                                player.deathTimer(timers.set(3.0f, false, () -> {
+                                    player.deathSequenceHasFinished(true);
+                                }));
+
+                                timers.set(7.5f, false, () -> state.changeStage(new RegularCircleStage(1)));
                             });
                         });
                     });

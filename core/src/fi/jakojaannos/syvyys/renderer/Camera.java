@@ -41,10 +41,6 @@ public class Camera {
         return this.camera.combined;
     }
 
-    public void setLocation(final Vector2 position) {
-        this.camera.position.set(position, 0.0f);
-    }
-
     public void lerpNewPosition(final Vector2 newPosition) {
         this.tmp.set(newPosition, 0.0f);
 
@@ -68,5 +64,13 @@ public class Camera {
 
     public float getScreenHeight() {
         return this.screenHeight;
+    }
+
+    public Vector3 getLocation() {
+        return this.camera.position;
+    }
+
+    public void setLocation(final Vector2 position) {
+        this.camera.position.set(position, 0.0f);
     }
 }

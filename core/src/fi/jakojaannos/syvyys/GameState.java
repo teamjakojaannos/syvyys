@@ -141,4 +141,8 @@ public class GameState {
         this.entities.removeAll(this.entitiesToBeRemoved);
         this.entitiesToBeRemoved.clear();
     }
+
+    public void spawn(final Entity entity) {
+        this.entitiesToBeSpawned.add(entity);
+    }
 }

@@ -115,7 +115,7 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
                 this.fontGothic.draw(context.batch(), String.format("%d%s Circle of Hell", circleN, postfix), 0.0f, y, screenWidth, Align.center, false);
             }
 
-            if (context.gameState().getPlayer().map(GameCharacter::dead).orElse(false)) {
+            if (ui.showPlayerHp && context.gameState().getPlayer().map(GameCharacter::dead).orElse(false)) {
                 this.fontGothic.setColor(0.7f, 0.1f, 0.1f, 1.0f);
                 this.fontRegular.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 

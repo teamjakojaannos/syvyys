@@ -2,10 +2,10 @@ package fi.jakojaannos.syvyys;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.utils.ScreenUtils;
 import fi.jakojaannos.syvyys.renderer.Renderer;
 import fi.jakojaannos.syvyys.stages.GameStage;
-import fi.jakojaannos.syvyys.stages.RegularCircleStage;
 
 public class SyvyysGame extends ApplicationAdapter {
     private Renderer renderer;
@@ -15,13 +15,21 @@ public class SyvyysGame extends ApplicationAdapter {
     private GameState gameState;
     private GameStage currentStage;
 
+    @SuppressWarnings("NonAsciiCharacters")
+    private Music kauhuambianssiPisteÄmPeeKolme;
+
     @Override
     public void create() {
         this.renderer = new Renderer();
+        this.kauhuambianssiPisteÄmPeeKolme = Gdx.audio.newMusic(Gdx.files.internal("Paskapersekauhuambianssi.mp3"));
+        this.kauhuambianssiPisteÄmPeeKolme.setVolume(0.1f);
+        this.kauhuambianssiPisteÄmPeeKolme.play();
+        this.kauhuambianssiPisteÄmPeeKolme.setPosition(7.5f);
+        this.kauhuambianssiPisteÄmPeeKolme.setLooping(true);
 
         // Initialize game
-        //changeStage(new IntroStage());
-        changeStage(new RegularCircleStage(1));
+        changeStage(new fi.jakojaannos.syvyys.stages.IntroStage());
+        //changeStage(new fi.jakojaannos.syvyys.stages.RegularCircleStage(1));
     }
 
     private void changeStage(final GameStage stage) {
@@ -82,6 +90,7 @@ public class SyvyysGame extends ApplicationAdapter {
     @Override
     public void dispose() {
         this.renderer.close();
+        this.kauhuambianssiPisteÄmPeeKolme.dispose();
     }
 
     public static class Constants {
@@ -94,7 +103,7 @@ public class SyvyysGame extends ApplicationAdapter {
         // Debug
         public static final boolean DEBUG_PHYSICS = false;
         public static final boolean DEBUG_ATTACK_RAYCAST = false;
-        public static final boolean SATANMODE = true; // Can't be "Godmode" cuz' we're in hell
+        public static final boolean SATANMODE = false; // Can't be "Godmode" cuz' we're in hell ;)
 
         public static class Collision {
             public static final short CATEGORY_TERRAIN = 0x0001;

@@ -30,7 +30,7 @@ public class IntroDemonicSpawnRenderer implements EntityRenderer<IntroDemonicSpa
         final var idleFrames = new int[]{0, 1};
         final var tremblingFrames = new int[]{2, 3, 4};
         final var hatsOffFrames = new int[]{5, 6, 7, 8, 8, 9, 9, 9, 9};
-        final var splitFrames = new int[]{10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
+        final var splitFrames = new int[]{10, 11, 12, 13, 14, 15, 16, 16, 16, 16, 16, 17, 18, 19, 19, 19, 19, 19, 19, 19};
         final var splurtFrames = new int[]{20, 21, 22, 23, 24, 25, 25, 25};
         final var hatchingFrames = new int[]{26, 26, 26, 26, 27, 27, 27, 28, 29, 30, 31, 32};
         final var hatchedFrames = new int[]{32};
