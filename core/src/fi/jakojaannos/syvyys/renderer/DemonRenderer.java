@@ -1,8 +1,11 @@
 package fi.jakojaannos.syvyys.renderer;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import fi.jakojaannos.syvyys.entities.Demon;
 import fi.jakojaannos.syvyys.util.Animations;
 
@@ -14,8 +17,15 @@ public class DemonRenderer implements EntityRenderer<Demon> {
     private final Animation<TextureRegion> idle;
     private final Animation<TextureRegion> death;
 
+    private final Sound[] spit;
+
     public DemonRenderer() {
         this.texture = new Texture("demon_01.png");
+        this.spit = new Sound[]{
+                Gdx.audio.newSound(Gdx.files.internal("demoni_sylkee_1-2.wav")),
+                Gdx.audio.newSound(Gdx.files.internal("demoni_sylkee_2-2.wav")),
+                Gdx.audio.newSound(Gdx.files.internal("demoni_sylkee_3-2.wav")),
+        };
 
         final var frames = Arrays.stream(TextureRegion.split(this.texture, 16, 16))
                                  .flatMap(Arrays::stream)
@@ -34,6 +44,12 @@ public class DemonRenderer implements EntityRenderer<Demon> {
             final RenderContext context
     ) {
         demons.forEach(demon -> {
+            if (demon.justAttacked) {
+                final var pew = this.spit[MathUtils.random(this.spit.length - 1)];
+                pew.play(0.5f, MathUtils.random(0.8f, 1.2f), 0.0f);
+                demon.justAttacked = false;
+            }
+
             final var animation = demon.dead()
                     ? this.death
                     : this.attack;
@@ -66,5 +82,8 @@ public class DemonRenderer implements EntityRenderer<Demon> {
     @Override
     public void close() {
         this.texture.dispose();
+        for (final var sound : this.spit) {
+            sound.dispose();
+        }
     }
 }

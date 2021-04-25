@@ -12,6 +12,7 @@ public class Demon extends GameCharacter {
     private final float projectileLifetime = 10.0f;
     private final float projectileAcceleration = 5.0f;
     private final float projectileDamage = 5.0f;
+    public boolean justAttacked;
 
     public Demon(final Body body) {
         super(body,
@@ -49,6 +50,7 @@ public class Demon extends GameCharacter {
     }
 
     public static void tickAttack(final GameState gameState, final Demon demon) {
+        demon.justAttacked = true;
         final var position = demon.body().getPosition();
 
         gameState.obtainParticleEmitter()
