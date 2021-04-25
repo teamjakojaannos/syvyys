@@ -2,16 +2,14 @@ package fi.jakojaannos.syvyys;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.physics.box2d.World;
-import fi.jakojaannos.syvyys.entities.Entity;
-import fi.jakojaannos.syvyys.entities.HasBody;
-import fi.jakojaannos.syvyys.entities.ParticleEmitter;
-import fi.jakojaannos.syvyys.entities.Player;
+import fi.jakojaannos.syvyys.entities.*;
 import fi.jakojaannos.syvyys.stages.GameStage;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class GameState {
@@ -66,6 +64,14 @@ public class GameState {
 
     public Stream<Entity> getAllEntities() {
         return this.entities.stream();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Entity> Stream<T> getEntities(final Class<? extends T> clazz) {
+        return this.entities
+                .stream()
+                .filter(e -> clazz.isAssignableFrom(e.getClass()))
+                .map(e -> (T) e);
     }
 
     public Color getBackgroundColor() {

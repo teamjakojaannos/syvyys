@@ -11,6 +11,7 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
     private final float width;
     private final float height;
     private final float maxHealth;
+    private final float deathAnimationDuration;
     private final Body body;
 
     public float distanceTravelled = 0.0f;
@@ -20,8 +21,10 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
     public boolean attacking;
     public TimerHandle attackTimer;
     public TimerHandle shotTimer;
+    private TimerHandle deathTimer;
     private CharacterInput input = new CharacterInput(0.0f, false, false);
     private float health;
+    private boolean deathSequenceHasFinished;
 
     public GameCharacter(
             final Body body,
@@ -30,7 +33,8 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
             final float jumpForce,
             final float health,
             final float attackDuration,
-            final int shotsPerAttack
+            final int shotsPerAttack,
+            final float deathAnimationDuration
     ) {
         this.attackDuration = attackDuration;
         this.shotsPerAttack = shotsPerAttack;
@@ -39,6 +43,7 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
         this.height = height;
         this.body = body;
         this.health = this.maxHealth = health;
+        this.deathAnimationDuration = deathAnimationDuration;
     }
 
     public float width() { return this.width; }
@@ -152,5 +157,35 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
     @Override
     public boolean hasMoved() {
         return this.distanceTravelled - this.previousDistanceTravelled > 0.05f;
+    }
+
+    @Override
+    public boolean dead() {
+        return this.health <= 0.00001f;
+    }
+
+    @Override
+    public TimerHandle deathTimer() {
+        return this.deathTimer;
+    }
+
+    @Override
+    public void deathTimer(final TimerHandle timer) {
+        this.deathTimer = timer;
+    }
+
+    @Override
+    public float deathAnimationDuration() {
+        return this.deathAnimationDuration;
+    }
+
+    @Override
+    public boolean deathSequenceHasFinished() {
+        return this.deathSequenceHasFinished;
+    }
+
+    @Override
+    public void deathSequenceHasFinished(final boolean value) {
+        this.deathSequenceHasFinished = value;
     }
 }

@@ -3,12 +3,14 @@ package fi.jakojaannos.syvyys.systems;
 import fi.jakojaannos.syvyys.GameState;
 import fi.jakojaannos.syvyys.entities.*;
 
+import java.util.stream.Stream;
+
 
 public class CharacterTickSystem implements EcsSystem<CharacterTickSystem.InputEntity> {
     private static final float EPSILON = 0.0001f;
 
     @Override
-    public void tick(final Iterable<InputEntity> entities, final GameState gameState) {
+    public void tick(final Stream<InputEntity> entities, final GameState gameState) {
         entities.forEach(entity -> {
             entity.distanceTravelled(entity.distanceTravelled() + Math.abs(entity.body().getLinearVelocity().x));
 

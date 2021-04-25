@@ -13,7 +13,8 @@ public final class Player extends GameCharacter {
               1.0f, 1.0f,
               10.0f,
               100.0f,
-              0.6f, 3);
+              0.6f, 3,
+              3.0f);
     }
 
     public static Player create(final World physicsWorld, final Vector2 position) {

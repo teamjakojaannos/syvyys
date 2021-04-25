@@ -12,11 +12,11 @@ import fi.jakojaannos.syvyys.physics.PhysicsContactListener;
 import fi.jakojaannos.syvyys.renderer.Renderer;
 import fi.jakojaannos.syvyys.systems.CharacterTickSystem;
 import fi.jakojaannos.syvyys.systems.DemonAiSystem;
+import fi.jakojaannos.syvyys.systems.EntityReaperSystem;
 import fi.jakojaannos.syvyys.systems.SoulTrapTickSystem;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class FirstCircleStage implements GameStage {
     private CharacterTickSystem characterTick;
@@ -24,6 +24,7 @@ public class FirstCircleStage implements GameStage {
     private DemonAiSystem demonAiTick;
 
     private Player player;
+    private EntityReaperSystem reaperTick;
 
     @Override
     public GameState createState() {
@@ -37,6 +38,7 @@ public class FirstCircleStage implements GameStage {
         this.characterTick = new CharacterTickSystem();
         this.soulTrapTick = new SoulTrapTickSystem();
         this.demonAiTick = new DemonAiSystem();
+        this.reaperTick = new EntityReaperSystem();
 
         final List<Entity> entities = new ArrayList<>(level.getAllTiles());
         entities.add(Demon.create(physicsWorld, new Vector2(8.0f, 4.0f)));
@@ -67,6 +69,10 @@ public class FirstCircleStage implements GameStage {
 
         final boolean jumpPressed = Gdx.input.isKeyPressed(Input.Keys.SPACE);
 
+        if (Gdx.input.isKeyPressed(Input.Keys.K)) {
+            this.player.dealDamage(999999.0f);
+        }
+
         this.player.input(new CharacterInput(
                 rightPressed - leftPressed,
                 attackPressed,
@@ -76,18 +82,10 @@ public class FirstCircleStage implements GameStage {
 
     @Override
     public void systemTick(final GameState gameState) {
-        this.characterTick.tick(gameState.getAllEntities()
-                                         .filter(e -> e instanceof CharacterTickSystem.InputEntity)
-                                         .map(e -> (CharacterTickSystem.InputEntity) e)
-                                         .collect(Collectors.toList()), gameState);
-        this.soulTrapTick.tick(gameState.getAllEntities()
-                                        .filter(e -> e instanceof SoulTrap)
-                                        .map(e -> (SoulTrap) e)
-                                        .collect(Collectors.toList()), gameState);
-        this.demonAiTick.tick(gameState.getAllEntities()
-                                       .filter(e -> e instanceof Demon)
-                                       .map(e -> (Demon) e)
-                                       .collect(Collectors.toList()), gameState);
+        this.characterTick.tick(gameState.getEntities(CharacterTickSystem.InputEntity.class), gameState);
+        this.soulTrapTick.tick(gameState.getEntities(SoulTrap.class), gameState);
+        this.demonAiTick.tick(gameState.getEntities(Demon.class), gameState);
+        this.reaperTick.tick(gameState.getEntities(HasHealth.class), gameState);
     }
 
     @Override

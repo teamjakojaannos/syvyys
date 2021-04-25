@@ -3,11 +3,12 @@ package fi.jakojaannos.syvyys.systems;
 import fi.jakojaannos.syvyys.GameState;
 import fi.jakojaannos.syvyys.entities.SoulTrap;
 
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class SoulTrapTickSystem implements EcsSystem<SoulTrap> {
     @Override
-    public void tick(final Iterable<SoulTrap> soulTraps, final GameState gameState) {
+    public void tick(final Stream<SoulTrap> soulTraps, final GameState gameState) {
         final var timers = gameState.getTimers();
         StreamSupport.stream(soulTraps.spliterator(), false)
                      .forEach(trap -> {

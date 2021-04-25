@@ -14,6 +14,7 @@ public class PlayerRenderer implements EntityRenderer<Player> {
     private final Animation<TextureRegion> idle;
     private final Animation<TextureRegion> run;
     private final Animation<TextureRegion> shoot;
+    private final Animation<TextureRegion> death;
 
     private float currentTime;
 
@@ -26,23 +27,11 @@ public class PlayerRenderer implements EntityRenderer<Player> {
         final var idleFrames = new int[]{0};
         final var runFrames = new int[]{1, 2, 3, 4, 5, 6, 7, 8};
         final var attackFrames = new int[]{9, 10, 11};
-        this.run = new Animation<>(
-                1.0f / runFrames.length,
-                Animations.framesForAnimation(frames, runFrames),
-                Animation.PlayMode.LOOP
-        );
-
-        this.idle = new Animation<>(
-                1.0f / idleFrames.length,
-                Animations.framesForAnimation(frames, idleFrames),
-                Animation.PlayMode.LOOP
-        );
-
-        this.shoot = new Animation<>(
-                1.0f / attackFrames.length,
-                Animations.framesForAnimation(frames, attackFrames),
-                Animation.PlayMode.LOOP
-        );
+        final var deathFrames = new int[]{12, 12, 12, 12, 13, 14, 15, 15, 15, 15, 16};
+        this.run = Animations.animationFromFrames(frames, runFrames);
+        this.idle = Animations.animationFromFrames(frames, idleFrames);
+        this.shoot = Animations.animationFromFrames(frames, attackFrames);
+        this.death = Animations.animationFromFrames(frames, deathFrames);
     }
 
     @Override
@@ -55,7 +44,9 @@ public class PlayerRenderer implements EntityRenderer<Player> {
         entities.forEach(player -> {
             final var velocity = player.body().getLinearVelocity();
 
-            final var animation = player.attacking
+            final var animation = player.dead()
+                    ? this.death
+                    : player.attacking
                     ? this.shoot
                     : Math.abs(velocity.x) > 0.0f
                     ? this.run
@@ -63,7 +54,9 @@ public class PlayerRenderer implements EntityRenderer<Player> {
 
             final var timers = context.gameState().getTimers();
             final float stepLength = 16.0f * this.run.getKeyFrames().length;
-            final var animationProgress = player.attacking
+            final var animationProgress = player.dead()
+                    ? deathProgress(player, timers)
+                    : player.attacking
                     ? timers.getTimeElapsed(player.attackTimer) / player.attackDuration()
                     : Math.abs(velocity.x) > 0.0f
                     ? player.distanceTravelled / stepLength
@@ -93,6 +86,12 @@ public class PlayerRenderer implements EntityRenderer<Player> {
                          0.0f
                    );
         });
+    }
+
+    private float deathProgress(final Player player, final fi.jakojaannos.syvyys.Timers timers) {
+        return !player.deathSequenceHasFinished() && timers.isActiveAndValid(player.deathTimer())
+                ? timers.getTimeElapsed(player.deathTimer()) / player.deathAnimationDuration()
+                : 0.999f;
     }
 
     @Override

@@ -14,7 +14,8 @@ public class Demon extends GameCharacter {
               1.0f, 1.0f,
               10.0f,
               10.0f,
-              2.0f, 1);
+              2.0f, 1,
+              0.0f);
     }
 
     public static Demon create(final World physicsWorld, final Vector2 position) {

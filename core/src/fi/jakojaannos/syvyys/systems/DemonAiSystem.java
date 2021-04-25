@@ -7,11 +7,13 @@ import fi.jakojaannos.syvyys.entities.CharacterInput;
 import fi.jakojaannos.syvyys.entities.Demon;
 import fi.jakojaannos.syvyys.entities.Player;
 
+import java.util.stream.Stream;
+
 public class DemonAiSystem implements EcsSystem<Demon> {
 
 
     @Override
-    public void tick(final Iterable<Demon> demons, final GameState gameState) {
+    public void tick(final Stream<Demon> demons, final GameState gameState) {
         final var maybePlayer = gameState.getPlayer();
 
         demons.forEach(demon -> {
