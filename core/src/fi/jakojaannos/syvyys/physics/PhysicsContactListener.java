@@ -2,6 +2,7 @@ package fi.jakojaannos.syvyys.physics;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import fi.jakojaannos.syvyys.entities.DemonBall;
 import fi.jakojaannos.syvyys.entities.Player;
 import fi.jakojaannos.syvyys.entities.SoulTrap;
 import fi.jakojaannos.syvyys.entities.Tile;
@@ -31,13 +32,22 @@ public class PhysicsContactListener implements ContactListener {
             }
 
             return true;
-        } else if (dataA instanceof Player && dataB instanceof SoulTrap trap) {
+        }
+        // TODO: interface TracksContactWithPlayer
+        else if (dataA instanceof Player && dataB instanceof SoulTrap trap) {
             if (trap.state == SoulTrap.State.IDLE) {
                 trap.state = SoulTrap.State.BUBBLING;
             }
 
             trap.isInContactWithPlayer = true;
 
+            return true;
+        } else if (dataA instanceof DemonBall ball && dataB instanceof Tile) {
+            ball.collidedWithWall = true;
+            return true;
+        } else if (dataA instanceof DemonBall ball && dataB instanceof Player player) {
+            ball.collidedWithWall = true;
+            player.dealDamage(ball.damage);
             return true;
         }
 

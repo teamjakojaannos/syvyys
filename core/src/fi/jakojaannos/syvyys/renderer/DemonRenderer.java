@@ -12,8 +12,7 @@ public class DemonRenderer implements EntityRenderer<Demon> {
     private final Texture texture;
     private final Animation<TextureRegion> attack;
     private final Animation<TextureRegion> idle;
-
-    private float currentTime;
+    private final Animation<TextureRegion> death;
 
     public DemonRenderer() {
         this.texture = new Texture("demon_01.png");
@@ -23,8 +22,10 @@ public class DemonRenderer implements EntityRenderer<Demon> {
                                  .toArray(TextureRegion[]::new);
         final var idleFrames = new int[]{0};
         final var attackFrames = new int[]{0, 1, 2, 3, 4, 5, 6};
+        final var deathFrames = new int[]{0, 1, 2, 7, 8, 9, 10, 11};
         this.idle = Animations.animationFromFrames(frames, idleFrames);
         this.attack = Animations.animationFromFrames(frames, attackFrames);
+        this.death = Animations.animationFromFrames(frames, deathFrames);
     }
 
     @Override
@@ -33,9 +34,14 @@ public class DemonRenderer implements EntityRenderer<Demon> {
             final RenderContext context
     ) {
         demons.forEach(demon -> {
-            final var animation = this.attack;
+            final var animation = demon.dead()
+                    ? this.death
+                    : this.attack;
 
-            final var animationProgress = context.gameState().getCurrentTime();
+            final var timers = context.gameState().getTimers();
+            final var animationProgress = demon.dead()
+                    ? Animations.deathProgress(demon, timers)
+                    : context.gameState().getCurrentTime();
             final var currentFrame = animation.getKeyFrame(animationProgress, true);
 
             final var position = demon.body().getPosition();

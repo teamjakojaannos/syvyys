@@ -1,6 +1,8 @@
 package fi.jakojaannos.syvyys.entities;
 
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Filter;
+import fi.jakojaannos.syvyys.GameState;
 import fi.jakojaannos.syvyys.SyvyysGame;
 import fi.jakojaannos.syvyys.TimerHandle;
 import fi.jakojaannos.syvyys.systems.CharacterTickSystem;
@@ -192,5 +194,21 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
     @Override
     public void deathSequenceHasFinished(final boolean value) {
         this.deathSequenceHasFinished = value;
+    }
+
+    @Override
+    public void onStartDeathSequenceCallback(final GameState gameState) {
+        body().getFixtureList()
+              .forEach(fixture -> {
+                  final var filter = new Filter();
+                  filter.categoryBits = SyvyysGame.Constants.Collision.CATEGORY_CORPSE;
+                  filter.maskBits = SyvyysGame.Constants.Collision.MASK_CORPSE;
+                  fixture.setFilterData(filter);
+              });
+
+        final var timers = gameState.getTimers();
+        timers.clear(this.attackTimer);
+        timers.clear(this.shotTimer);
+        timers.clear(this.deathTimer);
     }
 }

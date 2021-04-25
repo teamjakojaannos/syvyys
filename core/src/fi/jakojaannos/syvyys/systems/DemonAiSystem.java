@@ -18,7 +18,8 @@ public class DemonAiSystem implements EcsSystem<Demon> {
         final var maybePlayer = gameState.getPlayer();
 
         demons.forEach(demon -> {
-            if (maybePlayer.isPresent()) {
+            if (maybePlayer.map(player -> !player.dead())
+                           .orElse(false)) {
                 moveTowardsPlayer(gameState, demon, maybePlayer.get());
             } else {
                 doWanderMovement(gameState, demon);
@@ -41,6 +42,7 @@ public class DemonAiSystem implements EcsSystem<Demon> {
     }
 
     private void doWanderMovement(final GameState gameState, final Demon demon) {
+        demon.input(new CharacterInput(0.0f, false, false));
     }
 
     private void moveTowardsPlayer(final GameState gameState, final Demon demon, final Player player) {

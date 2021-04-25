@@ -59,7 +59,7 @@ public class PlayerRenderer implements EntityRenderer<Player> {
             final var timers = context.gameState().getTimers();
             final float stepLength = 16.0f * this.run.getKeyFrames().length;
             final var animationProgress = player.dead()
-                    ? deathProgress(player, timers)
+                    ? Animations.deathProgress(player, timers)
                     : player.attacking()
                     ? timers.getTimeElapsed(player.attackTimer()) / player.attackDuration()
                     : player.grounded() && Math.abs(velocity.x) > 0.0f
@@ -93,12 +93,6 @@ public class PlayerRenderer implements EntityRenderer<Player> {
                          0.0f
                    );
         });
-    }
-
-    private float deathProgress(final Player player, final fi.jakojaannos.syvyys.Timers timers) {
-        return !player.deathSequenceHasFinished() && timers.isActiveAndValid(player.deathTimer())
-                ? timers.getTimeElapsed(player.deathTimer()) / player.deathAnimationDuration()
-                : 0.999f;
     }
 
     @Override

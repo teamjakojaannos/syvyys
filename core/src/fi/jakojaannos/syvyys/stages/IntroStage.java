@@ -36,7 +36,6 @@ public class IntroStage implements GameStage {
                 ui
         ), player, camera);
         camera.setLocation(new Vector2(0, 2));
-        System.out.println(camera.getLocation());
 
         this.ukkoKuoriutuuPisteWav = Gdx.audio.newSound(Gdx.files.internal("ukko_kuoriutuu.wav"));
 

@@ -25,6 +25,7 @@ public class RegularCircleStage implements GameStage {
     private EntityReaperSystem reaperTick;
     private TransitionStageSystem transitionTick;
     private UpdateParticleEmittersSystem emitterTick;
+    private DemonBallTickSystem projectileTick;
 
     private Player player;
 
@@ -54,6 +55,7 @@ public class RegularCircleStage implements GameStage {
         this.reaperTick = new EntityReaperSystem();
         this.transitionTick = new TransitionStageSystem();
         this.emitterTick = new UpdateParticleEmittersSystem();
+        this.projectileTick = new DemonBallTickSystem();
 
         final List<Entity> entities = new ArrayList<>(level.getAllTiles());
         entities.addAll(level.getAllEntities());
@@ -102,6 +104,7 @@ public class RegularCircleStage implements GameStage {
         this.characterTick.tick(gameState.getEntities(CharacterTickSystem.InputEntity.class), gameState);
         this.soulTrapTick.tick(gameState.getEntities(SoulTrap.class), gameState);
         this.demonAiTick.tick(gameState.getEntities(Demon.class), gameState);
+        this.projectileTick.tick(gameState.getEntities(DemonBall.class), gameState);
         this.reaperTick.tick(gameState.getEntities(HasHealth.class, true), gameState);
         this.emitterTick.tick(gameState.getEntities(ParticleEmitter.class), gameState);
         this.transitionTick.tick(gameState.getEntities(Player.class, true), gameState);

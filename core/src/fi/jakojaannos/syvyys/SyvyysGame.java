@@ -28,8 +28,8 @@ public class SyvyysGame extends ApplicationAdapter {
         this.kauhuambianssiPisteÄmPeeKolme.setLooping(true);
 
         // Initialize game
-        changeStage(new fi.jakojaannos.syvyys.stages.IntroStage());
-        //changeStage(new fi.jakojaannos.syvyys.stages.RegularCircleStage(1));
+        //changeStage(new fi.jakojaannos.syvyys.stages.IntroStage());
+        changeStage(new fi.jakojaannos.syvyys.stages.RegularCircleStage(1));
     }
 
     private void changeStage(final GameStage stage) {
@@ -109,12 +109,15 @@ public class SyvyysGame extends ApplicationAdapter {
             public static final short CATEGORY_TERRAIN = 0x0001;
             public static final short CATEGORY_PLAYER = 0x0002;
             public static final short CATEGORY_ENEMY = 0x0004;
-            public static final short CATEGORY_PROJECTILE_PLAYER = 0x0008;
-            public static final short CATEGORY_PROJECTILE_ENEMY = 0x0010;
+            public static final short CATEGORY_CORPSE = 0x0008;
+            public static final short CATEGORY_PROJECTILE_PLAYER = 0x0010;
+            public static final short CATEGORY_PROJECTILE_ENEMY = 0x0020;
 
             public static final short MASK_PLAYER = ~(CATEGORY_PLAYER | CATEGORY_PROJECTILE_PLAYER);
             public static final short MASK_ENEMY = ~(CATEGORY_ENEMY | CATEGORY_PROJECTILE_ENEMY);
+            public static final short MASK_PROJECTILE_ENEMY = (CATEGORY_PLAYER | CATEGORY_TERRAIN);
             public static final short MASK_TERRAIN = ~CATEGORY_TERRAIN;
+            public static final short MASK_CORPSE = CATEGORY_TERRAIN;
         }
     }
 }

@@ -49,7 +49,7 @@ public final class Player extends GameCharacter {
 
         final var facingVec = new Vector2(entity.facingRight ? 1.0f : -1.0f, 0.0f);
 
-        final var gunRange = 100.0f;
+        final var gunRange = 10.0f;
         final var rayEnd = new Vector2(facingVec)
                 .scl(gunRange)
                 .add(position);
@@ -74,6 +74,11 @@ public final class Player extends GameCharacter {
                 return -1;
             }
 
+            // Ignore corpses
+            if (fixture.getBody().getUserData() instanceof HasHealth killable && killable.dead()) {
+                return -1;
+            }
+
             hitInfo.thereWasAHit = true;
             if (fraction < hitInfo.closestFraction) {
                 hitInfo.closestPoint.set(point);
@@ -87,7 +92,7 @@ public final class Player extends GameCharacter {
 
         if (hitInfo.thereWasAHit && hitInfo.body != null) {
             if (hitInfo.body.getUserData() instanceof Demon demon) {
-                gameState.deletThis(demon);
+                demon.dealDamage(99999.0f);
             }
 
             gameState.obtainParticleEmitter()

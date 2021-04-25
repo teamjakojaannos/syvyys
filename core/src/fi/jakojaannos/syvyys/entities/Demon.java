@@ -9,14 +9,17 @@ import fi.jakojaannos.syvyys.SyvyysGame;
 public class Demon extends GameCharacter {
     public final float maxChaseDistance = 15f;
     public final float attackDistance = 5f;
+    private final float projectileLifetime = 10.0f;
+    private final float projectileAcceleration = 5.0f;
+    private final float projectileDamage = 5.0f;
 
     public Demon(final Body body) {
         super(body,
               1.0f, 1.0f,
               10.0f,
               10.0f,
-              2.0f, 1,
-              0.0f);
+              2.0f, 3,
+              1.0f);
     }
 
     public static Demon create(final World physicsWorld, final Vector2 position) {
@@ -62,5 +65,23 @@ public class Demon extends GameCharacter {
                              new Color(0.75f, 0.75f, 0.75f, 1.0f),
                              new Vector2(0, 0.05f)
                  );
+
+
+        final var dirToPlayer = gameState
+                .getPlayer()
+                .map(GameCharacter::body)
+                .map(Body::getPosition)
+                .map(playerPos -> new Vector2(playerPos).sub(position))
+                .orElseGet(() -> new Vector2().setToRandomDirection());
+
+        gameState.spawn(DemonBall.create(
+                gameState.getPhysicsWorld(),
+                position,
+                dirToPlayer,
+                demon.projectileAcceleration,
+                gameState.getCurrentTime(),
+                demon.projectileLifetime,
+                demon.projectileDamage
+        ));
     }
 }

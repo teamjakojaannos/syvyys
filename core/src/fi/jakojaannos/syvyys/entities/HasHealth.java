@@ -1,5 +1,6 @@
 package fi.jakojaannos.syvyys.entities;
 
+import fi.jakojaannos.syvyys.GameState;
 import fi.jakojaannos.syvyys.TimerHandle;
 
 public interface HasHealth extends Entity {
@@ -17,9 +18,11 @@ public interface HasHealth extends Entity {
 
     float deathAnimationDuration();
 
-    default void onDeadCallback() {}
-
     boolean deathSequenceHasFinished();
 
     void deathSequenceHasFinished(boolean value);
+
+    default void onDeadCallback(final GameState gameState) {}
+
+    default void onStartDeathSequenceCallback(final GameState gameState) {}
 }

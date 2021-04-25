@@ -11,9 +11,11 @@ public class EntityReaperSystem implements EcsSystem<HasHealth> {
         final var timers = gameState.getTimers();
         entities.forEach(entity -> {
             if (!entity.deathSequenceHasFinished() && entity.dead() && !timers.isActiveAndValid(entity.deathTimer())) {
+                entity.onStartDeathSequenceCallback(gameState);
+
                 entity.deathTimer(timers.set(entity.deathAnimationDuration(), false, () -> {
                     entity.deathSequenceHasFinished(true);
-                    entity.onDeadCallback();
+                    entity.onDeadCallback(gameState);
                 }));
             }
         });
