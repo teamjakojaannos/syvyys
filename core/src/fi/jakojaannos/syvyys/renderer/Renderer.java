@@ -33,7 +33,7 @@ public class Renderer implements AutoCloseable {
                 Map.entry(ParticleEmitter.class, new ParticleEmitterRenderer()),
                 Map.entry(IntroDemonicSpawn.class, new IntroDemonicSpawnRenderer()),
                 Map.entry(Demon.class, new DemonRenderer()),
-                Map.entry(MessageBox.class, new MessageBoxRenderer()),
+                Map.entry(UI.class, new MessageBoxRenderer()),
                 Map.entry(SoulTrap.class, new SoulTrapRenderer())
         );
 

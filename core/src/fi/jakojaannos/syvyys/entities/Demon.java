@@ -1,5 +1,6 @@
 package fi.jakojaannos.syvyys.entities;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import fi.jakojaannos.syvyys.GameState;
@@ -37,6 +38,22 @@ public class Demon extends GameCharacter {
     }
 
     public static void tickAttack(final GameState gameState, final Demon demon) {
-        // TODO
+        final var position = demon.body().getPosition();
+
+        gameState.obtainParticleEmitter()
+                 .spawnBurst(gameState.getCurrentTime(),
+                             5,
+                             position,
+                             0.01f,
+                             new Vector2(0, 1.0f),
+                             0.5f,
+                             0.02f, 0.2f,
+                             0.5f, 10.0f,
+                             0.5f, 0.75f,
+                             0.0f, 0.125f,
+                             new Color(0.75f, 0.75f, 0.75f, 1.0f),
+                             new Color(0.75f, 0.75f, 0.75f, 1.0f),
+                             new Vector2(0, 0.05f)
+                 );
     }
 }

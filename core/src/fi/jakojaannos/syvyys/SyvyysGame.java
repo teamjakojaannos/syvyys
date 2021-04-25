@@ -21,8 +21,8 @@ public class SyvyysGame extends ApplicationAdapter {
         this.renderer = new Renderer();
 
         // Initialize game
-        changeStage(new IntroStage());
-        //changeStage(new FirstCircleStage());
+        //changeStage(new IntroStage());
+        changeStage(new FirstCircleStage());
     }
 
     private void changeStage(final GameStage stage) {

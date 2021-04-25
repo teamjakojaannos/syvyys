@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import fi.jakojaannos.syvyys.GameState;
-import fi.jakojaannos.syvyys.entities.MessageBox;
+import fi.jakojaannos.syvyys.entities.UI;
 import fi.jakojaannos.syvyys.entities.Player;
 import fi.jakojaannos.syvyys.entities.intro.IntroDemonicSpawn;
 import fi.jakojaannos.syvyys.renderer.Renderer;
@@ -22,8 +22,8 @@ public class IntroStage implements GameStage {
         final var player = Player.create(physicsWorld, new Vector2(6.0f, 1.0f));
         final var demonicSpawn = new IntroDemonicSpawn(new Vector2(4.0f, 0.5f));
 
-        final var message = new MessageBox();
-        message.text = "Hello world!";
+        final var message = new UI();
+        message.messageText = "Hello world!";
         final var state = new GameState(physicsWorld, List.of(
                 demonicSpawn,
                 player,

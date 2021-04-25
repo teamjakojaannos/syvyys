@@ -43,6 +43,10 @@ public class FirstCircleStage implements GameStage {
         entities.add(SoulTrap.create(physicsWorld, new Vector2(10.0f, 0.0f)));
 
         entities.add(this.player);
+        final var ui = new UI();
+        ui.showPlayerHp = true;
+        ui.messageText = null;
+        entities.add(ui);
         final var state = new GameState(physicsWorld, entities, this.player);
         state.setBackgroundColor(new Color(0.01f, 0f, 0f, 1.0f));
         return state;
