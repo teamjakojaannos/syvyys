@@ -4,7 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.ScreenUtils;
 import fi.jakojaannos.syvyys.renderer.Renderer;
-import fi.jakojaannos.syvyys.stages.FirstCircleStage;
+import fi.jakojaannos.syvyys.stages.RegularCircleStage;
 import fi.jakojaannos.syvyys.stages.GameStage;
 
 public class SyvyysGame extends ApplicationAdapter {
@@ -21,7 +21,7 @@ public class SyvyysGame extends ApplicationAdapter {
 
         // Initialize game
         //changeStage(new IntroStage());
-        changeStage(new FirstCircleStage(1));
+        changeStage(new RegularCircleStage(1));
     }
 
     private void changeStage(final GameStage stage) {

@@ -17,23 +17,24 @@ public class TileLevelGenerator extends LevelGenerator {
 
     private final Random random;
     private final float createTrapChance;
+    private final int worldLength;
 
-    public TileLevelGenerator(final long seed, final float createTrapChance) {
+    public TileLevelGenerator(final long seed, final float createTrapChance, final int worldLength) {
         this.random = new Random(seed);
         this.createTrapChance = createTrapChance;
+        this.worldLength = worldLength;
     }
 
     @Override
     public Level generateLevel(final World world) {
         final var worldStart = -7;
-        final var worldLength = 200;
         final List<Tile> tiles = new ArrayList<>();
         final List<Entity> entities = new ArrayList<>();
 
         int generated = 0;
         int previousHeight = 200;
         int lastEndX = worldStart;
-        while (generated < worldLength) {
+        while (generated < this.worldLength) {
             final var startX = worldStart + generated;
             final var stripLength = this.random.nextInt(16) + 4;
             previousHeight = generateStrip(world, tiles, entities, startX, startX + stripLength, previousHeight);

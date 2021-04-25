@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Align;
 import fi.jakojaannos.syvyys.entities.GameCharacter;
 import fi.jakojaannos.syvyys.entities.UI;
-import fi.jakojaannos.syvyys.stages.FirstCircleStage;
+import fi.jakojaannos.syvyys.stages.RegularCircleStage;
 
 import java.util.Arrays;
 import java.util.stream.StreamSupport;
@@ -97,7 +97,7 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
                 context.batch().draw(this.healthBarFrames[2], startX + unit + currentHpWidth, startY, missingHpWidth, height);
             }
 
-            final var circleN = context.gameState().getCurrentStage() instanceof FirstCircleStage circleStage
+            final var circleN = context.gameState().getCurrentStage() instanceof RegularCircleStage circleStage
                     ? circleStage.circleN
                     : 1;
 

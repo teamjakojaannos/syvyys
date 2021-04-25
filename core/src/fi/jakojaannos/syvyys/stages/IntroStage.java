@@ -65,7 +65,7 @@ public class IntroStage implements GameStage {
                             demonicSpawn.stageTimer = timers.set(5.0f, false, () -> {
                                 demonicSpawn.stage = IntroDemonicSpawn.Stage.IDLE_HATCHED;
 
-                                timers.set(5.0f, false, () -> state.changeStage(new FirstCircleStage(1)));
+                                timers.set(5.0f, false, () -> state.changeStage(new RegularCircleStage(1)));
                             });
                         });
                     });

@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import fi.jakojaannos.syvyys.GameState;
 import fi.jakojaannos.syvyys.entities.Player;
-import fi.jakojaannos.syvyys.stages.FirstCircleStage;
+import fi.jakojaannos.syvyys.stages.RegularCircleStage;
 
 import java.util.stream.Stream;
 
@@ -14,7 +14,7 @@ public class TransitionStageSystem implements EcsSystem<Player> {
         players.forEach(player -> {
             if (player.dead()) {
                 if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-                    gameState.changeStage(new FirstCircleStage(1));
+                    gameState.changeStage(new RegularCircleStage(1));
                 }
                 return;
             }
@@ -27,11 +27,11 @@ public class TransitionStageSystem implements EcsSystem<Player> {
 
             if (player.body().getPosition().y < -100.0f) {
                 var circleN = 1;
-                if (gameState.getCurrentStage() instanceof FirstCircleStage circleStage) {
+                if (gameState.getCurrentStage() instanceof RegularCircleStage circleStage) {
                     circleN = circleStage.circleN + 1;
                 }
 
-                gameState.changeStage(new FirstCircleStage(circleN));
+                gameState.changeStage(new RegularCircleStage(circleN));
             }
         });
     }
