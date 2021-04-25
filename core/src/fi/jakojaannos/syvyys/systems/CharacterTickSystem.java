@@ -75,7 +75,7 @@ public class CharacterTickSystem implements EcsSystem<CharacterTickSystem.InputE
         final float accelerationForce = movementForce * (entity.grounded()
                 ? 1.0f
                 : 0.5f);
-        final float deceleration = 0.05f * (entity.attacking() ? 2.5f : 0.0f);
+        final float deceleration = 0.05f * (entity.attacking() ? 2.5f : 1.0f);
         final float baseFriction = 0.05f;
 
         final var position = entity.body().getPosition();

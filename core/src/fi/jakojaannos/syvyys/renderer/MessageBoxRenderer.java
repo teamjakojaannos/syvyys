@@ -6,11 +6,10 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Matrix4;
+import fi.jakojaannos.syvyys.entities.GameCharacter;
 import fi.jakojaannos.syvyys.entities.UI;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.StreamSupport;
 
 public class MessageBoxRenderer implements EntityRenderer<UI> {
@@ -28,26 +27,9 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
         this.panelFrames = Arrays.stream(TextureRegion.split(this.panel, 2, 2))
                                  .flatMap(Arrays::stream)
                                  .toArray(TextureRegion[]::new);
-        final var tmpFrames = new ArrayList<>(List.of(Arrays.stream(TextureRegion.split(this.healthBar, 3, 3))
-                                                            .flatMap(Arrays::stream)
-                                                            .toArray(TextureRegion[]::new)));
-        // Split produces some extra frames, kill em'
-        tmpFrames.remove(17);
-        tmpFrames.remove(16);
-        tmpFrames.remove(15);
-        tmpFrames.remove(11);
-        tmpFrames.remove(10);
-        tmpFrames.remove(9);
-        tmpFrames.remove(5);
-        tmpFrames.remove(4);
-        tmpFrames.remove(3);
-        final var tmpFrames2 = Arrays.stream(TextureRegion.split(this.healthBar, 3, 9))
+        this.healthBarFrames = Arrays.stream(TextureRegion.split(this.healthBar, 1, 9))
                                      .flatMap(Arrays::stream)
                                      .toArray(TextureRegion[]::new);
-        tmpFrames.add(tmpFrames2[3]);
-        tmpFrames.add(tmpFrames2[4]);
-        tmpFrames.add(tmpFrames2[5]);
-        this.healthBarFrames = tmpFrames.toArray(TextureRegion[]::new);
 
         final var generator = new FreeTypeFontGenerator(Gdx.files.internal("pixeled.ttf"));
         final var parameters = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -82,7 +64,30 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
             }
 
             if (ui.showPlayerHp) {
-                drawBox(context, this.healthBarFrames, 5.0f, 15.0f, screenWidth / 4, screenHeight / 15, 5.0f, 0.0f);
+                final var height = screenHeight / 15.0f;
+                final var width = screenWidth / 4.0f;
+                final var unit = height / 9.0f;
+                final var fillAreaWidth = width - 2 * unit;
+
+                final var startX = 10.0f;
+                final var startY = 15.0f;
+                context.batch().draw(this.healthBarFrames[0], startX, startY, unit, height);
+                context.batch().draw(this.healthBarFrames[3], startX + unit + fillAreaWidth, startY, unit, height);
+
+                final var maybePlayer = context.gameState().getPlayer();
+                final var currentHp = maybePlayer
+                        .map(GameCharacter::health)
+                        .orElse(75.0f);
+                final var maxHp = maybePlayer
+                        .map(GameCharacter::maxHealth)
+                        .orElse(100.0f);
+                final var progress = Math.max(0.0f, currentHp) / maxHp;
+
+
+                final var currentHpWidth = fillAreaWidth * progress;
+                final var missingHpWidth = fillAreaWidth - currentHpWidth;
+                context.batch().draw(this.healthBarFrames[1], startX + unit, startY, currentHpWidth, height);
+                context.batch().draw(this.healthBarFrames[2], startX + unit + currentHpWidth, startY, missingHpWidth, height);
             }
         });
 

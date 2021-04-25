@@ -62,15 +62,25 @@ public class Renderer implements AutoCloseable {
 
         final var context = new RenderContext(this.batch, gameState, this.camera);
         entitiesByClass.forEach((clazz, entitiesOfClazz) -> {
+            // UI is hardcoded last
+            if (clazz == UI.class) {
+                return;
+            }
+
             final EntityRenderer renderer = this.renderers.get(clazz);
             if (renderer != null) {
                 renderer.render(entitiesOfClazz, context);
             }
         });
 
+        final EntityRenderer renderer = this.renderers.get(UI.class);
+        if (renderer != null) {
+            renderer.render(entitiesByClass.get(UI.class), context);
+        }
+
         this.batch.end();
 
-        if (SyvyysGame.Constants.DEBUG_PHYSICS){
+        if (SyvyysGame.Constants.DEBUG_PHYSICS) {
             this.physicsDebugRenderer.render(gameState.getPhysicsWorld(), this.camera.getCombinedMatrix());
         }
     }

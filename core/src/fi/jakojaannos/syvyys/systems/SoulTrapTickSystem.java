@@ -11,6 +11,10 @@ public class SoulTrapTickSystem implements EcsSystem<SoulTrap> {
         final var timers = gameState.getTimers();
         StreamSupport.stream(soulTraps.spliterator(), false)
                      .forEach(trap -> {
+                         if (!trap.isInContactWithPlayer) {
+                             timers.clear(trap.damageTimer);
+                         }
+
                          final var isTicking = timers.isActiveAndValid(trap.stateTimer);
                          if (!isTicking && trap.isBubbling()) {
                              trap.stateTimer = timers.set(trap.bubblingDuration, false, () -> {

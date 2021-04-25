@@ -5,32 +5,40 @@ import fi.jakojaannos.syvyys.TimerHandle;
 import fi.jakojaannos.syvyys.systems.CharacterTickSystem;
 
 public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth {
-    private final float attackDuration = 0.6f;
-    private final int shotsPerAttack = 3;
-    private final float jumpForce = 10.0f;
+    private final float attackDuration;
+    private final int shotsPerAttack;
+    private final float jumpForce;
     private final float width;
     private final float height;
+    private final float maxHealth;
     private final Body body;
-    public float distanceTravelled;
+
+    public float distanceTravelled = 0.0f;
     public float previousDistanceTravelled;
-    public boolean grounded;
-    public boolean facingRight;
+    public boolean grounded = true;
+    public boolean facingRight = true;
     public boolean attacking;
     public TimerHandle attackTimer;
     public TimerHandle shotTimer;
-    private CharacterInput input;
+    private CharacterInput input = new CharacterInput(0.0f, false, false);
     private float health;
 
     public GameCharacter(
-            final Body body
+            final Body body,
+            final float width,
+            final float height,
+            final float jumpForce,
+            final float health,
+            final float attackDuration,
+            final int shotsPerAttack
     ) {
-        this.width = 1.0f;
-        this.height = 1.0f;
+        this.attackDuration = attackDuration;
+        this.shotsPerAttack = shotsPerAttack;
+        this.jumpForce = jumpForce;
+        this.width = width;
+        this.height = height;
         this.body = body;
-        this.distanceTravelled = 0.0f;
-        this.grounded = true;
-        this.input = new CharacterInput(0.0f, false, false);
-        this.facingRight = true;
+        this.health = this.maxHealth = health;
     }
 
     public float width() { return this.width; }
@@ -126,8 +134,19 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
     }
 
     @Override
-    public void dealDamage(float amount) {
+    public void dealDamage(final float amount) {
+        System.out.println(this.getClass().getSimpleName() + " TAKING DAMAGE: " + amount);
         this.health -= amount;
+    }
+
+    @Override
+    public float maxHealth() {
+        return this.maxHealth;
+    }
+
+    @Override
+    public float health() {
+        return this.health;
     }
 
     @Override

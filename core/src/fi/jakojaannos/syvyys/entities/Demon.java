@@ -9,9 +9,12 @@ public class Demon extends GameCharacter {
     public final float maxChaseDistance = 50f;
     public final float attackDistance = 5f;
 
-
     public Demon(final Body body) {
-        super(body);
+        super(body,
+              1.0f, 1.0f,
+              10.0f,
+              10.0f,
+              2.0f, 1);
     }
 
     public static Demon create(final World physicsWorld, final Vector2 position) {

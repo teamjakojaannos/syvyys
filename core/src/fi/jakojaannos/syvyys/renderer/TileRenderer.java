@@ -27,6 +27,8 @@ public class TileRenderer implements EntityRenderer<Tile> {
             final var frame = this.frames[frameIndex];
             final var position = tile.body().getPosition();
             context.batch()
+                   .setColor(1.0f, 1.0f, 1.0f, 1.0f);
+            context.batch()
                    .draw(frame,
                          position.x - tile.width() / 2.0f,
                          position.y - tile.height() / 2.0f,

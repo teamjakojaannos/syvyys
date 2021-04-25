@@ -56,8 +56,8 @@ public class Timers {
     }
 
     public void clear(final TimerHandle timer) {
-        if (!this.states.containsKey(timer.id())) {
-            throw new IllegalStateException("Tried clearing an invalid timer handle!");
+        if (timer == null || !this.states.containsKey(timer.id())) {
+            return;
         }
 
         this.timersPendingRemoval.add(timer);

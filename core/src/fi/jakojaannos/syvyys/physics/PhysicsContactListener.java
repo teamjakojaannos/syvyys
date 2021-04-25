@@ -17,11 +17,7 @@ public class PhysicsContactListener implements ContactListener {
         if (resolveBeginContact(manifold, dataA, dataB)) {
             return;
         }
-        if (resolveBeginContact(manifold, dataB, dataA)) {
-            return;
-        }
-
-        System.out.printf("Unhandled begin contact: %s -> %s%n", dataA, dataB);
+        resolveBeginContact(manifold, dataB, dataA);
     }
 
     private boolean resolveBeginContact(final WorldManifold manifold, final Object dataA, final Object dataB) {
@@ -56,11 +52,7 @@ public class PhysicsContactListener implements ContactListener {
         if (resolveEndContact(manifold, dataA, dataB)) {
             return;
         }
-        if (resolveEndContact(manifold, dataB, dataA)) {
-            return;
-        }
-
-        System.out.printf("Unhandled end contact: %s -> %s%n", dataA, dataB);
+        resolveEndContact(manifold, dataB, dataA);
     }
 
     private boolean resolveEndContact(final WorldManifold manifold, final Object dataA, final Object dataB) {
