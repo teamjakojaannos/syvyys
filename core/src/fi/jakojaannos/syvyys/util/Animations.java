@@ -17,10 +17,18 @@ public final class Animations {
     }
 
     public static Animation<TextureRegion> animationFromFrames(final TextureRegion[] frames, final int[] frameIndices) {
+        return animationFromFrames(frames, frameIndices, Animation.PlayMode.LOOP);
+    }
+
+    public static Animation<TextureRegion> animationFromFrames(
+            final TextureRegion[] frames,
+            final int[] frameIndices,
+            final Animation.PlayMode playMode
+    ) {
         return new Animation<>(
                 1.0f / frameIndices.length,
                 Animations.framesForAnimation(frames, frameIndices),
-                Animation.PlayMode.LOOP
+                playMode
         );
     }
 }

@@ -9,16 +9,20 @@ import fi.jakojaannos.syvyys.GameState;
 import fi.jakojaannos.syvyys.entities.Demon;
 import fi.jakojaannos.syvyys.entities.Entity;
 import fi.jakojaannos.syvyys.entities.Player;
+import fi.jakojaannos.syvyys.entities.SoulTrap;
 import fi.jakojaannos.syvyys.level.TileLevelGenerator;
 import fi.jakojaannos.syvyys.physics.PhysicsContactListener;
 import fi.jakojaannos.syvyys.renderer.Renderer;
 import fi.jakojaannos.syvyys.systems.CharacterTickSystem;
+import fi.jakojaannos.syvyys.systems.SoulTrapTickSystem;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FirstCircleStage implements GameStage {
     private CharacterTickSystem characterTick;
+    private SoulTrapTickSystem soulTrapTick;
     private Player player;
 
     @Override
@@ -31,9 +35,11 @@ public class FirstCircleStage implements GameStage {
         final var level = new TileLevelGenerator(666).generateLevel(physicsWorld);
 
         this.characterTick = new CharacterTickSystem();
+        this.soulTrapTick = new SoulTrapTickSystem();
 
         final List<Entity> entities = new ArrayList<>(level.getAllTiles());
         entities.add(Demon.create(physicsWorld, new Vector2(8.0f, 4.0f)));
+        entities.add(SoulTrap.create(physicsWorld, new Vector2(10.0f, 0.0f)));
 
         entities.add(this.player);
         final var state = new GameState(physicsWorld, entities);
@@ -66,10 +72,18 @@ public class FirstCircleStage implements GameStage {
     @Override
     public void systemTick(final GameState gameState) {
         this.characterTick.tick(List.of(this.player), gameState);
+        this.soulTrapTick.tick(gameState.getAllEntities()
+                                        .filter(e -> e instanceof SoulTrap)
+                                        .map(e -> (SoulTrap) e)
+                                        .collect(Collectors.toList()), gameState);
     }
 
     @Override
     public void lateSystemTick(final Renderer renderer, final GameState gameState) {
         renderer.getCamera().lerpNewPosition(this.player.body().getPosition());
+    }
+
+    @Override
+    public void close() {
     }
 }

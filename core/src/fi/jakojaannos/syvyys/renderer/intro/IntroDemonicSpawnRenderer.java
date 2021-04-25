@@ -29,14 +29,14 @@ public class IntroDemonicSpawnRenderer implements EntityRenderer<IntroDemonicSpa
                                  .toArray(TextureRegion[]::new);
         final var idleFrames = new int[]{0, 1};
         final var tremblingFrames = new int[]{2, 3, 4};
-        final var hatsOffFrames = new int[]{5, 6, 7, 8, 9};
+        final var hatsOffFrames = new int[]{5, 6, 7, 8, 8, 9, 9, 9, 9};
         final var splitFrames = new int[]{10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
-        final var splurtFrames = new int[]{20, 21, 22, 23, 24, 25};
-        final var hatchingFrames = new int[]{26, 27, 28, 29, 30, 31, 32};
+        final var splurtFrames = new int[]{20, 21, 22, 23, 24, 25, 25, 25};
+        final var hatchingFrames = new int[]{26, 26, 26, 26, 27, 27, 27, 28, 29, 30, 31, 32};
         final var hatchedFrames = new int[]{32};
         this.idle = Animations.animationFromFrames(frames, idleFrames);
-        this.trembling = Animations.animationFromFrames(frames, tremblingFrames);
-        this.hatsOff = Animations.animationFromFrames(frames, hatsOffFrames);
+        this.trembling = Animations.animationFromFrames(frames, tremblingFrames, Animation.PlayMode.LOOP_RANDOM);
+        this.hatsOff = Animations.animationFromFrames(frames, hatsOffFrames, Animation.PlayMode.NORMAL);
         this.split = Animations.animationFromFrames(frames, splitFrames);
         this.splurt = Animations.animationFromFrames(frames, splurtFrames);
         this.hatching = Animations.animationFromFrames(frames, hatchingFrames);
@@ -71,7 +71,7 @@ public class IntroDemonicSpawnRenderer implements EntityRenderer<IntroDemonicSpa
                     ? 0.0f
                     : timers.getTimeElapsed(entity.stageTimer) / entity.stageTimer.duration();
 
-            final var frame = animation.getKeyFrame(stageProgress * loops);
+            final var frame = animation.getKeyFrame(stageProgress * loops, true);
 
             final var pos = entity.position;
             context.batch()

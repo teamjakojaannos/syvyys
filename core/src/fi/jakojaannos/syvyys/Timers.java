@@ -71,6 +71,10 @@ public class Timers {
         return this.states.get(timer.id()).progress;
     }
 
+    public boolean isActiveAndValid(final TimerHandle timer) {
+        return timer != null && this.states.containsKey(timer.id()) && !this.states.get(timer.id()).paused;
+    }
+
     public interface Action {
         void execute();
     }

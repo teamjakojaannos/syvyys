@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import fi.jakojaannos.syvyys.GameState;
+import fi.jakojaannos.syvyys.SyvyysGame;
 import fi.jakojaannos.syvyys.entities.*;
 import fi.jakojaannos.syvyys.entities.intro.IntroDemonicSpawn;
 import fi.jakojaannos.syvyys.renderer.intro.IntroDemonicSpawnRenderer;
@@ -31,7 +32,9 @@ public class Renderer implements AutoCloseable {
                 Map.entry(Tile.class, new TileRenderer()),
                 Map.entry(ParticleEmitter.class, new ParticleEmitterRenderer()),
                 Map.entry(IntroDemonicSpawn.class, new IntroDemonicSpawnRenderer()),
-                Map.entry(Demon.class, new DemonRenderer())
+                Map.entry(Demon.class, new DemonRenderer()),
+                Map.entry(MessageBox.class, new MessageBoxRenderer()),
+                Map.entry(SoulTrap.class, new SoulTrapRenderer())
         );
 
         this.physicsDebugRenderer = new Box2DDebugRenderer();
@@ -57,7 +60,7 @@ public class Renderer implements AutoCloseable {
         this.batch.setTransformMatrix(this.camera.getTransformMatrix());
         this.batch.begin();
 
-        final var context = new RenderContext(this.batch, gameState);
+        final var context = new RenderContext(this.batch, gameState, this.camera);
         entitiesByClass.forEach((clazz, entitiesOfClazz) -> {
             final EntityRenderer renderer = this.renderers.get(clazz);
             if (renderer != null) {
@@ -67,7 +70,9 @@ public class Renderer implements AutoCloseable {
 
         this.batch.end();
 
-        //this.physicsDebugRenderer.render(gameState.getPhysicsWorld(), this.camera.getCombinedMatrix());
+        if (SyvyysGame.Constants.DEBUG_PHYSICS){
+            this.physicsDebugRenderer.render(gameState.getPhysicsWorld(), this.camera.getCombinedMatrix());
+        }
     }
 
     @Override

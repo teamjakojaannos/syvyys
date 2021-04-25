@@ -24,6 +24,10 @@ public class SyvyysGame extends ApplicationAdapter {
     }
 
     private void changeStage(final GameStage stage) {
+        if (this.currentStage != null) {
+            this.currentStage.close();
+        }
+
         this.currentStage = stage;
         this.gameState = this.currentStage.createState();
     }
@@ -72,11 +76,15 @@ public class SyvyysGame extends ApplicationAdapter {
         this.renderer.close();
     }
 
-    private static class Constants {
+    public static class Constants {
         public static final int TICKS_PER_SECOND = 50;
         public static final float TIME_STEP = 1.0f / TICKS_PER_SECOND;
 
         public static final int VELOCITY_ITERATIONS = 6;
         public static final int POSITION_ITERATIONS = 2;
+
+        // Debug
+        public static final boolean DEBUG_PHYSICS = false;
+        public static final boolean DEBUG_ATTACK_RAYCAST = false;
     }
 }

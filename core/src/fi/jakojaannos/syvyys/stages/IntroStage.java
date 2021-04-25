@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import fi.jakojaannos.syvyys.GameState;
+import fi.jakojaannos.syvyys.entities.MessageBox;
 import fi.jakojaannos.syvyys.entities.Player;
 import fi.jakojaannos.syvyys.entities.intro.IntroDemonicSpawn;
 import fi.jakojaannos.syvyys.renderer.Renderer;
@@ -13,6 +14,7 @@ import fi.jakojaannos.syvyys.renderer.Renderer;
 import java.util.List;
 
 public class IntroStage implements GameStage {
+    private Sound ukkoKuoriutuuPisteWav;
 
     @Override
     public GameState createState() {
@@ -20,13 +22,16 @@ public class IntroStage implements GameStage {
         final var player = Player.create(physicsWorld, new Vector2(6.0f, 1.0f));
         final var demonicSpawn = new IntroDemonicSpawn(new Vector2(4.0f, 0.5f));
 
+        final var message = new MessageBox();
+        message.text = "Hello world!";
         final var state = new GameState(physicsWorld, List.of(
                 demonicSpawn,
-                player
+                player,
+                message
         ));
         player.facingRight = false;
 
-        final Sound ukkoKuoriutuuPisteWav = Gdx.audio.newSound(Gdx.files.internal("ukko_kuoriutuu.wav"));
+        this.ukkoKuoriutuuPisteWav = Gdx.audio.newSound(Gdx.files.internal("ukko_kuoriutuu.wav"));
 
         final var timers = state.getTimers();
 
@@ -37,7 +42,7 @@ public class IntroStage implements GameStage {
             demonicSpawn.flashTimer = timers.set(1.0f, false, () -> tremblingFlash(demonicSpawn, state));
 
             demonicSpawn.stageTimer = timers.set(3.0f, false, () -> {
-                timers.set(2.75f, false, ukkoKuoriutuuPisteWav::play);
+                timers.set(2.75f, false, this.ukkoKuoriutuuPisteWav::play);
                 demonicSpawn.stage = IntroDemonicSpawn.Stage.HATS_OFF;
                 timers.clear(demonicSpawn.flashTimer);
                 timers.clear(demonicSpawn.flashTimer);
@@ -97,5 +102,10 @@ public class IntroStage implements GameStage {
     @Override
     public void lateSystemTick(final Renderer renderer, final GameState gameState) {
 
+    }
+
+    @Override
+    public void close() {
+        this.ukkoKuoriutuuPisteWav.dispose();
     }
 }

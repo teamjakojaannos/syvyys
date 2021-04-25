@@ -5,6 +5,14 @@ import fi.jakojaannos.syvyys.GameState;
 
 public record RenderContext(
         SpriteBatch batch,
-        GameState gameState
+        GameState gameState,
+        Camera camera
 ) {
+    public float screenWidth() {
+        return this.camera.getScreenWidth();
+    }
+
+    public float screenHeight() {
+        return this.camera.getScreenHeight();
+    }
 }

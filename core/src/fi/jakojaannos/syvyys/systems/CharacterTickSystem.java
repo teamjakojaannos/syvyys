@@ -4,11 +4,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import fi.jakojaannos.syvyys.GameState;
+import fi.jakojaannos.syvyys.SyvyysGame;
 import fi.jakojaannos.syvyys.entities.Demon;
 import fi.jakojaannos.syvyys.entities.Player;
 
 public class CharacterTickSystem implements EcsSystem<Player> {
-    private static final boolean DEBUG_ATTACK_RAYCAST = false;
     private static final float EPSILON = 0.0001f;
 
     @Override
@@ -63,11 +63,17 @@ public class CharacterTickSystem implements EcsSystem<Player> {
             hitInfo.normal.set(facingVec).scl(-1.0f);
             hitInfo.thereWasAHit = false;
             gameState.getPhysicsWorld().rayCast((fixture, point, normal, fraction) -> {
-                if (DEBUG_ATTACK_RAYCAST) {
+                if (SyvyysGame.Constants.DEBUG_ATTACK_RAYCAST) {
                     System.out.println("Hit:\t" + fixture.toString());
                     System.out.println("Point:\t" + point.toString());
                     System.out.println("Player:\t" + position.toString());
                     System.out.println("Fraction:\t" + fraction);
+                    System.out.println("isSensor:\t" + fixture.isSensor());
+                }
+
+                // Ignore any sensors
+                if (fixture.isSensor()) {
+                    return -1;
                 }
 
                 hitInfo.thereWasAHit = true;

@@ -10,6 +10,7 @@ public class Camera {
     private final OrthographicCamera camera;
 
     private final Vector3 tmp;
+    private int screenWidth, screenHeight;
 
     public Camera(final int windowWidth, final int windowHeight) {
         final float aspectRatio = (float) windowHeight / windowWidth;
@@ -19,6 +20,9 @@ public class Camera {
         this.camera = new OrthographicCamera(this.widthInUnits, heightInUnits);
 
         this.tmp = new Vector3();
+
+        this.screenWidth = windowWidth;
+        this.screenHeight = windowHeight;
     }
 
     public void resize(final int windowWidth, final int windowHeight) {
@@ -26,6 +30,9 @@ public class Camera {
 
         final float heightInUnits = aspectRatio * this.widthInUnits;
         this.camera.setToOrtho(false, this.widthInUnits, heightInUnits);
+
+        this.screenWidth = windowWidth;
+        this.screenHeight = windowHeight;
     }
 
     public Matrix4 getProjectionMatrix() {
@@ -44,12 +51,11 @@ public class Camera {
         this.camera.position.set(position, 0.0f);
     }
 
-    public void lerpNewPosition(final Vector2 newPosition){
+    public void lerpNewPosition(final Vector2 newPosition) {
         this.tmp.set(newPosition, 0.0f);
 
         // Accurate lerp using Fused Multiply Add
-        //final var alpha = 0.075f;
-        final var alpha = 1.0f;
+        final var alpha = 0.075f;
         this.camera.position.x = Math.fma(alpha, (this.tmp.x - this.camera.position.x), this.camera.position.x);
         this.camera.position.y = Math.fma(alpha, (this.tmp.y - this.camera.position.y), this.camera.position.y);
         this.camera.position.z = Math.fma(alpha, (this.tmp.z - this.camera.position.z), this.camera.position.z);
@@ -57,5 +63,13 @@ public class Camera {
 
     public void update() {
         this.camera.update();
+    }
+
+    public float getScreenWidth() {
+        return this.screenWidth;
+    }
+
+    public float getScreenHeight() {
+        return this.screenHeight;
     }
 }
