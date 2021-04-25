@@ -1,10 +1,11 @@
 package fi.jakojaannos.syvyys.stages;
 
 import fi.jakojaannos.syvyys.GameState;
+import fi.jakojaannos.syvyys.renderer.Camera;
 import fi.jakojaannos.syvyys.renderer.Renderer;
 
 public interface GameStage extends AutoCloseable {
-    GameState createState();
+    GameState createState(GameStage gameStage, Camera camera);
 
     void tick(float deltaSeconds, GameState gameState);
 

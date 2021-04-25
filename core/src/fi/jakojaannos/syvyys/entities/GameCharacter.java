@@ -16,7 +16,7 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
 
     public float distanceTravelled = 0.0f;
     public float previousDistanceTravelled;
-    public boolean grounded = true;
+    public boolean grounded = false;
     public boolean facingRight = true;
     public boolean attacking;
     public TimerHandle attackTimer;

@@ -9,17 +9,16 @@ public class Camera {
     private final float widthInUnits = 10.0f;
     private final OrthographicCamera camera;
 
-    private final Vector3 tmp;
+    private final Vector3 tmp = new Vector3();
+    public boolean lockedToPlayer;
     private int screenWidth, screenHeight;
+    private float heightInUnits;
 
     public Camera(final int windowWidth, final int windowHeight) {
         final float aspectRatio = (float) windowHeight / windowWidth;
 
-        final float heightInUnits = aspectRatio * this.widthInUnits;
-
-        this.camera = new OrthographicCamera(this.widthInUnits, heightInUnits);
-
-        this.tmp = new Vector3();
+        this.heightInUnits = aspectRatio * this.widthInUnits;
+        this.camera = new OrthographicCamera(this.widthInUnits, this.heightInUnits);
 
         this.screenWidth = windowWidth;
         this.screenHeight = windowHeight;
@@ -28,19 +27,14 @@ public class Camera {
     public void resize(final int windowWidth, final int windowHeight) {
         final float aspectRatio = (float) windowHeight / windowWidth;
 
-        final float heightInUnits = aspectRatio * this.widthInUnits;
-        this.camera.setToOrtho(false, this.widthInUnits, heightInUnits);
+        this.heightInUnits = aspectRatio * this.widthInUnits;
+        final var pos = new Vector3(this.camera.position);
+        this.camera.setToOrtho(false, this.widthInUnits, this.heightInUnits);
+        this.camera.position.set(pos);
+        this.camera.update();
 
         this.screenWidth = windowWidth;
         this.screenHeight = windowHeight;
-    }
-
-    public Matrix4 getProjectionMatrix() {
-        return this.camera.projection;
-    }
-
-    public Matrix4 getTransformMatrix() {
-        return this.camera.view;
     }
 
     public Matrix4 getCombinedMatrix() {
@@ -54,11 +48,14 @@ public class Camera {
     public void lerpNewPosition(final Vector2 newPosition) {
         this.tmp.set(newPosition, 0.0f);
 
-        // Accurate lerp using Fused Multiply Add
+        // (Tiny bit more) accurate lerp using Fused Multiply Add
         final var alpha = 0.075f;
         this.camera.position.x = Math.fma(alpha, (this.tmp.x - this.camera.position.x), this.camera.position.x);
         this.camera.position.y = Math.fma(alpha, (this.tmp.y - this.camera.position.y), this.camera.position.y);
         this.camera.position.z = Math.fma(alpha, (this.tmp.z - this.camera.position.z), this.camera.position.z);
+
+        // Don't let the player fall off the screen
+        this.camera.position.y = Math.min(this.camera.position.y, this.tmp.y + this.heightInUnits / 4.0f);
     }
 
     public void update() {

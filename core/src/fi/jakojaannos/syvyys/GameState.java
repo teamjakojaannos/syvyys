@@ -3,6 +3,7 @@ package fi.jakojaannos.syvyys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.physics.box2d.World;
 import fi.jakojaannos.syvyys.entities.*;
+import fi.jakojaannos.syvyys.renderer.Camera;
 import fi.jakojaannos.syvyys.stages.GameStage;
 
 import java.util.ArrayList;
@@ -12,21 +13,30 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class GameState {
+    private final GameStage gameStage;
     private final Timers timers = new Timers();
     private final World physicsWorld;
 
     private final List<Entity> entities;
     private final Player player;
+    private final Camera camera;
 
     private float currentTime;
 
     private GameStage nextStage;
     private Color backgroundColor = new Color(0.3f, 0.3f, 0.3f, 1.0f);
 
-    public GameState(final World physicsWorld, final Collection<Entity> entities, final Player player) {
+    public GameState(
+            final GameStage gameStage, final World physicsWorld,
+            final Collection<Entity> entities,
+            final Player player,
+            final Camera camera
+    ) {
+        this.gameStage = gameStage;
         this.physicsWorld = physicsWorld;
         this.entities = new ArrayList<>(entities);
         this.player = player;
+        this.camera = camera;
     }
 
     public void changeStage(final GameStage nextStage) {
@@ -96,5 +106,13 @@ public class GameState {
 
     public Optional<Player> getPlayer() {
         return Optional.ofNullable(this.player);
+    }
+
+    public Camera getCamera() {
+        return camera;
+    }
+
+    public GameStage getCurrentStage() {
+        return this.gameStage;
     }
 }

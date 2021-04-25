@@ -9,6 +9,7 @@ import fi.jakojaannos.syvyys.GameState;
 import fi.jakojaannos.syvyys.entities.UI;
 import fi.jakojaannos.syvyys.entities.Player;
 import fi.jakojaannos.syvyys.entities.intro.IntroDemonicSpawn;
+import fi.jakojaannos.syvyys.renderer.Camera;
 import fi.jakojaannos.syvyys.renderer.Renderer;
 
 import java.util.List;
@@ -17,18 +18,18 @@ public class IntroStage implements GameStage {
     private Sound ukkoKuoriutuuPisteWav;
 
     @Override
-    public GameState createState() {
+    public GameState createState(GameStage gameStage, final Camera camera) {
         final var physicsWorld = new World(new Vector2(0.0f, 0.0f), true);
         final var player = Player.create(physicsWorld, new Vector2(6.0f, 1.0f));
         final var demonicSpawn = new IntroDemonicSpawn(new Vector2(4.0f, 0.5f));
 
         final var message = new UI();
         message.messageText = "Hello world!";
-        final var state = new GameState(physicsWorld, List.of(
+        final var state = new GameState(gameStage, physicsWorld, List.of(
                 demonicSpawn,
                 player,
                 message
-        ), player);
+        ), player, camera);
         player.facingRight = false;
 
         this.ukkoKuoriutuuPisteWav = Gdx.audio.newSound(Gdx.files.internal("ukko_kuoriutuu.wav"));
@@ -64,7 +65,7 @@ public class IntroStage implements GameStage {
                             demonicSpawn.stageTimer = timers.set(5.0f, false, () -> {
                                 demonicSpawn.stage = IntroDemonicSpawn.Stage.IDLE_HATCHED;
 
-                                timers.set(5.0f, false, () -> state.changeStage(new FirstCircleStage()));
+                                timers.set(5.0f, false, () -> state.changeStage(new FirstCircleStage(1)));
                             });
                         });
                     });

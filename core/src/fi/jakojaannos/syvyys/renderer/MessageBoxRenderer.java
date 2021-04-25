@@ -6,14 +6,17 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.utils.Align;
 import fi.jakojaannos.syvyys.entities.GameCharacter;
 import fi.jakojaannos.syvyys.entities.UI;
+import fi.jakojaannos.syvyys.stages.FirstCircleStage;
 
 import java.util.Arrays;
 import java.util.stream.StreamSupport;
 
 public class MessageBoxRenderer implements EntityRenderer<UI> {
     private final BitmapFont fontRegular;
+    private final BitmapFont fontGothic;
     private final Texture panel;
     private final TextureRegion[] panelFrames;
 
@@ -31,12 +34,17 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
                                      .flatMap(Arrays::stream)
                                      .toArray(TextureRegion[]::new);
 
-        final var generator = new FreeTypeFontGenerator(Gdx.files.internal("pixeled.ttf"));
-        final var parameters = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameters.size = 24;
-        this.fontRegular = generator.generateFont(parameters);
+        final var genRegular = new FreeTypeFontGenerator(Gdx.files.internal("pixeled.ttf"));
+        final var paramRegular = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        paramRegular.size = 24;
+        this.fontRegular = genRegular.generateFont(paramRegular);
 
-        generator.dispose();
+        final var genGothic = new FreeTypeFontGenerator(Gdx.files.internal("GothicPixels.ttf"));
+        final var paramGothic = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        paramGothic.size = 48;
+        this.fontGothic = genGothic.generateFont(paramGothic);
+
+        genRegular.dispose();
     }
 
     @Override
@@ -45,11 +53,9 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
             final RenderContext context
     ) {
         final var proj = new Matrix4(context.batch().getProjectionMatrix());
-        final var transform = new Matrix4(context.batch().getTransformMatrix());
         context.batch().end();
 
         context.batch().setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0, context.screenWidth(), context.screenHeight()));
-        context.batch().setTransformMatrix(new Matrix4());
         context.batch().begin();
 
         StreamSupport.stream(uis.spliterator(), false).findFirst().ifPresent(ui -> {
@@ -89,12 +95,29 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
                 context.batch().draw(this.healthBarFrames[1], startX + unit, startY, currentHpWidth, height);
                 context.batch().draw(this.healthBarFrames[2], startX + unit + currentHpWidth, startY, missingHpWidth, height);
             }
+
+            if (context.gameState().getCamera().lockedToPlayer) {
+                this.fontGothic.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+                final var circleN = context.gameState().getCurrentStage() instanceof FirstCircleStage circleStage
+                        ? circleStage.circleN
+                        : 1;
+
+                final var postfix = switch (circleN % 10) {
+                    case 1 -> "st";
+                    case 2 -> "nd";
+                    case 3 -> "rd";
+                    default -> "th";
+                };
+
+                final var y = screenHeight * 0.8f;
+                this.fontGothic.draw(context.batch(), String.format("%d%s Circle of Hell", circleN, postfix), 0.0f, y, screenWidth, Align.center, false);
+            }
         });
 
         context.batch().end();
 
         context.batch().setProjectionMatrix(proj);
-        context.batch().setTransformMatrix(transform);
         context.batch().begin();
     }
 
@@ -132,7 +155,9 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
 
     @Override
     public void close() {
+        this.fontGothic.dispose();
         this.fontRegular.dispose();
         this.panel.dispose();
+        this.healthBar.dispose();
     }
 }

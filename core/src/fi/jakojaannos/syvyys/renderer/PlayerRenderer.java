@@ -71,11 +71,13 @@ public class PlayerRenderer implements EntityRenderer<Player> {
             final float originY = 0.0f;
             final float scaleX = player.facingRight ? 1.0f : -1.0f;
 
-            final var fadeStart = -10.0f;
-            final var fadeEnd = -100.0f;
-            final var rgb = position.y > fadeStart
+            final var fadeStart = 10.0f;
+            final var fadeEnd = 50.0f;
+
+            final var distance = Math.abs(position.y) - fadeStart;
+            final var rgb = distance < 0
                     ? 1.0f
-                    : (1.0f - ((position.y - fadeStart) / (fadeEnd - fadeStart)));
+                    : (1.0f - ((distance - fadeStart) / (fadeEnd - fadeStart)));
             context.batch().setColor(rgb, rgb, rgb, 1.0f);
             context.batch()
                    .draw(currentFrame,

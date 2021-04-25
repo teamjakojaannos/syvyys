@@ -56,8 +56,7 @@ public class Renderer implements AutoCloseable {
                                 });
 
         this.camera.update();
-        this.batch.setProjectionMatrix(this.camera.getProjectionMatrix());
-        this.batch.setTransformMatrix(this.camera.getTransformMatrix());
+        this.batch.setProjectionMatrix(this.camera.getCombinedMatrix());
         this.batch.begin();
 
         final var context = new RenderContext(this.batch, gameState, this.camera);

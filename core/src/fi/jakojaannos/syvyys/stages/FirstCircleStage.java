@@ -9,29 +9,36 @@ import fi.jakojaannos.syvyys.GameState;
 import fi.jakojaannos.syvyys.entities.*;
 import fi.jakojaannos.syvyys.level.TileLevelGenerator;
 import fi.jakojaannos.syvyys.physics.PhysicsContactListener;
+import fi.jakojaannos.syvyys.renderer.Camera;
 import fi.jakojaannos.syvyys.renderer.Renderer;
-import fi.jakojaannos.syvyys.systems.CharacterTickSystem;
-import fi.jakojaannos.syvyys.systems.DemonAiSystem;
-import fi.jakojaannos.syvyys.systems.EntityReaperSystem;
-import fi.jakojaannos.syvyys.systems.SoulTrapTickSystem;
+import fi.jakojaannos.syvyys.systems.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FirstCircleStage implements GameStage {
+    public final int circleN;
+
     private CharacterTickSystem characterTick;
     private SoulTrapTickSystem soulTrapTick;
     private DemonAiSystem demonAiTick;
+    private EntityReaperSystem reaperTick;
+    private TransitionStageSystem transitionTick;
 
     private Player player;
-    private EntityReaperSystem reaperTick;
+
+    public FirstCircleStage(final int circleN) {
+        this.circleN = circleN;
+    }
 
     @Override
-    public GameState createState() {
+    public GameState createState(GameStage gameStage, final Camera camera) {
         final var physicsWorld = new World(new Vector2(0.0f, -20.0f), true);
         physicsWorld.setContactListener(new PhysicsContactListener());
 
-        this.player = Player.create(physicsWorld, new Vector2(0.0f, 3.0f));
+        this.player = Player.create(physicsWorld, new Vector2(0.0f, 80.0f));
+        camera.setLocation(new Vector2(0, 90.0f));
+        camera.lockedToPlayer = true;
 
         final var level = new TileLevelGenerator(666, 0.15f)
                 .generateLevel(physicsWorld);
@@ -40,6 +47,7 @@ public class FirstCircleStage implements GameStage {
         this.soulTrapTick = new SoulTrapTickSystem();
         this.demonAiTick = new DemonAiSystem();
         this.reaperTick = new EntityReaperSystem();
+        this.transitionTick = new TransitionStageSystem();
 
         final List<Entity> entities = new ArrayList<>(level.getAllTiles());
         entities.addAll(level.getAllEntities());
@@ -51,7 +59,7 @@ public class FirstCircleStage implements GameStage {
         ui.showPlayerHp = true;
         ui.messageText = null;
         entities.add(ui);
-        final var state = new GameState(physicsWorld, entities, this.player);
+        final var state = new GameState(gameStage, physicsWorld, entities, this.player, camera);
         state.setBackgroundColor(new Color(0.01f, 0f, 0f, 1.0f));
         return state;
     }
@@ -88,6 +96,7 @@ public class FirstCircleStage implements GameStage {
         this.soulTrapTick.tick(gameState.getEntities(SoulTrap.class), gameState);
         this.demonAiTick.tick(gameState.getEntities(Demon.class), gameState);
         this.reaperTick.tick(gameState.getEntities(HasHealth.class, true), gameState);
+        this.transitionTick.tick(gameState.getEntities(Player.class), gameState);
     }
 
     @Override

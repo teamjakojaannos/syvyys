@@ -6,7 +6,6 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import fi.jakojaannos.syvyys.renderer.Renderer;
 import fi.jakojaannos.syvyys.stages.FirstCircleStage;
 import fi.jakojaannos.syvyys.stages.GameStage;
-import fi.jakojaannos.syvyys.stages.IntroStage;
 
 public class SyvyysGame extends ApplicationAdapter {
     private Renderer renderer;
@@ -22,7 +21,7 @@ public class SyvyysGame extends ApplicationAdapter {
 
         // Initialize game
         //changeStage(new IntroStage());
-        changeStage(new FirstCircleStage());
+        changeStage(new FirstCircleStage(1));
     }
 
     private void changeStage(final GameStage stage) {
@@ -31,7 +30,8 @@ public class SyvyysGame extends ApplicationAdapter {
         }
 
         this.currentStage = stage;
-        this.gameState = this.currentStage.createState();
+        this.gameState = this.currentStage.createState(this.currentStage, this.renderer.getCamera());
+        this.renderer.getCamera().update();
     }
 
     private void tick(final float deltaSeconds) {
