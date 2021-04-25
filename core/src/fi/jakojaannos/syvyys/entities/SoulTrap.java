@@ -62,5 +62,10 @@ public class SoulTrap implements Entity {
         return trap;
     }
 
-    public enum State {IDLE, I_WANT_OUT, BUBBLING}
+    public enum State {
+        BUBBLING,
+        IDLE,
+        I_WANT_OUT,
+        I_WANT_OUT_START
+    }
 }

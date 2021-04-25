@@ -1,5 +1,7 @@
 package fi.jakojaannos.syvyys.renderer;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -7,6 +9,7 @@ import fi.jakojaannos.syvyys.entities.SoulTrap;
 import fi.jakojaannos.syvyys.util.Animations;
 
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SoulTrapRenderer implements EntityRenderer<SoulTrap> {
     private final Texture texture;
@@ -14,7 +17,10 @@ public class SoulTrapRenderer implements EntityRenderer<SoulTrap> {
     private final Animation<TextureRegion> bubbling;
     private final Animation<TextureRegion> iWantOut;
 
+    private final Sound goToHell;
+
     public SoulTrapRenderer() {
+        this.goToHell = Gdx.audio.newSound(Gdx.files.internal("helvettiin_siita.wav"));
         this.texture = new Texture("souls_of_the_damned.png");
 
         final var frames = Arrays.stream(TextureRegion.split(this.texture, 32, 32))
@@ -22,7 +28,7 @@ public class SoulTrapRenderer implements EntityRenderer<SoulTrap> {
                                  .toArray(TextureRegion[]::new);
         final var idleFrames = new int[]{0, 1};
         final var bubblingFrames = new int[]{0, 1, 2, 3};
-        final var iWantOutFrames = new int[]{4, 5, 6,};
+        final var iWantOutFrames = new int[]{4, 5, 6};
 
         this.idle = Animations.animationFromFrames(frames, idleFrames);
         this.bubbling = Animations.animationFromFrames(frames, bubblingFrames, Animation.PlayMode.LOOP_RANDOM);
@@ -34,12 +40,18 @@ public class SoulTrapRenderer implements EntityRenderer<SoulTrap> {
             final I traps,
             final RenderContext context
     ) {
+        final var shouldStartScreaming = new AtomicBoolean(false);
         traps.forEach(trap -> {
             final var animation = switch (trap.state) {
                 case IDLE -> this.idle;
                 case BUBBLING -> this.bubbling;
-                case I_WANT_OUT -> this.iWantOut;
+                case I_WANT_OUT, I_WANT_OUT_START -> this.iWantOut;
             };
+
+            if (trap.state == SoulTrap.State.I_WANT_OUT_START) {
+                shouldStartScreaming.set(true);
+                trap.state = SoulTrap.State.I_WANT_OUT;
+            }
 
             final var animSpeed = trap.state == SoulTrap.State.IDLE ? 1.0f : 5.0f;
 
@@ -61,10 +73,15 @@ public class SoulTrapRenderer implements EntityRenderer<SoulTrap> {
                          0.0f
                    );
         });
+
+        if (shouldStartScreaming.get()) {
+            this.goToHell.play(0.5f);
+        }
     }
 
     @Override
     public void close() {
         this.texture.dispose();
+        this.goToHell.dispose();
     }
 }

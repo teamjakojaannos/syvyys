@@ -43,19 +43,21 @@ public class CharacterTickSystem implements EcsSystem<CharacterTickSystem.InputE
         entity.attacking(true);
 
         final var timers = gameState.getTimers();
-        entity.shotTimer(timers.set(entity.attackDuration() / entity.shotsPerAttack(), true, () -> {
-            if (entity instanceof Player player) {
-                Player.tickAttack(gameState, player);
-            } else if (entity instanceof Demon demon) {
-                Demon.tickAttack(gameState, demon);
-            } else {
-                throw new IllegalStateException("Not implemented for " + entity.getClass().getSimpleName());
-            }
-        }));
+        entity.attackDelayTimer(timers.set(entity.attackDelay(), false, () -> {
+            entity.shotTimer(timers.set(entity.attackDuration() / entity.shotsPerAttack(), true, () -> {
+                if (entity instanceof Player player) {
+                    Player.tickAttack(gameState, player);
+                } else if (entity instanceof Demon demon) {
+                    Demon.tickAttack(gameState, demon);
+                } else {
+                    throw new IllegalStateException("Not implemented for " + entity.getClass().getSimpleName());
+                }
+            }));
 
-        entity.attackTimer(timers.set(entity.attackDuration(), false, () -> {
-            entity.attacking(false);
-            timers.clear(entity.shotTimer());
+            entity.attackTimer(timers.set(entity.attackDuration(), false, () -> {
+                entity.attacking(false);
+                timers.clear(entity.shotTimer());
+            }));
         }));
     }
 

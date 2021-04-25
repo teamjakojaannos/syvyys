@@ -9,6 +9,7 @@ import fi.jakojaannos.syvyys.systems.CharacterTickSystem;
 
 public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth {
     private final float attackDuration;
+    private final float attackInitialDelay;
     private final int shotsPerAttack;
     private final float jumpForce;
     private final float width;
@@ -25,6 +26,7 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
     public TimerHandle attackTimer;
     public TimerHandle shotTimer;
     private TimerHandle deathTimer;
+    private TimerHandle attackDelayTimer;
     private CharacterInput input = new CharacterInput(0.0f, false, false);
     private float health;
     private boolean deathSequenceHasFinished;
@@ -37,7 +39,7 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
             final float health,
             final float attackDuration,
             final int shotsPerAttack,
-            final float deathAnimationDuration
+            final float attackInitialDelay, final float deathAnimationDuration
     ) {
         this.attackDuration = attackDuration;
         this.shotsPerAttack = shotsPerAttack;
@@ -46,6 +48,7 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
         this.height = height;
         this.body = body;
         this.health = this.maxHealth = health;
+        this.attackInitialDelay = attackInitialDelay;
         this.deathAnimationDuration = deathAnimationDuration;
     }
 
@@ -142,6 +145,16 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
     }
 
     @Override
+    public float attackDelay() {
+        return this.attackInitialDelay;
+    }
+
+    @Override
+    public void attackDelayTimer(final TimerHandle timer) {
+        this.attackDelayTimer = timer;
+    }
+
+    @Override
     public void dealDamage(final float amount) {
         //noinspection InstanceofThis
         if (this instanceof Player && SyvyysGame.Constants.SATANMODE) {
@@ -159,6 +172,11 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
     @Override
     public float health() {
         return this.health;
+    }
+
+    @Override
+    public void health(final float health) {
+        this.health = health;
     }
 
     @Override
@@ -207,6 +225,7 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
               });
 
         final var timers = gameState.getTimers();
+        timers.clear(this.attackDelayTimer);
         timers.clear(this.attackTimer);
         timers.clear(this.shotTimer);
         timers.clear(this.deathTimer);

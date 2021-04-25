@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import fi.jakojaannos.syvyys.Timers;
 import fi.jakojaannos.syvyys.entities.Player;
 import fi.jakojaannos.syvyys.util.Animations;
 
@@ -61,7 +62,7 @@ public class PlayerRenderer implements EntityRenderer<Player> {
             final var animationProgress = player.dead()
                     ? Animations.deathProgress(player, timers)
                     : player.attacking()
-                    ? timers.getTimeElapsed(player.attackTimer()) / player.attackDuration()
+                    ? attackProgress(player, timers)
                     : player.grounded() && Math.abs(velocity.x) > 0.0f
                     ? player.distanceTravelled() / stepLength
                     : this.currentTime * (player.grounded() ? 1.0f : 0.25f);
@@ -93,6 +94,12 @@ public class PlayerRenderer implements EntityRenderer<Player> {
                          0.0f
                    );
         });
+    }
+
+    private float attackProgress(final Player player, final Timers timers) {
+        return timers.isActiveAndValid(player.attackTimer())
+                ? timers.getTimeElapsed(player.attackTimer()) / player.attackDuration()
+                : 0.0f;
     }
 
     @Override

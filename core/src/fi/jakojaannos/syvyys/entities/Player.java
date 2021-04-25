@@ -14,7 +14,15 @@ public final class Player extends GameCharacter {
               10.0f,
               100.0f,
               0.6f, 3,
+              0.0f,
               3.0f);
+    }
+
+    public static Player copyFrom(final World physicsWorld, final Vector2 position, final Player other) {
+        final var player = Player.create(physicsWorld, position);
+        player.health(other.health());
+
+        return player;
     }
 
     public static Player create(final World physicsWorld, final Vector2 position) {

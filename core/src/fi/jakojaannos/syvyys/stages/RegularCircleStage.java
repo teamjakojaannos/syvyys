@@ -15,6 +15,7 @@ import fi.jakojaannos.syvyys.systems.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class RegularCircleStage implements GameStage {
     public final int circleN;
@@ -34,11 +35,23 @@ public class RegularCircleStage implements GameStage {
     }
 
     @Override
-    public GameState createState(final GameStage gameStage, final Camera camera) {
+    public GameState createState(
+            final GameStage gameStage,
+            final GameState previousState,
+            final Camera camera
+    ) {
         final var physicsWorld = new World(new Vector2(0.0f, -20.0f), true);
         physicsWorld.setContactListener(new PhysicsContactListener());
 
-        this.player = Player.create(physicsWorld, new Vector2(0.0f, 80.0f));
+        final var playerStartPos = new Vector2(0.0f, 80.0f);
+        this.player = Optional.ofNullable(previousState)
+                              .flatMap(GameState::getPlayer)
+                              .map(player -> Player.copyFrom(physicsWorld, playerStartPos, player))
+                              .orElseGet(() -> Player.create(
+                                      physicsWorld,
+                                      playerStartPos)
+                              );
+
         camera.setLocation(new Vector2(0, 90.0f));
         camera.lockedToPlayer = true;
 

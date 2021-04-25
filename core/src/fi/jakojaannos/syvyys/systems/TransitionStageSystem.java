@@ -14,7 +14,7 @@ public class TransitionStageSystem implements EcsSystem<Player> {
         players.forEach(player -> {
             if (player.dead()) {
                 if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-                    gameState.changeStage(new RegularCircleStage(1));
+                    gameState.changeStage(new RegularCircleStage(1), true);
                 }
                 return;
             }
@@ -32,7 +32,7 @@ public class TransitionStageSystem implements EcsSystem<Player> {
                     circleN = circleStage.circleN + 1;
                 }
 
-                gameState.changeStage(new RegularCircleStage(circleN));
+                gameState.changeStage(new RegularCircleStage(circleN), false);
             }
         });
     }

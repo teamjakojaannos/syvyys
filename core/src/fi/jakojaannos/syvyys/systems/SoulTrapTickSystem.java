@@ -26,7 +26,7 @@ public class SoulTrapTickSystem implements EcsSystem<SoulTrap> {
             final var isTicking = timers.isActiveAndValid(trap.stateTimer);
             if (!isTicking && trap.isBubbling()) {
                 trap.stateTimer = timers.set(trap.bubblingDuration, false, () -> {
-                    trap.state = SoulTrap.State.I_WANT_OUT;
+                    trap.state = SoulTrap.State.I_WANT_OUT_START;
 
                     trap.stateTimer = timers.set(trap.attackDuration, false, () -> {
                         trap.state = SoulTrap.State.IDLE;

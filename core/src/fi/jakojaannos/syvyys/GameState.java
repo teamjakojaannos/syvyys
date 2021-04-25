@@ -26,6 +26,7 @@ public class GameState {
     private Player player;
     private float currentTime;
     private GameStage nextStage;
+    private boolean hardReset;
     private Color backgroundColor = new Color(0.3f, 0.3f, 0.3f, 1.0f);
 
     public GameState(
@@ -41,8 +42,9 @@ public class GameState {
         this.camera = camera;
     }
 
-    public void changeStage(final GameStage nextStage) {
+    public void changeStage(final GameStage nextStage, final boolean hardReset) {
         this.nextStage = nextStage;
+        this.hardReset = hardReset;
     }
 
     public Optional<GameStage> getNextStage() {
@@ -144,5 +146,9 @@ public class GameState {
 
     public void spawn(final Entity entity) {
         this.entitiesToBeSpawned.add(entity);
+    }
+
+    public boolean isHardReset() {
+        return this.hardReset;
     }
 }

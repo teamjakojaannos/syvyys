@@ -16,10 +16,17 @@ import fi.jakojaannos.syvyys.renderer.Renderer;
 import java.util.List;
 
 public class IntroStage implements GameStage {
+    public static final float TREMBLE_FLASH_DELAY = 0.75f;
+    public static final float TREMBLE_FLASH_DURATION = 0.03f;
+
     private Sound ukkoKuoriutuuPisteWav;
 
     @Override
-    public GameState createState(final GameStage gameStage, final Camera camera) {
+    public GameState createState(
+            final GameStage gameStage,
+            final GameState previousState,
+            final Camera camera
+    ) {
         final var physicsWorld = new World(new Vector2(0.0f, 0.0f), true);
         final var player = Player.create(physicsWorld, new Vector2(1.2f, 1.0f));
         player.grounded(true);
@@ -42,22 +49,31 @@ public class IntroStage implements GameStage {
         final var timers = state.getTimers();
 
         state.setBackgroundColor(new Color(0.3f, 0.3f, 0.3f, 1.0f));
-        demonicSpawn.stageTimer = timers.set(15f, false, () -> {
+        demonicSpawn.stageTimer = timers.set(1.5f, false, () -> {
             demonicSpawn.stage = IntroDemonicSpawn.Stage.TREMBLING;
 
-            demonicSpawn.flashTimer = timers.set(1.0f, false, () -> tremblingFlash(demonicSpawn, state));
+            demonicSpawn.flashTimer = timers.set(TREMBLE_FLASH_DELAY, false,
+                                                 () -> tremblingFlash(demonicSpawn, state,
+                                                                      new Color(0.8f, 0.3f, 0.3f, 1.0f),
+                                                                      new Color(0.3f, 0.3f, 0.3f, 1.0f)));
 
             demonicSpawn.stageTimer = timers.set(3.0f, false, () -> {
-                timers.set(2.75f, false, this.ukkoKuoriutuuPisteWav::play);
                 demonicSpawn.stage = IntroDemonicSpawn.Stage.HATS_OFF;
-                timers.clear(demonicSpawn.flashTimer);
-                timers.clear(demonicSpawn.flashTimer);
 
-                state.setBackgroundColor(new Color(0.3f, 0.3f, 0.3f, 1.0f));
+                final var colorA = new Color(0.3f, 0.3f, 0.3f, 1.0f);
+                timers.clear(demonicSpawn.flashTimer);
+                demonicSpawn.flashTimer = timers.set(2.25f, false, () -> {
+                    tremblingFlash(demonicSpawn, state, colorA, new Color(0.2f, 0f, 0f, 1.0f));
+                    this.ukkoKuoriutuuPisteWav.play();
+                });
+
+                state.setBackgroundColor(colorA);
 
                 demonicSpawn.stageTimer = timers.set(4.0f, false, () -> {
-
                     demonicSpawn.stage = IntroDemonicSpawn.Stage.SPLIT;
+                    timers.clear(demonicSpawn.flashTimer);
+
+                    state.setBackgroundColor(new Color(0.3f, 0.3f, 0.3f, 1.0f));
 
                     demonicSpawn.stageTimer = timers.set(5.0f, false, () -> {
                         state.setBackgroundColor(new Color(0.1f, 0.1f, 0.1f, 1.0f));
@@ -89,7 +105,7 @@ public class IntroStage implements GameStage {
                                     player.deathSequenceHasFinished(true);
                                 }));
 
-                                timers.set(7.5f, false, () -> state.changeStage(new RegularCircleStage(1)));
+                                timers.set(7.5f, false, () -> state.changeStage(new RegularCircleStage(1), true));
                             });
                         });
                     });
@@ -102,15 +118,17 @@ public class IntroStage implements GameStage {
 
     private void tremblingFlash(
             final IntroDemonicSpawn demonicSpawn,
-            final GameState state
+            final GameState state,
+            final Color colorA,
+            final Color colorB
     ) {
         final var timers = state.getTimers();
-        state.setBackgroundColor(new Color(0.8f, 0.8f, 0.8f, 1.0f));
+        state.setBackgroundColor(colorB);
 
-        demonicSpawn.flashTimer = timers.set(0.15f, false, () -> {
-            state.setBackgroundColor(new Color(0.8f, 0.1f, 0.1f, 1.0f));
+        demonicSpawn.flashTimer = timers.set(TREMBLE_FLASH_DURATION, false, () -> {
+            state.setBackgroundColor(colorA);
 
-            demonicSpawn.flashTimer = timers.set(1.0f, false, () -> tremblingFlash(demonicSpawn, state));
+            demonicSpawn.flashTimer = timers.set(TREMBLE_FLASH_DELAY, false, () -> tremblingFlash(demonicSpawn, state, colorA, colorB));
         });
     }
 

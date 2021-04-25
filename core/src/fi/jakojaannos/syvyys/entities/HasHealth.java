@@ -10,6 +10,8 @@ public interface HasHealth extends Entity {
 
     float health();
 
+    void health(float health);
+
     boolean dead();
 
     TimerHandle deathTimer();

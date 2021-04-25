@@ -5,7 +5,7 @@ import fi.jakojaannos.syvyys.renderer.Camera;
 import fi.jakojaannos.syvyys.renderer.Renderer;
 
 public interface GameStage extends AutoCloseable {
-    GameState createState(GameStage gameStage, Camera camera);
+    GameState createState(GameStage gameStage, GameState previousState, Camera camera);
 
     void tick(float deltaSeconds, GameState gameState);
 

@@ -34,4 +34,8 @@ public interface HasCharacterState {
     void attackTimer(TimerHandle timer);
 
     boolean hasMoved();
+
+    float attackDelay();
+
+    void attackDelayTimer(TimerHandle timer);
 }

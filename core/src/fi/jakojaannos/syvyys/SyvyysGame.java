@@ -28,8 +28,8 @@ public class SyvyysGame extends ApplicationAdapter {
         this.kauhuambianssiPisteÄmPeeKolme.setLooping(true);
 
         // Initialize game
-        //changeStage(new fi.jakojaannos.syvyys.stages.IntroStage());
-        changeStage(new fi.jakojaannos.syvyys.stages.RegularCircleStage(1));
+        changeStage(new fi.jakojaannos.syvyys.stages.IntroStage());
+        //changeStage(new fi.jakojaannos.syvyys.stages.RegularCircleStage(1));
     }
 
     private void changeStage(final GameStage stage) {
@@ -38,7 +38,9 @@ public class SyvyysGame extends ApplicationAdapter {
         }
 
         this.currentStage = stage;
-        this.gameState = this.currentStage.createState(this.currentStage, this.renderer.getCamera());
+        this.gameState = this.currentStage.createState(this.currentStage,
+                                                       this.gameState == null || this.gameState.isHardReset() ? null : this.gameState,
+                                                       this.renderer.getCamera());
         this.gameState.spawnEntities();
         this.gameState.purgeEntities();
 
