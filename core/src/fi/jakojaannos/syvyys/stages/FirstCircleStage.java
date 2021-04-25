@@ -33,7 +33,8 @@ public class FirstCircleStage implements GameStage {
 
         this.player = Player.create(physicsWorld, new Vector2(0.0f, 3.0f));
 
-        final var level = new TileLevelGenerator(666).generateLevel(physicsWorld);
+        final var level = new TileLevelGenerator(666, 0.15f)
+                .generateLevel(physicsWorld);
 
         this.characterTick = new CharacterTickSystem();
         this.soulTrapTick = new SoulTrapTickSystem();
@@ -41,8 +42,9 @@ public class FirstCircleStage implements GameStage {
         this.reaperTick = new EntityReaperSystem();
 
         final List<Entity> entities = new ArrayList<>(level.getAllTiles());
+        entities.addAll(level.getAllEntities());
+
         entities.add(Demon.create(physicsWorld, new Vector2(8.0f, 4.0f)));
-        entities.add(SoulTrap.create(physicsWorld, new Vector2(10.0f, 0.0f)));
 
         entities.add(this.player);
         final var ui = new UI();

@@ -140,7 +140,6 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
 
     @Override
     public void dealDamage(final float amount) {
-        System.out.println(this.getClass().getSimpleName() + " TAKING DAMAGE: " + amount);
         this.health -= amount;
     }
 

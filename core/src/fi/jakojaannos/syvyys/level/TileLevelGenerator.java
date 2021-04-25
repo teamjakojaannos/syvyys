@@ -2,6 +2,8 @@ package fi.jakojaannos.syvyys.level;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import fi.jakojaannos.syvyys.entities.Entity;
+import fi.jakojaannos.syvyys.entities.SoulTrap;
 import fi.jakojaannos.syvyys.entities.Tile;
 
 import java.util.ArrayList;
@@ -9,39 +11,43 @@ import java.util.List;
 import java.util.Random;
 
 public class TileLevelGenerator extends LevelGenerator {
-     private static final int TILE_ID_FLOOR = 0;
-     private static final int TILE_ID_WALL_RIGHT = 1;
-     private static final int TILE_ID_WALL_LEFT = 2;
+    private static final int TILE_ID_FLOOR = 0;
+    private static final int TILE_ID_WALL_RIGHT = 1;
+    private static final int TILE_ID_WALL_LEFT = 2;
 
     private final Random random;
+    private final float createTrapChance;
 
-    public TileLevelGenerator(final long seed) {
+    public TileLevelGenerator(final long seed, final float createTrapChance) {
         this.random = new Random(seed);
+        this.createTrapChance = createTrapChance;
     }
 
     @Override
     public Level generateLevel(final World world) {
-        final var worldStart = -150;
+        final var worldStart = -10;
         final var worldLength = 200;
         final List<Tile> tiles = new ArrayList<>();
+        final List<Entity> entities = new ArrayList<>();
 
         int generated = 0;
-        int previousHeight = 10;
+        int previousHeight = 30;
         while (generated < worldLength) {
             final var startX = worldStart + generated;
             final var stripLength = this.random.nextInt(16) + 4;
-            previousHeight = generateStrip(world, tiles, startX, startX + stripLength, previousHeight);
+            previousHeight = generateStrip(world, tiles, entities, startX, startX + stripLength, previousHeight);
 
             generated += stripLength;
         }
 
-        return new Level(tiles);
+        return new Level(tiles, entities);
     }
 
 
     private int generateStrip(
             final World world,
             final List<Tile> tiles,
+            final List<Entity> entities,
             final int stripStartTileX,
             final int stripEndTileX,
             final int previousStripTileY
@@ -55,10 +61,19 @@ public class TileLevelGenerator extends LevelGenerator {
         final var n = stripEndTileX - stripStartTileX;
         for (int x = 0; x < n; x++) {
             final var tileX = (stripStartTileX + x);
+            final var position = new Vector2(tileX * tileWidth, stripTileY * tileHeight);
+
+            final var isNotInSpawn = Math.abs(position.x) > 10.0f;
+            final var isNotOnEdge = x > 3 && x + 3 < n;
+            final var isSuitablePosition = isNotInSpawn && isNotOnEdge;
+            if (isSuitablePosition && this.random.nextFloat() < this.createTrapChance) {
+                entities.add(SoulTrap.create(world, new Vector2(position).add(0.0f, tileHeight)));
+            }
+
             tiles.add(Tile.create(
                     world,
                     tileWidth, tileHeight,
-                    new Vector2(tileX * tileWidth, stripTileY * tileHeight),
+                    position,
                     TILE_ID_FLOOR)
             );
         }
