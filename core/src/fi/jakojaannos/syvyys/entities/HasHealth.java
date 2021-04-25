@@ -4,7 +4,7 @@ import fi.jakojaannos.syvyys.GameState;
 import fi.jakojaannos.syvyys.TimerHandle;
 
 public interface HasHealth extends Entity {
-    void dealDamage(float amount);
+    void dealDamage(float amount, GameState gameState);
 
     float maxHealth();
 

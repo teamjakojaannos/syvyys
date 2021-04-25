@@ -17,6 +17,7 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
     private final float maxHealth;
     private final float deathAnimationDuration;
     private final Body body;
+    private final float maxSpeed = 5.0f;
 
     public float distanceTravelled = 0.0f;
     public float previousDistanceTravelled;
@@ -155,7 +156,7 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
     }
 
     @Override
-    public void dealDamage(final float amount) {
+    public void dealDamage(final float amount, GameState gameState) {
         //noinspection InstanceofThis
         if (this instanceof Player && SyvyysGame.Constants.SATANMODE) {
             return;
@@ -229,5 +230,10 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
         timers.clear(this.attackTimer);
         timers.clear(this.shotTimer);
         timers.clear(this.deathTimer);
+    }
+
+    @Override
+    public float maxSpeed() {
+        return this.maxSpeed;
     }
 }

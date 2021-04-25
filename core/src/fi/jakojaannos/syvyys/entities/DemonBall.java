@@ -12,6 +12,7 @@ public class DemonBall implements Entity, HasBody {
     public float acceleration;
     public boolean collidedWithWall;
     public final float damage;
+    public boolean isInContactWithPlayer;
 
     public DemonBall(
             final Body body,

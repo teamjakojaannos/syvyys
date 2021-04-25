@@ -27,6 +27,7 @@ public class RegularCircleStage implements GameStage {
     private TransitionStageSystem transitionTick;
     private UpdateParticleEmittersSystem emitterTick;
     private DemonBallTickSystem projectileTick;
+    private PlayerAbilityTickSystem playerAbilityTick;
 
     private Player player;
 
@@ -69,6 +70,7 @@ public class RegularCircleStage implements GameStage {
         this.transitionTick = new TransitionStageSystem();
         this.emitterTick = new UpdateParticleEmittersSystem();
         this.projectileTick = new DemonBallTickSystem();
+        this.playerAbilityTick = new PlayerAbilityTickSystem();
 
         final List<Entity> entities = new ArrayList<>(level.getAllTiles());
         entities.addAll(level.getAllEntities());
@@ -102,7 +104,7 @@ public class RegularCircleStage implements GameStage {
         final boolean jumpPressed = Gdx.input.isKeyPressed(Input.Keys.SPACE);
 
         if (Gdx.input.isKeyPressed(Input.Keys.K)) {
-            this.player.dealDamage(999999.0f);
+            this.player.dealDamage(999999.0f, gameState);
         }
 
         this.player.input(new CharacterInput(
@@ -110,10 +112,14 @@ public class RegularCircleStage implements GameStage {
                 attackPressed,
                 jumpPressed
         ));
+
+        final boolean dash = Gdx.input.isKeyPressed(Input.Keys.X);
+        this.player.abilityInput(new AbilityInput(dash));
     }
 
     @Override
     public void systemTick(final GameState gameState) {
+        this.playerAbilityTick.tick(gameState.getEntities(Player.class), gameState);
         this.characterTick.tick(gameState.getEntities(CharacterTickSystem.InputEntity.class), gameState);
         this.soulTrapTick.tick(gameState.getEntities(SoulTrap.class), gameState);
         this.demonAiTick.tick(gameState.getEntities(Demon.class), gameState);

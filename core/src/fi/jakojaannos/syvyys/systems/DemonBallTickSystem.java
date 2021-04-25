@@ -12,6 +12,12 @@ public class DemonBallTickSystem implements EcsSystem<DemonBall> {
     @Override
     public void tick(final Stream<DemonBall> balls, final GameState gameState) {
         balls.forEach(ball -> {
+            if (ball.isInContactWithPlayer) {
+                gameState.getPlayer().ifPresent(player -> player.dealDamage(ball.damage, gameState));
+                gameState.deletThis(ball);
+                return;
+            }
+
             if (ball.collidedWithWall) {
                 gameState.deletThis(ball);
                 return;

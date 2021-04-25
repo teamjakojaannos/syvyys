@@ -15,7 +15,7 @@ public class SoulTrapTickSystem implements EcsSystem<SoulTrap> {
             if (canDealDamage && !isDealingDamage) {
                 trap.damageTimer = timers.set(trap.damageTickInterval, true, () -> {
                     gameState.getPlayer()
-                             .ifPresent(player -> player.dealDamage(5.0f));
+                             .ifPresent(player -> player.dealDamage(5.0f, gameState));
                 });
             }
 

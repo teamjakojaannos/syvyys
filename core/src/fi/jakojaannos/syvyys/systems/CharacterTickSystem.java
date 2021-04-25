@@ -15,7 +15,9 @@ public class CharacterTickSystem implements EcsSystem<CharacterTickSystem.InputE
             entity.distanceTravelled(entity.distanceTravelled() + Math.abs(entity.body().getLinearVelocity().x));
 
             applyInputForceAndFriction(entity);
-            limitMaxHorizontalSpeed(entity);
+            if (!(entity instanceof Player player) || !player.isDashing(gameState)) {
+                limitMaxHorizontalSpeed(entity);
+            }
 
             final var velocity = entity.body().getLinearVelocity();
 
@@ -65,7 +67,7 @@ public class CharacterTickSystem implements EcsSystem<CharacterTickSystem.InputE
     private static void limitMaxHorizontalSpeed(final InputEntity entity) {
         final var velocity = entity.body().getLinearVelocity();
 
-        final float maxSpeed = 5.0f;
+        final float maxSpeed = entity.maxSpeed();
         if (Math.abs(velocity.x) > maxSpeed) {
             entity.body()
                   .setLinearVelocity(maxSpeed * Math.signum(velocity.x),

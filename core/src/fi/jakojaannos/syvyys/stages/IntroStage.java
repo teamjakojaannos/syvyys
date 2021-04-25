@@ -121,7 +121,7 @@ public class IntroStage implements GameStage {
                                 soulTrap.state = SoulTrap.State.I_WANT_OUT;
                                 state.setBackgroundColor(new Color(0.025f, 0.0f, 0.0f, 1.0f));
 
-                                player.dealDamage(999999.0f);
+                                player.dealDamage(999999.0f, state);
                                 player.deathTimer(timers.set(3.0f, false, () -> {
                                     player.deathSequenceHasFinished(true);
                                 }));

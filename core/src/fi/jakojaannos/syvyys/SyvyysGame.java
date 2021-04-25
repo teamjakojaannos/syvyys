@@ -28,8 +28,8 @@ public class SyvyysGame extends ApplicationAdapter {
         this.kauhuambianssiPisteÄmPeeKolme.setLooping(true);
 
         // Initialize game
-        changeStage(new fi.jakojaannos.syvyys.stages.IntroStage());
-        //changeStage(new fi.jakojaannos.syvyys.stages.RegularCircleStage(1));
+        //changeStage(new fi.jakojaannos.syvyys.stages.IntroStage());
+        changeStage(new fi.jakojaannos.syvyys.stages.RegularCircleStage(1));
     }
 
     private void changeStage(final GameStage stage) {

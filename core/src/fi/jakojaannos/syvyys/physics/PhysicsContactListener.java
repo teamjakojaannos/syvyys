@@ -47,7 +47,7 @@ public class PhysicsContactListener implements ContactListener {
             return true;
         } else if (dataA instanceof DemonBall ball && dataB instanceof Player player) {
             ball.collidedWithWall = true;
-            player.dealDamage(ball.damage);
+            ball.isInContactWithPlayer = true;
             return true;
         }
 

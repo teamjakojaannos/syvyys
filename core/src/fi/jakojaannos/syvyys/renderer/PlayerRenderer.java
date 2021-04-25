@@ -19,6 +19,7 @@ public class PlayerRenderer implements EntityRenderer<Player> {
     private final Animation<TextureRegion> shoot;
     private final Animation<TextureRegion> death;
     private final Animation<TextureRegion> falling;
+    private final Animation<TextureRegion> dash;
     private final Sound pew;
 
     private float currentTime;
@@ -34,11 +35,13 @@ public class PlayerRenderer implements EntityRenderer<Player> {
         final var runFrames = new int[]{1, 2, 3, 4, 5, 6, 7, 8};
         final var attackFrames = new int[]{9, 10, 11};
         final var deathFrames = new int[]{12, 12, 12, 12, 13, 14, 15, 15, 15, 15, 16};
+        final var dashFrames = new int[]{17};
         this.run = Animations.animationFromFrames(frames, runFrames);
         this.idle = Animations.animationFromFrames(frames, idleFrames);
         this.shoot = Animations.animationFromFrames(frames, attackFrames);
         this.death = Animations.animationFromFrames(frames, deathFrames);
         this.falling = Animations.animationFromFrames(frames, runFrames);
+        this.dash = Animations.animationFromFrames(frames, dashFrames);
     }
 
     @Override
@@ -58,6 +61,8 @@ public class PlayerRenderer implements EntityRenderer<Player> {
 
             final var animation = player.dead()
                     ? this.death
+                    : (player.isDashing(context.gameState()) || player.body().getLinearVelocity().x > player.maxSpeed())
+                    ? this.dash
                     : player.attacking()
                     ? this.shoot
                     : !player.grounded()
@@ -90,9 +95,13 @@ public class PlayerRenderer implements EntityRenderer<Player> {
             final var fadeEnd = 50.0f;
 
             final var distance = Math.abs(position.y) - fadeStart;
-            final var rgb = distance < 0
+            var rgb = distance < 0
                     ? 1.0f
                     : (1.0f - ((distance - fadeStart) / (fadeEnd - fadeStart)));
+
+            if (player.isInvulnerable(context.gameState())) {
+                rgb = 0.4f;
+            }
             context.batch().setColor(rgb, rgb, rgb, 1.0f);
             context.batch()
                    .draw(currentFrame,

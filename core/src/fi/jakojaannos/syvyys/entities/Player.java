@@ -6,9 +6,20 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import fi.jakojaannos.syvyys.GameState;
 import fi.jakojaannos.syvyys.SyvyysGame;
+import fi.jakojaannos.syvyys.TimerHandle;
 
 public final class Player extends GameCharacter {
+    public final float dashCoolDown = 3.0f;
+    public final float dashDuration = 0.069f;
+    public final float dashStrength = 666.0f;
+    public final float meNoDieTime = 1.5f;
+
+    public TimerHandle dashTimer;
+    public TimerHandle dashCooldownTimer;
+    public TimerHandle meNoDieTimer;
+
     public boolean justAttacked;
+    private AbilityInput abilityInput = new AbilityInput(false);
 
     public Player(final Body body) {
         super(body,
@@ -18,6 +29,35 @@ public final class Player extends GameCharacter {
               0.4f, 3,
               0.0f,
               3.0f);
+    }
+
+    public AbilityInput abilityInput() {
+        return this.abilityInput;
+    }
+
+    public void abilityInput(final AbilityInput abilityInput) {
+        this.abilityInput = abilityInput;
+    }
+
+    public boolean isDashing(final GameState gameState) {
+        return gameState.getTimers().isActiveAndValid(this.dashTimer);
+    }
+
+    public boolean canDash(final GameState gameState) {
+        return !gameState.getTimers().isActiveAndValid(this.dashCooldownTimer);
+    }
+
+    public boolean isInvulnerable(final GameState gameState) {
+        return gameState.getTimers().isActiveAndValid(this.meNoDieTimer);
+    }
+
+    @Override
+    public void dealDamage(final float amount, final GameState gameState) {
+        if (isInvulnerable(gameState)) {
+            return;
+        }
+
+        super.dealDamage(amount, gameState);
     }
 
     public static Player copyFrom(final World physicsWorld, final Vector2 position, final Player other) {
@@ -102,7 +142,7 @@ public final class Player extends GameCharacter {
 
         if (hitInfo.thereWasAHit && hitInfo.body != null) {
             if (hitInfo.body.getUserData() instanceof Demon demon) {
-                demon.dealDamage(99999.0f);
+                demon.dealDamage(99999.0f, gameState);
             }
 
             gameState.obtainParticleEmitter()

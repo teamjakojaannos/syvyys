@@ -38,4 +38,6 @@ public interface HasCharacterState {
     float attackDelay();
 
     void attackDelayTimer(TimerHandle timer);
+
+    float maxSpeed();
 }
