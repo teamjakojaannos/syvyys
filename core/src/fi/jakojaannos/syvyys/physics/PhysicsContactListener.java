@@ -34,8 +34,9 @@ public class PhysicsContactListener implements ContactListener {
         } else if (dataA instanceof Player && dataB instanceof SoulTrap trap) {
             if (trap.state == SoulTrap.State.IDLE) {
                 trap.state = SoulTrap.State.BUBBLING;
-                trap.isInContactWithPlayer = true;
             }
+
+            trap.isInContactWithPlayer = true;
 
             return true;
         }

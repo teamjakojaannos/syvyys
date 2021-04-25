@@ -85,7 +85,7 @@ public class FirstCircleStage implements GameStage {
         this.characterTick.tick(gameState.getEntities(CharacterTickSystem.InputEntity.class), gameState);
         this.soulTrapTick.tick(gameState.getEntities(SoulTrap.class), gameState);
         this.demonAiTick.tick(gameState.getEntities(Demon.class), gameState);
-        this.reaperTick.tick(gameState.getEntities(HasHealth.class), gameState);
+        this.reaperTick.tick(gameState.getEntities(HasHealth.class, true), gameState);
     }
 
     @Override

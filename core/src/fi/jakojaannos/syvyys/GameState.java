@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class GameState {
@@ -66,11 +65,16 @@ public class GameState {
         return this.entities.stream();
     }
 
-    @SuppressWarnings("unchecked")
     public <T extends Entity> Stream<T> getEntities(final Class<? extends T> clazz) {
+        return getEntities(clazz, false);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Entity> Stream<T> getEntities(final Class<? extends T> clazz, final boolean includeDead) {
         return this.entities
                 .stream()
                 .filter(e -> clazz.isAssignableFrom(e.getClass()))
+                .filter(e -> includeDead || !(e instanceof HasHealth health) || !health.dead())
                 .map(e -> (T) e);
     }
 
