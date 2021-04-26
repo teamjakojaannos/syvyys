@@ -56,6 +56,8 @@ public class CharacterTickSystem implements EcsSystem<CharacterTickSystem.InputE
                     Demon.tickAttack(gameState, demon);
                 } else if (entity instanceof Hellspider hellspider) {
                     Hellspider.tickAttack(gameState, hellspider);
+                } else if (entity instanceof Golem golem) {
+                    Golem.tickAttack(gameState, golem);
                 } else {
                     throw new IllegalStateException("Not implemented for " + entity.getClass().getSimpleName());
                 }

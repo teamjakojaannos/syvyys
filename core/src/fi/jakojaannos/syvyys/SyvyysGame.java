@@ -114,8 +114,8 @@ public class SyvyysGame extends ApplicationAdapter {
 
         // Debug
         public static final boolean FAST_INTRO = true;
-        public static final boolean BOSSRUSH = true;
-        public static final boolean DEBUG_PHYSICS = false;
+        public static final boolean BOSSRUSH = false;
+        public static final boolean DEBUG_PHYSICS = true;
         public static final boolean DEBUG_ATTACK_RAYCAST = false;
         public static final boolean SATANMODE = false; // Can't be "Godmode" cuz' we're in hell ;)
 

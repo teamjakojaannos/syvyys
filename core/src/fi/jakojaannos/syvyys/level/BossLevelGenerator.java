@@ -26,15 +26,18 @@ public class BossLevelGenerator extends TileLevelGenerator {
         final List<Tile> tiles = new ArrayList<>();
         final List<Entity> entities = new ArrayList<>();
 
-        generateWall(world, tiles, +2, 0, 300, true);
-        generateWall(world, tiles, -2, 300, 0, false);
+        generateWall(world, tiles, +3, 4, 300, false);
+        generateWall(world, tiles, -3, 0, 300, true);
 
-        generateFloor(world, tiles, -2, 20, 0, TILE_ID_FLOOR);
-        generateFloor(world, tiles, +2, 20, 5, TILE_ID_CEILING);
+        generateShop(world, tiles, entities, -3, gameState, TILE_WIDTH, TILE_HEIGHT, 0);
+
+        generateFloor(world, tiles, -3, 20, 0, TILE_ID_FLOOR);
+        generateFloor(world, tiles, +3, 20, 5, TILE_ID_CEILING);
 
         generateFloor(world, tiles, 20, 60, 0, TILE_ID_FLOOR);
 
-        generateWall(world, tiles, 60, 0, 300, false);
+        generateWall(world, tiles, 20, 5, 300, false);
+        generateWall(world, tiles, 60, 300, 0, false);
 
         return new Level(tiles, entities);
     }
@@ -57,5 +60,18 @@ public class BossLevelGenerator extends TileLevelGenerator {
                     randomTile(ids))
             );
         }
+    }
+
+    public Level generateBossPlatforms(final World world, final GameState gameState) {
+        final List<Tile> tiles = new ArrayList<>();
+        final List<Entity> entities = new ArrayList<>();
+
+        final var arenaStartX = 20;
+
+        final var platformY = 4;
+
+        generateFloor(world, tiles, arenaStartX + 4, arenaStartX + 8, platformY, TILE_ID_FLOOR);
+
+        return new Level(tiles, entities);
     }
 }

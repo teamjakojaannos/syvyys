@@ -4,8 +4,16 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import fi.jakojaannos.syvyys.GameState;
 import fi.jakojaannos.syvyys.SyvyysGame;
+import fi.jakojaannos.syvyys.TimerHandle;
 
 public class Golem extends GameCharacter {
+    public final float attackRange = 10.0f;
+    public final float chaseRange = 10.0f;
+    public final float attackDelay = 10.0f;
+
+    public TimerHandle attackTimer;
+
+
 
     public Golem(
             final Body body

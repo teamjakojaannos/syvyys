@@ -21,17 +21,18 @@ public class SpikeTickSystem implements EcsSystem<SpikeNode> {
                 final var duration = spike.duration(SpikeNode.State.HIDDEN);
 
                 spike.state = SpikeNode.State.HIDDEN;
-                spike.stageTimer = timers.set(duration, false, () -> nextSpikeState(spike, timers));
+                spike.stageTimer = timers.set(duration, false, () -> nextSpikeState(spike, timers, gameState));
             }
         });
     }
 
-    private void nextSpikeState(final SpikeNode spike, final Timers timers) {
+    private void nextSpikeState(final SpikeNode spike, final Timers timers, final GameState gameState) {
         spike.nextState()
-             .ifPresent(state -> {
-                 spike.state = state;
-                 final float duration = spike.duration(state);
-                 spike.stageTimer = timers.set(duration, false, () -> nextSpikeState(spike, timers));
-             });
+             .ifPresentOrElse(state -> {
+                                  spike.state = state;
+                                  final float duration = spike.duration(state);
+                                  spike.stageTimer = timers.set(duration, false, () -> nextSpikeState(spike, timers, gameState));
+                              },
+                              () -> gameState.deletThis(spike));
     }
 }

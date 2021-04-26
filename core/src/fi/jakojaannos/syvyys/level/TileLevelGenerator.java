@@ -90,55 +90,7 @@ public class TileLevelGenerator extends LevelGenerator {
         generateWall(world, tiles, stripStartTileX, stripTileY, previousStripTileY, isFirst);
 
         if (isFirst) {
-            final var shopHallwayLength = 20;
-            final int shopWidth = 15;
-            final int shopHeight = 8;
-
-            for (int x = 0; x < shopHallwayLength + shopWidth; x++) {
-                final int tileX = stripStartTileX - 1 - x;
-                final var positionFloor = new Vector2(tileX * tileWidth, stripTileY * tileHeight);
-
-                final var ceilOffset = x < shopHallwayLength ? SHOP_HALLWAY_HEIGHT : shopHeight;
-                final var positionCeil = new Vector2(tileX * tileWidth, (stripTileY + ceilOffset) * tileHeight);
-                tiles.add(Tile.create(
-                        world,
-                        tileWidth, tileHeight,
-                        positionFloor,
-                        randomTile(TILE_ID_FLOOR)
-                ));
-
-                tiles.add(Tile.create(
-                        world,
-                        tileWidth, tileHeight,
-                        positionCeil,
-                        randomTile(TILE_ID_CEILING)
-                ));
-            }
-
-            final int shopLeftX = stripStartTileX - shopHallwayLength - shopWidth;
-            final int shopRightX = shopLeftX + shopWidth;
-            final int shopCeilingY = stripTileY + shopHeight;
-            generateWall(world, tiles, shopLeftX, stripTileY, shopCeilingY, false);
-            generateWall(world, tiles, shopRightX, shopCeilingY, stripTileY + SHOP_HALLWAY_HEIGHT, false);
-
-            final var shopItemCount = 3;
-            final int shopItemMargin = 2;
-            final var shopItemWidth = (shopWidth - shopItemMargin) / (float) shopItemCount;
-            final var shopItemStartX = shopLeftX + shopItemMargin;
-            final var added = new ArrayList<Upgrade>();
-            for (int i = 0; i < shopItemCount; i++) {
-                final var itemX = (shopItemStartX + i * shopItemWidth) * tileWidth + 0.5f;
-
-                // HACK: remove from pool instead of get to make sure we get no duplicates. Added back after selection
-                if (gameState.upgradePool.size() == 0) {
-                    break;
-                }
-                final var upgrade = gameState.upgradePool.remove(MathUtils.random(gameState.upgradePool.size() - 1));
-                added.add(upgrade);
-
-                entities.add(ShopItem.create(world, new Vector2(itemX, (stripTileY + 2) * tileHeight + 0.25f), upgrade));
-            }
-            gameState.upgradePool.addAll(added);
+            generateShop(world, tiles, entities, stripStartTileX, gameState, tileWidth, tileHeight, stripTileY);
         }
 
         final var n = stripEndTileX - stripStartTileX;
@@ -190,6 +142,67 @@ public class TileLevelGenerator extends LevelGenerator {
         }
 
         return stripTileY;
+    }
+
+    protected void generateShop(
+            final World world,
+            final List<Tile> tiles,
+            final List<Entity> entities,
+            final int stripStartTileX,
+            final GameState gameState,
+            final float tileWidth,
+            final float tileHeight,
+            final int stripTileY
+    ) {
+        final var shopHallwayLength = 20;
+        final int shopWidth = 15;
+        final int shopHeight = 8;
+
+        for (int x = 0; x < shopHallwayLength + shopWidth; x++) {
+            final int tileX = stripStartTileX - 1 - x;
+            final var positionFloor = new Vector2(tileX * tileWidth, stripTileY * tileHeight);
+
+            final var ceilOffset = x < shopHallwayLength ? SHOP_HALLWAY_HEIGHT : shopHeight;
+            final var positionCeil = new Vector2(tileX * tileWidth, (stripTileY + ceilOffset) * tileHeight);
+            tiles.add(Tile.create(
+                    world,
+                    tileWidth, tileHeight,
+                    positionFloor,
+                    randomTile(TILE_ID_FLOOR)
+            ));
+
+            tiles.add(Tile.create(
+                    world,
+                    tileWidth, tileHeight,
+                    positionCeil,
+                    randomTile(TILE_ID_CEILING)
+            ));
+        }
+
+        final int shopLeftX = stripStartTileX - shopHallwayLength - shopWidth;
+        final int shopRightX = shopLeftX + shopWidth;
+        final int shopCeilingY = stripTileY + shopHeight;
+        generateWall(world, tiles, shopLeftX, stripTileY, shopCeilingY, false);
+        generateWall(world, tiles, shopRightX, shopCeilingY, stripTileY + SHOP_HALLWAY_HEIGHT, false);
+
+        final var shopItemCount = 3;
+        final int shopItemMargin = 2;
+        final var shopItemWidth = (shopWidth - shopItemMargin) / (float) shopItemCount;
+        final var shopItemStartX = shopLeftX + shopItemMargin;
+        final var added = new ArrayList<Upgrade>();
+        for (int i = 0; i < shopItemCount; i++) {
+            final var itemX = (shopItemStartX + i * shopItemWidth) * tileWidth + 0.5f;
+
+            // HACK: remove from pool instead of get to make sure we get no duplicates. Added back after selection
+            if (gameState.upgradePool.size() == 0) {
+                break;
+            }
+            final var upgrade = gameState.upgradePool.remove(MathUtils.random(gameState.upgradePool.size() - 1));
+            added.add(upgrade);
+
+            entities.add(ShopItem.create(world, new Vector2(itemX, (stripTileY + 2) * tileHeight + 0.25f), upgrade));
+        }
+        gameState.upgradePool.addAll(added);
     }
 
     protected int randomTile(final int[] tiles) {
