@@ -1,5 +1,6 @@
 package fi.jakojaannos.syvyys.level;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import fi.jakojaannos.syvyys.entities.Demon;
@@ -12,16 +13,25 @@ import java.util.List;
 import java.util.Random;
 
 public class TileLevelGenerator extends LevelGenerator {
-    private static final int TILE_ID_FLOOR = 0;
-    private static final int TILE_ID_WALL_RIGHT = 1;
-    private static final int TILE_ID_WALL_LEFT = 2;
+    private static final int[] TILE_ID_FLOOR = {0, 0, 0, 1, 2};
+    private static final int TILE_ID_WALL_RIGHT = 3;
+    private static final int TILE_ID_WALL_LEFT = 4;
+    private static final int[] TILE_ID_CEILING = {5, 5, 5, 6, 7};
+
+    private static final int SHOP_HALLWAY_HEIGHT = 4;
+
 
     private final Random random;
     private final float createTrapChance;
     private final float spawnDemonChance;
     private final int worldLength;
 
-    public TileLevelGenerator(final long seed, final float createTrapChance, final float spawnDemonChance, final int worldLength) {
+    public TileLevelGenerator(
+            final long seed,
+            final float createTrapChance,
+            final float spawnDemonChance,
+            final int worldLength
+    ) {
         this.random = new Random(seed);
         this.createTrapChance = createTrapChance;
         this.spawnDemonChance = spawnDemonChance;
@@ -37,16 +47,18 @@ public class TileLevelGenerator extends LevelGenerator {
         int generated = 0;
         int previousHeight = 200;
         int lastEndX = worldStart;
+        boolean isFirst = true;
         while (generated < this.worldLength) {
             final var startX = worldStart + generated;
             final var stripLength = this.random.nextInt(16) + 4;
-            previousHeight = generateStrip(world, tiles, entities, startX, startX + stripLength, previousHeight);
+            previousHeight = generateStrip(world, tiles, entities, startX, startX + stripLength, previousHeight, isFirst);
 
             generated += stripLength;
             lastEndX = startX + stripLength;
+            isFirst = false;
         }
 
-        generateWall(world, tiles, lastEndX, -300, previousHeight);
+        generateWall(world, tiles, lastEndX, -300, previousHeight, false);
 
         return new Level(tiles, entities);
     }
@@ -58,13 +70,47 @@ public class TileLevelGenerator extends LevelGenerator {
             final List<Entity> entities,
             final int stripStartTileX,
             final int stripEndTileX,
-            final int previousStripTileY
+            final int previousStripTileY,
+            final boolean isFirst
     ) {
         final var tileWidth = 0.5f;
         final var tileHeight = 0.5f;
 
         final var stripTileY = this.random.nextInt(5) - 2;
-        generateWall(world, tiles, stripStartTileX, stripTileY, previousStripTileY);
+        generateWall(world, tiles, stripStartTileX, stripTileY, previousStripTileY, isFirst);
+
+        if (isFirst) {
+            final var shopHallwayLength = 20;
+            final int shopWidth = 15;
+            final int shopHeight = 8;
+
+            for (int x = 0; x < shopHallwayLength + shopWidth; x++) {
+                final int tileX = stripStartTileX - 1 - x;
+                final var positionFloor = new Vector2(tileX * tileWidth, stripTileY * tileHeight);
+
+                final var ceilOffset = x < shopHallwayLength ? SHOP_HALLWAY_HEIGHT : shopHeight;
+                final var positionCeil = new Vector2(tileX * tileWidth, (stripTileY + ceilOffset) * tileHeight);
+                tiles.add(Tile.create(
+                        world,
+                        tileWidth, tileHeight,
+                        positionFloor,
+                        randomTile(TILE_ID_FLOOR)
+                ));
+
+                tiles.add(Tile.create(
+                        world,
+                        tileWidth, tileHeight,
+                        positionCeil,
+                        randomTile(TILE_ID_CEILING)
+                ));
+            }
+
+            final int shopLeftX = stripStartTileX - shopHallwayLength - shopWidth;
+            final int shopRightX = shopLeftX + shopWidth;
+            final int shopCeilingY = stripTileY + shopHeight;
+            generateWall(world, tiles, shopLeftX, stripTileY, shopCeilingY, false);
+            generateWall(world, tiles, shopRightX, shopCeilingY, stripTileY + SHOP_HALLWAY_HEIGHT, false);
+        }
 
         final var n = stripEndTileX - stripStartTileX;
         for (int x = 0; x < n; x++) {
@@ -87,11 +133,15 @@ public class TileLevelGenerator extends LevelGenerator {
                     world,
                     tileWidth, tileHeight,
                     position,
-                    TILE_ID_FLOOR)
+                    randomTile(TILE_ID_FLOOR))
             );
         }
 
         return stripTileY;
+    }
+
+    private int randomTile(final int[] tiles) {
+        return tiles[MathUtils.random(tiles.length - 1)];
     }
 
     private void generateWall(
@@ -99,7 +149,8 @@ public class TileLevelGenerator extends LevelGenerator {
             final List<Tile> tiles,
             final int stripStartTileX,
             final int stripTileY,
-            final int previousStripTileY
+            final int previousStripTileY,
+            final boolean isFirst
     ) {
         if (stripTileY == previousStripTileY) {
             return;
@@ -109,10 +160,11 @@ public class TileLevelGenerator extends LevelGenerator {
         final var tileHeight = 0.5f;
 
         final boolean shouldGenerateAbove = stripTileY < previousStripTileY;
+        final int firstOffset = isFirst ? SHOP_HALLWAY_HEIGHT : 0; // HACK: Generate "doorway" if this is the first wall
 
         final var wallTileX = stripStartTileX - (shouldGenerateAbove ? 1 : 0);
         final var step = shouldGenerateAbove ? 1 : -1;
-        for (int y = stripTileY + step; y != previousStripTileY; y += step) {
+        for (int y = stripTileY + step + firstOffset; y != previousStripTileY; y += step) {
             tiles.add(Tile.create(
                     world,
                     tileWidth,
