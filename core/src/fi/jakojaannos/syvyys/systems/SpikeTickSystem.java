@@ -27,10 +27,8 @@ public class SpikeTickSystem implements EcsSystem<SpikeNode> {
     }
 
     private void nextSpikeState(final SpikeNode spike, final Timers timers) {
-        System.out.println("was:" + spike.state);
         spike.nextState()
              .ifPresent(state -> {
-                 System.out.println("set:" + state);
                  spike.state = state;
                  final float duration = spike.duration(state);
                  spike.stageTimer = timers.set(duration, false, () -> nextSpikeState(spike, timers));
