@@ -86,12 +86,12 @@ public class SpikeNode extends TracksPlayerContact.Simple implements Entity, Has
     ) {
         final var bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;
-        bodyDef.position.set(position).add(width / 2.0f, height / 2.0f);
+        bodyDef.position.set(position).add(width / 2.0f, height / 2.0f - 0.25f);
         bodyDef.fixedRotation = true;
 
         final var body = physicsWorld.createBody(bodyDef);
         final var hitBox = new PolygonShape();
-        hitBox.setAsBox(width / 2.0f, height / 2.0f);
+        hitBox.setAsBox(width / 4.0f, height / 4.0f);
 
         final var hbFixture = new FixtureDef();
         hbFixture.shape = hitBox;

@@ -11,19 +11,20 @@ public class Golem extends GameCharacter {
     public final float chaseRange = 10.0f;
     public final float attackDelay = 10.0f;
 
-    public TimerHandle attackTimer;
-
+    public boolean justAttacked = false;
+    public TimerHandle attackCdTimer;
+    public TimerHandle damageTickTimer;
 
 
     public Golem(
             final Body body
     ) {
         super(body,
-              1.0f, 2.0f,
+              2.0f, 2.0f,
               0.0f,
-              50.0f,
-              3.0f, 1,
-              0.5f,
+              100.0f,
+              5.0f, 1,
+              1.5f,
               1.0f,
               1.5f, 50);
     }
@@ -54,6 +55,8 @@ public class Golem extends GameCharacter {
     }
 
     public static void tickAttack(final GameState state, final Golem golem) {
+        golem.justAttacked = true;
+
         final var a = new boolean[]{true, false};
         for (final var right : a) {
             final var entities = SpikeNode.spawnSpikeStrip(
@@ -62,8 +65,8 @@ public class Golem extends GameCharacter {
                     0.5f, 1.0f,
                     8,
                     0.75f,
-                    2.5f,
-                    0.7f,
+                    0.0f,
+                    0.25f,
                     right
             );
             entities.forEach(state::spawn);

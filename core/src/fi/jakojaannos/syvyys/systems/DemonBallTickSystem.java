@@ -13,7 +13,23 @@ public class DemonBallTickSystem implements EcsSystem<DemonBall> {
     public void tick(final Stream<DemonBall> balls, final GameState gameState) {
         balls.forEach(ball -> {
             if (ball.isInContactWithPlayer) {
-                gameState.getPlayer().ifPresent(player -> player.dealDamage(ball.damage, gameState));
+                gameState.getPlayer().ifPresent(player -> {
+                    player.dealDamage(ball.damage, gameState);
+
+                    final var pushForce = 5.0f * player.body().getMass();
+                    final var outward = new Vector2(player.body().getPosition())
+                            .sub(ball.body().getPosition())
+                            .nor()
+                            .scl(pushForce);
+
+                    player.body().applyLinearImpulse(
+                            outward,
+                            player.body().getPosition(),
+                            true
+                    );
+
+
+                });
                 gameState.deletThis(ball);
                 return;
             }

@@ -13,7 +13,7 @@ public class GameCharacter extends TracksPlayerContact.Simple implements Charact
     private final float jumpForce;
     private final float width;
     private final float height;
-    private final float maxHealth;
+    public float maxHealth;
     private final float deathAnimationDuration;
     private final Body body;
     private final int soulReward;
@@ -29,7 +29,7 @@ public class GameCharacter extends TracksPlayerContact.Simple implements Charact
     private TimerHandle deathTimer;
     private TimerHandle attackDelayTimer;
     private CharacterInput input = new CharacterInput(0.0f, false, false);
-    private float health;
+    public float health;
     private boolean deathSequenceHasFinished;
     private int nShots;
     private boolean inputDisabled;

@@ -63,7 +63,7 @@ public class SpikeRenderer implements EntityRenderer<SpikeNode> {
 
             final var position = yikes.body().getPosition();
             final float x = position.x - yikes.width() / 2.0f;
-            final float y = position.y - yikes.height() / 2.0f;
+            final float y = position.y - yikes.height() / 2.0f + 0.25f;
             final float originX = yikes.width() / 2.0f;
             final float originY = 0.0f;
             context.batch().setColor(1.0f, 1.0f, 1.0f, 1.0f);

@@ -34,7 +34,7 @@ public class SyvyysGame extends ApplicationAdapter {
         if (Constants.BOSSRUSH) {
             changeStage(new BossStage(10));
         } else if (Constants.FAST_INTRO) {
-            changeStage(new RegularCircleStage(1));
+            changeStage(new RegularCircleStage(9));
         } else {
             changeStage(new IntroStage());
         }
@@ -113,11 +113,12 @@ public class SyvyysGame extends ApplicationAdapter {
         public static final boolean GENERATE_SHOP = true;
 
         // Debug
-        public static final boolean FAST_INTRO = true;
+        public static final boolean FAST_INTRO = false;
         public static final boolean BOSSRUSH = false;
-        public static final boolean DEBUG_PHYSICS = true;
+        public static final boolean DEBUG_PHYSICS = false;
         public static final boolean DEBUG_ATTACK_RAYCAST = false;
         public static final boolean SATANMODE = false; // Can't be "Godmode" cuz' we're in hell ;)
+        public static final boolean CHEAT_CODES_ENABLED = false;
 
         public static class Collision {
             public static final short CATEGORY_TERRAIN = 0x0001;

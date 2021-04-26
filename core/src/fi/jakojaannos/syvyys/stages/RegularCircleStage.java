@@ -101,6 +101,7 @@ public class RegularCircleStage implements GameStage {
                 0.10f + this.circleN * 0.01f,
                 0.035f + this.circleN * 0.01f,
                 0.035f + this.circleN * 0.0075f,
+                Math.max(0.0f, this.circleN - 2.0f) * 0.01f,
                 200 + 15 * this.circleN
         );
     }
@@ -133,10 +134,16 @@ public class RegularCircleStage implements GameStage {
             this.player.dealDamage(999999.0f, gameState);
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.G)) {
-            final var pos = new Vector2(this.player.body().getPosition())
-                    .add(0.0f, 0.0f);
-            gameState.spawn(Golem.create(gameState.getPhysicsWorld(), pos));
+        if (SyvyysGame.Constants.CHEAT_CODES_ENABLED) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.G)) {
+                final var pos = new Vector2(this.player.body().getPosition())
+                        .add(0.0f, 0.0f);
+                gameState.spawn(Golem.create(gameState.getPhysicsWorld(), pos));
+            }
+
+            if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
+                gameState.souls += 500;
+            }
         }
 
 

@@ -1,5 +1,6 @@
 package fi.jakojaannos.syvyys.systems;
 
+import com.badlogic.gdx.math.Vector2;
 import fi.jakojaannos.syvyys.GameState;
 import fi.jakojaannos.syvyys.Timers;
 import fi.jakojaannos.syvyys.entities.SpikeNode;
@@ -10,9 +11,12 @@ public class SpikeTickSystem implements EcsSystem<SpikeNode> {
     @Override
     public void tick(final Stream<SpikeNode> entities, final GameState gameState) {
         entities.forEach(spike -> {
-            // TODO: deal damage + knockback on erupt, use quick (0.1s) idle?
-            if (spike.state == SpikeNode.State.IDLE && spike.isInContactWithPlayer) {
-                gameState.getPlayer().ifPresent(player -> player.dealDamage(spike.damage, gameState));
+            if (spike.state == SpikeNode.State.UP_IN_THE_ASS_OF_TIMO && spike.isInContactWithPlayer) {
+                gameState.getPlayer().ifPresent(player -> {
+                    player.dealDamage(spike.damage, gameState);
+                    player.body().applyLinearImpulse(new Vector2(Vector2.Y).scl(17.5f * player.body().getMass()), player.body().getPosition(), true);
+                });
+
                 spike.isInContactWithPlayer = false;
             }
 

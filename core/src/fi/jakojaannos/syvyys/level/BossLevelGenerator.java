@@ -15,7 +15,7 @@ public class BossLevelGenerator extends TileLevelGenerator {
     public static final float TILE_WIDTH = 0.5f;
 
     public BossLevelGenerator() {
-        super(0L, 0, 0, 0, 0);
+        super(0L, 0, 0, 0, 0, 0);
     }
 
     @Override

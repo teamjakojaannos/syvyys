@@ -25,6 +25,7 @@ public class TileLevelGenerator extends LevelGenerator {
 
 
     private final Random random;
+    private final float spawnGolemChance;
     private final Random enemyRandom;
     private final float createTrapChance;
     private final float spawnDemonChance;
@@ -36,9 +37,11 @@ public class TileLevelGenerator extends LevelGenerator {
             final float createTrapChance,
             final float spawnDemonChance,
             final float spawnHellspiderChance,
+            final float spawnGolemChance,
             final int worldLength
     ) {
         this.random = new Random(seed);
+        this.spawnGolemChance = spawnGolemChance;
         this.enemyRandom = new Random();
         this.createTrapChance = createTrapChance;
         this.spawnDemonChance = spawnDemonChance;
@@ -114,6 +117,11 @@ public class TileLevelGenerator extends LevelGenerator {
             final var isSuitablePositionForSpoder = isNotInSpawn && isFarInTheLevel;
             if (isSuitablePositionForSpoder && this.enemyRandom.nextFloat() < this.spawnHellspiderChance) {
                 entities.add(Hellspider.create(world, new Vector2(position).add(0.0f, tileHeight)));
+            }
+
+            final var isSuitablePositionForGolem = isNotInSpawn && isFarInTheLevel;
+            if (isSuitablePositionForGolem && this.enemyRandom.nextFloat() < this.spawnGolemChance) {
+                entities.add(Golem.create(world, new Vector2(position).add(0.0f, tileHeight + 2.0f)));
             }
 
             tiles.add(Tile.create(

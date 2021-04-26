@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import fi.jakojaannos.syvyys.GameState;
 import fi.jakojaannos.syvyys.entities.Player;
+import fi.jakojaannos.syvyys.stages.BossStage;
 import fi.jakojaannos.syvyys.stages.RegularCircleStage;
 
 import java.util.stream.Stream;
@@ -32,7 +33,7 @@ public class TransitionStageSystem implements EcsSystem<Player> {
                     circleN = circleStage.circleN + 1;
                 }
 
-                gameState.changeStage(new RegularCircleStage(circleN), false);
+                gameState.changeStage(circleN % 10 != 0 ? new RegularCircleStage(circleN) : new BossStage(circleN), false);
             }
         });
     }

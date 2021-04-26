@@ -19,6 +19,27 @@ public class GolemAiTickSystem implements EcsSystem<Golem> {
                 return;
             }
 
+            if (golem.isInContactWithPlayer && !gameState.getTimers().isActiveAndValid(golem.damageTickTimer)) {
+                golem.damageTickTimer = gameState.getTimers().set(0.1f, true, () -> {
+
+                    optPlayer.get().dealDamage(5.0f, gameState);
+                    final var pushForce = 5.0f * optPlayer.get().body().getMass();
+                    final var outward = new Vector2(optPlayer.get().body().getPosition())
+                            .sub(golem.body().getPosition())
+                            .nor()
+                            .scl(pushForce);
+
+                    optPlayer.get().body().applyLinearImpulse(
+                            outward,
+                            optPlayer.get().body().getPosition(),
+                            true
+                    );
+
+                });
+            } else if (!golem.isInContactWithPlayer) {
+                gameState.getTimers().clear(golem.damageTickTimer);
+            }
+
             boolean didAttack = false;
             if (canAttack(gameState, golem)) {
                 didAttack = tryAttack(gameState, golem, optPlayer.get());
@@ -78,11 +99,11 @@ public class GolemAiTickSystem implements EcsSystem<Golem> {
         }
 
         golem.input(new CharacterInput(0.0f, true, false));
-        golem.attackTimer = gameState.getTimers().set(golem.attackDelay, false, () -> {});
+        golem.attackCdTimer = gameState.getTimers().set(golem.attackDelay, false, () -> {});
         return true;
     }
 
     private boolean canAttack(final GameState gameState, final Golem golem) {
-        return !gameState.getTimers().isActiveAndValid(golem.attackTimer);
+        return !gameState.getTimers().isActiveAndValid(golem.attackCdTimer);
     }
 }
