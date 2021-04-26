@@ -32,6 +32,7 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
     private float health;
     private boolean deathSequenceHasFinished;
     private int nShots;
+    private boolean inputDisabled;
 
     public GameCharacter(
             final Body body,
@@ -71,6 +72,21 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
     @Override
     public void input(final CharacterInput input) {
         this.input = input;
+    }
+
+    @Override
+    public boolean inputDisabled(final GameState gameState) {
+        return this.inputDisabled;
+    }
+
+    @Override
+    public void disableInput() {
+        this.inputDisabled = true;
+    }
+
+    @Override
+    public void enableInput() {
+        this.inputDisabled = false;
     }
 
     @Override

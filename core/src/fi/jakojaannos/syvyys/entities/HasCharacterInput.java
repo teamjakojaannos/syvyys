@@ -10,4 +10,8 @@ public interface HasCharacterInput {
     default boolean inputDisabled(final GameState gameState) {
         return false;
     }
+
+    void disableInput();
+
+    void enableInput();
 }

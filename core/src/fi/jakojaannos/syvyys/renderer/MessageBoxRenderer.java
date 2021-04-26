@@ -1,13 +1,16 @@
 package fi.jakojaannos.syvyys.renderer;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Align;
+import fi.jakojaannos.syvyys.GameState;
 import fi.jakojaannos.syvyys.entities.GameCharacter;
+import fi.jakojaannos.syvyys.entities.Player;
 import fi.jakojaannos.syvyys.entities.UI;
 import fi.jakojaannos.syvyys.stages.RegularCircleStage;
 
@@ -23,8 +26,12 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
     private final Texture healthBar;
     private final TextureRegion[] healthBarFrames;
 
+    private final Texture abilityIcons;
+    private final TextureRegion[] abilityFrames;
+
     public MessageBoxRenderer() {
         this.panel = new Texture("ui_background.png");
+        this.abilityIcons = new Texture("ui_ability_icons.png");
         this.healthBar = new Texture("healthbar.png");
 
         this.panelFrames = Arrays.stream(TextureRegion.split(this.panel, 2, 2))
@@ -33,6 +40,9 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
         this.healthBarFrames = Arrays.stream(TextureRegion.split(this.healthBar, 1, 9))
                                      .flatMap(Arrays::stream)
                                      .toArray(TextureRegion[]::new);
+        this.abilityFrames = Arrays.stream(TextureRegion.split(this.abilityIcons, 16, 16))
+                                   .flatMap(Arrays::stream)
+                                   .toArray(TextureRegion[]::new);
 
         final var genRegular = new FreeTypeFontGenerator(Gdx.files.internal("pixeled.ttf"));
         final var paramRegular = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -70,14 +80,14 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
                 this.fontRegular.draw(context.batch(), ui.messageText, 25, screenHeight - 25);
             }
 
-            if (ui.showPlayerHp && context.gameState().getPlayer().isPresent()) {
+            if (ui.showPlayerHp && context.gameState().getPlayer().map(player -> !player.dead()).orElse(false)) {
                 final var height = screenHeight / 15.0f;
                 final var width = screenWidth / 4.0f;
                 final var unit = height / 9.0f;
                 final var fillAreaWidth = width - 2 * unit;
 
                 final var startX = 10.0f;
-                final var startY = 15.0f;
+                final var startY = 5.0f * unit;
                 context.batch().draw(this.healthBarFrames[0], startX, startY, unit, height);
                 context.batch().draw(this.healthBarFrames[3], startX + unit + fillAreaWidth, startY, unit, height);
 
@@ -95,6 +105,20 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
                 final var missingHpWidth = fillAreaWidth - currentHpWidth;
                 context.batch().draw(this.healthBarFrames[1], startX + unit, startY, currentHpWidth, height);
                 context.batch().draw(this.healthBarFrames[2], startX + unit + currentHpWidth, startY, missingHpWidth, height);
+
+                final var abilitiesStartX = startX + width + unit;
+                final var abilityUnit = unit; // scale to match with hp bar
+                for (int ability = 0; ability < this.abilityFrames.length; ++ability) {
+                    final var abilitySize = abilityUnit * 16.0f;
+                    context.batch().setColor(isAbilityOnCooldown(context.gameState(), maybePlayer.get(), ability)
+                                                     ? new Color(0.5f, 0.5f, 0.5f, 1.0f)
+                                                     : Color.WHITE);
+                    context.batch().draw(this.abilityFrames[ability],
+                                         abilitiesStartX + (ability * (abilitySize + unit)),
+                                         startY - abilityUnit * 4.0f,
+                                         abilitySize,
+                                         abilitySize);
+                }
             }
 
             final var circleN = context.gameState().getCurrentStage() instanceof RegularCircleStage circleStage
@@ -135,6 +159,14 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
         context.batch().begin();
     }
 
+    private boolean isAbilityOnCooldown(final GameState gameState, final Player player, final int ability) {
+        return switch (ability) {
+            case 0 -> player.attacking();
+            case 1 -> !player.canDash(gameState);
+            default -> true;
+        };
+    }
+
     private void drawBox(
             final RenderContext context,
             final TextureRegion[] frames,
@@ -173,5 +205,6 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
         this.fontRegular.dispose();
         this.panel.dispose();
         this.healthBar.dispose();
+        this.abilityIcons.dispose();
     }
 }

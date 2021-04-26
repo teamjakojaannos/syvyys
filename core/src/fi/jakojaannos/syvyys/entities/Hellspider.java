@@ -59,6 +59,11 @@ public class Hellspider extends GameCharacter implements HasEnemyAI {
         return Float.MAX_VALUE;
     }
 
+    @Override
+    public void onDeadCallback(GameState gameState) {
+        body().setGravityScale(1.0f);
+    }
+
     public static Hellspider create(final World physicsWorld, final Vector2 position) {
         final var bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;

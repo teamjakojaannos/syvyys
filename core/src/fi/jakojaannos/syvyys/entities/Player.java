@@ -13,11 +13,12 @@ public final class Player extends GameCharacter {
     public final float dashDuration = 0.25f;
     public final float dashStrength = 150.0f;
     public final float meNoDieTime = 0.5f;
+    private final float damageKnockbackStrength = 100.0f;
+    private final float damageStaggerDuration = 0.1f;
 
     public TimerHandle dashTimer;
     public TimerHandle dashCooldownTimer;
     public TimerHandle meNoDieTimer;
-
     public boolean justAttacked;
     private AbilityInput abilityInput = new AbilityInput(false);
 
@@ -54,7 +55,7 @@ public final class Player extends GameCharacter {
 
     @Override
     public boolean inputDisabled(final GameState gameState) {
-        return isDashing(gameState);
+        return isDashing(gameState) || super.inputDisabled(gameState);
     }
 
     @Override
@@ -149,9 +150,20 @@ public final class Player extends GameCharacter {
         }, position, rayEnd);
 
         if (hitInfo.thereWasAHit && hitInfo.body != null) {
-            if (hitInfo.body.getUserData() instanceof HasHealth killable) {
+            final var target = hitInfo.body.getUserData();
+            if (target instanceof HasHealth killable) {
                 killable.dealDamage(5.0f, gameState);
             }
+            if (target instanceof HasCharacterInput characterInput) {
+                characterInput.disableInput();
+                gameState.getTimers().set(entity.damageStaggerDuration, false, () -> characterInput.enableInput());
+            }
+
+            if (hitInfo.body.getType() == BodyType.DynamicBody) {
+                hitInfo.body.applyLinearImpulse(new Vector2(facingVec).scl(entity.damageKnockbackStrength),
+                                                hitInfo.closestPoint, true);
+            }
+
 
             gameState.obtainParticleEmitter()
                      .spawnBurst(gameState.getCurrentTime(),
