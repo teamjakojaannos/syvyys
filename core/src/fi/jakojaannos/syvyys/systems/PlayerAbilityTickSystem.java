@@ -26,7 +26,7 @@ public class PlayerAbilityTickSystem implements EcsSystem<Player> {
                 );
 
                 final var facingVec = new Vector2(player.facingRight ? 1.0f : -1.0f, 0.0f)
-                        .scl(MathUtils.lerp(player.dashStrength, 0.0f, dashProgress) * (player.grounded() ? 1.0f : 0.25f));
+                        .scl(MathUtils.lerp(player.dashStrength, 0.0f, dashProgress) * (player.grounded() ? 1.0f : 0.5f));
                 player.body().applyLinearImpulse(facingVec, player.body().getPosition(), true);
             }
         });

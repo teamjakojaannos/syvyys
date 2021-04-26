@@ -18,6 +18,8 @@ import java.util.Arrays;
 import java.util.stream.StreamSupport;
 
 public class MessageBoxRenderer implements EntityRenderer<UI> {
+    public static final Color COLOR_NOPE = new Color(0.95f, 0.5f, 0.5f, 1.0f);
+    public static final Color COLOR_INACTIVE = new Color(0.25f, 0.25f, 0.25f, 1.0f);
     private final BitmapFont fontRegular;
     private final BitmapFont fontGothic;
     private final Texture panel;
@@ -110,14 +112,20 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
                 final var abilityUnit = unit; // scale to match with hp bar
                 for (int ability = 0; ability < this.abilityFrames.length; ++ability) {
                     final var abilitySize = abilityUnit * 16.0f;
-                    context.batch().setColor(isAbilityOnCooldown(context.gameState(), maybePlayer.get(), ability)
-                                                     ? new Color(0.5f, 0.5f, 0.5f, 1.0f)
+
+                    final var isOnCooldown = isAbilityOnCooldown(context.gameState(), maybePlayer.get(), ability);
+                    final var tryingToForceIt = abilityInput(maybePlayer.get(), ability);
+
+                    final var offset = tryingToForceIt ? -unit : 0.0f;
+
+                    context.batch().setColor(isOnCooldown
+                                                     ? (tryingToForceIt ? COLOR_NOPE : COLOR_INACTIVE)
                                                      : Color.WHITE);
                     context.batch().draw(this.abilityFrames[ability],
-                                         abilitiesStartX + (ability * (abilitySize + unit)),
-                                         startY - abilityUnit * 4.0f,
-                                         abilitySize,
-                                         abilitySize);
+                                         abilitiesStartX + (ability * (abilitySize + unit)) + offset,
+                                         startY - abilityUnit * 4.0f + offset,
+                                         abilitySize + offset * -2,
+                                         abilitySize + offset * -2);
                 }
             }
 
@@ -164,6 +172,14 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
             case 0 -> player.attacking();
             case 1 -> !player.canDash(gameState);
             default -> true;
+        };
+    }
+
+    private boolean abilityInput(final Player player, final int ability) {
+        return switch (ability) {
+            case 0 -> player.input().attack() || player.isHoldingAttack;
+            case 1 -> player.abilityInput().dashInput();
+            default -> false;
         };
     }
 

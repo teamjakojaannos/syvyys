@@ -110,6 +110,10 @@ public class RegularCircleStage implements GameStage {
         final boolean attackPressed = Gdx.input.isKeyPressed(Input.Keys.Z) ||
                 Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT);
 
+        if (!attackPressed) {
+            this.player.isHoldingAttack = false;
+        }
+
         final boolean jumpPressed = Gdx.input.isKeyPressed(Input.Keys.SPACE);
 
         if (Gdx.input.isKeyPressed(Input.Keys.K)) {
@@ -128,6 +132,12 @@ public class RegularCircleStage implements GameStage {
 
     @Override
     public void systemTick(final GameState gameState) {
+        this.player.input(new CharacterInput(
+                this.player.input().horizontalInput(),
+                this.player.input().attack() && !this.player.isHoldingAttack,
+                this.player.input().jump()
+        ));
+
         this.playerAbilityTick.tick(gameState.getEntities(Player.class), gameState);
         this.characterTick.tick(gameState.getEntities(CharacterTickSystem.InputEntity.class), gameState);
         this.soulTrapTick.tick(gameState.getEntities(SoulTrap.class), gameState);
@@ -137,6 +147,10 @@ public class RegularCircleStage implements GameStage {
         this.reaperTick.tick(gameState.getEntities(HasHealth.class, true), gameState);
         this.emitterTick.tick(gameState.getEntities(ParticleEmitter.class), gameState);
         this.transitionTick.tick(gameState.getEntities(Player.class, true), gameState);
+
+        if (this.player.input().attack()) {
+            this.player.isHoldingAttack = true;
+        }
     }
 
     @Override

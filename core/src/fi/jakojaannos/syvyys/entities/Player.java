@@ -20,6 +20,7 @@ public final class Player extends GameCharacter {
     public TimerHandle dashCooldownTimer;
     public TimerHandle meNoDieTimer;
     public boolean justAttacked;
+    public boolean isHoldingAttack;
     private AbilityInput abilityInput = new AbilityInput(false);
 
     public Player(final Body body) {
