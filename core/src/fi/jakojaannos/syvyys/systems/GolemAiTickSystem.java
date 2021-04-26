@@ -21,7 +21,6 @@ public class GolemAiTickSystem implements EcsSystem<Golem> {
 
             boolean didAttack = false;
             if (canAttack(gameState, golem)) {
-                System.out.println("Trying to attack....");
                 didAttack = tryAttack(gameState, golem, optPlayer.get());
             }
 
