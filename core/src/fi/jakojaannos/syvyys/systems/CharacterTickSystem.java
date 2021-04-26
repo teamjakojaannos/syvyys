@@ -1,8 +1,5 @@
 package fi.jakojaannos.syvyys.systems;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.math.MathUtils;
 import fi.jakojaannos.syvyys.GameState;
 import fi.jakojaannos.syvyys.entities.*;
 
@@ -11,11 +8,6 @@ import java.util.stream.Stream;
 
 public class CharacterTickSystem implements EcsSystem<CharacterTickSystem.InputEntity> {
     private static final float EPSILON = 0.0001f;
-    private final Sound pew;
-
-    public CharacterTickSystem() {
-        this.pew = Gdx.audio.newSound(Gdx.files.internal("Blast4.ogg"));
-    }
 
     @Override
     public void tick(final Stream<InputEntity> entities, final GameState gameState) {
@@ -59,7 +51,6 @@ public class CharacterTickSystem implements EcsSystem<CharacterTickSystem.InputE
 
             entity.shotTimer(timers.set(shotDuration, true, () -> {
                 if (entity instanceof Player player) {
-                    this.pew.play(0.5f, 1.75f + MathUtils.random(0.0f, 0.25f), 0.0f);
                     Player.tickAttack(gameState, player);
                 } else if (entity instanceof Demon demon) {
                     Demon.tickAttack(gameState, demon);

@@ -21,12 +21,14 @@ public class PlayerRenderer implements EntityRenderer<Player> {
     private final Animation<TextureRegion> falling;
     private final Animation<TextureRegion> dash;
     private final Sound pew;
+    private final Sound splat;
 
     private float currentTime;
 
     public PlayerRenderer() {
         this.texture = new Texture("miner.png");
         this.pew = Gdx.audio.newSound(Gdx.files.internal("Blast4.ogg"));
+        this.splat = Gdx.audio.newSound(Gdx.files.internal("demoni_sylkee_3-2.wav"));
 
         final var frames = Arrays.stream(TextureRegion.split(this.texture, 16, 16))
                                  .flatMap(Arrays::stream)
@@ -53,8 +55,13 @@ public class PlayerRenderer implements EntityRenderer<Player> {
 
         entities.forEach(player -> {
             if (player.justAttacked) {
-                //this.pew.play(0.5f, 1.75f + MathUtils.random(0.0f, 0.25f), 0.0f);
+                this.pew.play(0.25f, 1.75f + MathUtils.random(0.0f, 0.25f), 0.0f);
                 player.justAttacked = false;
+            }
+
+            if (player.justHitSomething) {
+                this.splat.play(0.5f, 1.75f + MathUtils.random(0.0f, 0.25f), 0.0f);
+                player.justHitSomething = false;
             }
 
             final var velocity = player.body().getLinearVelocity();
@@ -124,5 +131,6 @@ public class PlayerRenderer implements EntityRenderer<Player> {
     public void close() {
         this.texture.dispose();
         this.pew.dispose();
+        this.splat.dispose();
     }
 }

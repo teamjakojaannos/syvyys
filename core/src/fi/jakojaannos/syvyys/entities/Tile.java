@@ -12,7 +12,7 @@ public record Tile(
         int tileIndex,
         Color tint,
         boolean hasCollision
-) implements Entity {
+) implements Entity, HasBody {
     public static Tile create(
             final World physicsWorld,
             final float width,

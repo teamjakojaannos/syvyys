@@ -77,7 +77,7 @@ public class SoulTrapRenderer implements EntityRenderer<SoulTrap> {
 
         if (shouldStartScreaming.get()) {
             this.goToHell.play(
-                    0.5f,
+                    0.125f,
                     MathUtils.random(0.5f, 2.0f),
                     MathUtils.random(-0.2f, 0.2f)
             );

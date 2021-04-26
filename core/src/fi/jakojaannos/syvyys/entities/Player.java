@@ -23,7 +23,7 @@ public final class Player extends GameCharacter {
     public boolean isHoldingAttack;
     public float damage = 5.0f;
     public boolean dashUnlocked;
-
+    public boolean justHitSomething;
     private AbilityInput abilityInput = new AbilityInput(false);
 
     public Player(final Body body) {
@@ -163,6 +163,7 @@ public final class Player extends GameCharacter {
         if (hitInfo.thereWasAHit && hitInfo.body != null) {
             final var target = hitInfo.body.getUserData();
             if (target instanceof HasHealth killable) {
+                entity.justHitSomething = true;
                 killable.dealDamage(entity.damage, gameState);
             }
             if (target instanceof HasCharacterInput characterInput) {

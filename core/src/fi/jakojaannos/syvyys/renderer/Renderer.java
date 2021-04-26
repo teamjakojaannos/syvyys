@@ -47,7 +47,8 @@ public class Renderer implements AutoCloseable {
     @SuppressWarnings({"rawtypes", "unchecked"})
     public void render(final GameState gameState, final Stream<Entity> entities) {
         final var entitiesByClass =
-                entities.reduce(new HashMap<Class<?>, List<Entity>>(), (results, entity) -> {
+                entities.filter(e -> isInRenderableRadius(gameState, e))
+                        .reduce(new HashMap<Class<?>, List<Entity>>(), (results, entity) -> {
                                     final var clazz = entity.getClass();
                                     results.computeIfAbsent(clazz, key -> new ArrayList<>())
                                            .add(entity);
@@ -92,6 +93,17 @@ public class Renderer implements AutoCloseable {
         if (SyvyysGame.Constants.DEBUG_PHYSICS) {
             this.physicsDebugRenderer.render(gameState.getPhysicsWorld(), this.camera.getCombinedMatrix());
         }
+    }
+
+    private boolean isInRenderableRadius(final GameState gameState, final Entity e) {
+        if (e instanceof HasBody bodyOwner) {
+            final var hDistanceFromPlayer = Math.abs(gameState.getLastKnownPlayerLocation().x - bodyOwner.body().getPosition().x);
+            return hDistanceFromPlayer < gameState.getCamera().getWidthInUnits2(gameState);
+        }
+
+        return true;
+
+
     }
 
     @Override

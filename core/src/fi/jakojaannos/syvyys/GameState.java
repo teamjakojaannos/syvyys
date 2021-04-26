@@ -1,6 +1,8 @@
 package fi.jakojaannos.syvyys;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import fi.jakojaannos.syvyys.entities.*;
 import fi.jakojaannos.syvyys.renderer.Camera;
@@ -23,10 +25,12 @@ public class GameState {
     private final Camera camera;
     private final List<ParticleEmitter> particleEmittersPool = new ArrayList<>();
     public int souls = 0;
+    public Vector2 getLastKnownPlayerLocation = new Vector2();
     private Player player;
     private float currentTime;
     private GameStage nextStage;
     private boolean hardReset;
+    private float posUpdateTimestamp;
     private Color backgroundColor = new Color(0.3f, 0.3f, 0.3f, 1.0f);
 
     public GameState(
@@ -153,5 +157,17 @@ public class GameState {
 
     public boolean isHardReset() {
         return this.hardReset;
+    }
+
+    public Vector2 getLastKnownPlayerLocation() {
+        if (this.currentTime > this.posUpdateTimestamp) {
+            getPlayer()
+                    .map(GameCharacter::body)
+                    .map(Body::getPosition)
+                    .ifPresent(this.getLastKnownPlayerLocation::set);
+            this.posUpdateTimestamp = this.currentTime;
+        }
+
+        return this.getLastKnownPlayerLocation;
     }
 }

@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import fi.jakojaannos.syvyys.GameState;
+import fi.jakojaannos.syvyys.entities.GameCharacter;
 
 public class Camera {
     private final float widthInUnits = 17.5f;
@@ -72,5 +74,12 @@ public class Camera {
 
     public void setLocation(final Vector2 position) {
         this.camera.position.set(position, 0.0f);
+    }
+
+    public float getWidthInUnits2(final GameState gameState) {
+        return this.widthInUnits + gameState.getPlayer()
+                                            .map(GameCharacter::maxSpeed)
+                                            .map(x -> x * 3.0f) // * n of physics ticks for a single frame until player can see offscreen
+                                            .orElse(10.0f);
     }
 }

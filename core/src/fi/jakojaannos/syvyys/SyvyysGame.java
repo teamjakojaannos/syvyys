@@ -24,7 +24,7 @@ public class SyvyysGame extends ApplicationAdapter {
     public void create() {
         this.renderer = new Renderer();
         this.kauhuambianssiPisteÄmPeeKolme = Gdx.audio.newMusic(Gdx.files.internal("Paskapersekauhuambianssi.mp3"));
-        this.kauhuambianssiPisteÄmPeeKolme.setVolume(0.1f);
+        this.kauhuambianssiPisteÄmPeeKolme.setVolume(0.05f);
         this.kauhuambianssiPisteÄmPeeKolme.play();
         this.kauhuambianssiPisteÄmPeeKolme.setPosition(7.5f);
         this.kauhuambianssiPisteÄmPeeKolme.setLooping(true);

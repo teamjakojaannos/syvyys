@@ -24,7 +24,7 @@ public class DemonRenderer implements EntityRenderer<Demon> {
         this.spit = new Sound[]{
                 Gdx.audio.newSound(Gdx.files.internal("demoni_sylkee_1-2.wav")),
                 Gdx.audio.newSound(Gdx.files.internal("demoni_sylkee_2-2.wav")),
-                Gdx.audio.newSound(Gdx.files.internal("demoni_sylkee_3-2.wav")),
+                //Gdx.audio.newSound(Gdx.files.internal("demoni_sylkee_3-2.wav")), // does not fit, re-used as hit marker sfx
         };
 
         final var frames = Arrays.stream(TextureRegion.split(this.texture, 16, 16))
@@ -46,7 +46,7 @@ public class DemonRenderer implements EntityRenderer<Demon> {
         demons.forEach(demon -> {
             if (demon.justAttacked) {
                 final var pew = this.spit[MathUtils.random(this.spit.length - 1)];
-                pew.play(0.5f, MathUtils.random(0.8f, 1.2f), 0.0f);
+                pew.play(0.125f, MathUtils.random(0.8f, 1.2f), 0.0f);
                 demon.justAttacked = false;
             }
 
