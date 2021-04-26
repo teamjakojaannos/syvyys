@@ -36,7 +36,9 @@ public class Renderer implements AutoCloseable {
                 Map.entry(Hellspider.class, new HellspiderRenderer()),
                 Map.entry(UI.class, new MessageBoxRenderer()),
                 Map.entry(SoulTrap.class, new SoulTrapRenderer()),
-                Map.entry(DemonBall.class, new DemonBallRenderer())
+                Map.entry(DemonBall.class, new DemonBallRenderer()),
+                Map.entry(ShopItem.class, new ShopItemRenderer())
+
         );
 
         this.physicsDebugRenderer = new Box2DDebugRenderer();
@@ -58,10 +60,10 @@ public class Renderer implements AutoCloseable {
                                 });
 
         this.camera.update();
-        this.batch.setProjectionMatrix(this.camera.getCombinedMatrix());
-        this.batch.begin();
 
         for (final var layer : RenderLayer.backToFront()) {
+            this.batch.setProjectionMatrix(this.camera.getCombinedMatrix());
+            this.batch.begin();
             final var context = new RenderContext(this.batch, gameState, this.camera, layer);
             entitiesByClass.forEach((clazz, entitiesOfClazz) -> {
                 // UI is hardcoded last
@@ -74,15 +76,18 @@ public class Renderer implements AutoCloseable {
                     renderer.render(entitiesOfClazz, context);
                 }
             });
+            this.batch.end();
         }
 
+        this.batch.setProjectionMatrix(this.camera.getCombinedMatrix());
+        this.batch.begin();
         final EntityRenderer renderer = this.renderers.get(UI.class);
         if (renderer != null) {
             final var context = new RenderContext(this.batch, gameState, this.camera, null);
             renderer.render(entitiesByClass.get(UI.class), context);
         }
-
         this.batch.end();
+
 
         if (SyvyysGame.Constants.DEBUG_PHYSICS) {
             this.physicsDebugRenderer.render(gameState.getPhysicsWorld(), this.camera.getCombinedMatrix());

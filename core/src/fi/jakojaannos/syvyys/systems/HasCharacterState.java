@@ -23,7 +23,7 @@ public interface HasCharacterState {
 
     float attackDuration();
 
-    float shotsPerAttack();
+    int shotsPerAttack();
 
     TimerHandle shotTimer();
 
@@ -44,4 +44,6 @@ public interface HasCharacterState {
     float maxSpeed();
 
     boolean checkShouldContinueShootingAfterShot();
+
+    void shotsPerAttack(int value);
 }

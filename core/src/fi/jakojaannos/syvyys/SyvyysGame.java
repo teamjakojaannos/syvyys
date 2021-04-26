@@ -6,6 +6,8 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.utils.ScreenUtils;
 import fi.jakojaannos.syvyys.renderer.Renderer;
 import fi.jakojaannos.syvyys.stages.GameStage;
+import fi.jakojaannos.syvyys.stages.IntroStage;
+import fi.jakojaannos.syvyys.stages.RegularCircleStage;
 
 public class SyvyysGame extends ApplicationAdapter {
     private Renderer renderer;
@@ -28,8 +30,11 @@ public class SyvyysGame extends ApplicationAdapter {
         this.kauhuambianssiPisteÄmPeeKolme.setLooping(true);
 
         // Initialize game
-        //changeStage(new fi.jakojaannos.syvyys.stages.IntroStage());
-        changeStage(new fi.jakojaannos.syvyys.stages.RegularCircleStage(1));
+        if (Constants.FAST_INTRO) {
+            changeStage(new RegularCircleStage(1));
+        } else {
+            changeStage(new IntroStage());
+        }
     }
 
     private void changeStage(final GameStage stage) {
@@ -102,9 +107,10 @@ public class SyvyysGame extends ApplicationAdapter {
         public static final int VELOCITY_ITERATIONS = 6;
         public static final int POSITION_ITERATIONS = 2;
 
-        public static final boolean GENERATE_SHOP = false;
+        public static final boolean GENERATE_SHOP = true;
 
         // Debug
+        public static final boolean FAST_INTRO = true;
         public static final boolean DEBUG_PHYSICS = false;
         public static final boolean DEBUG_ATTACK_RAYCAST = false;
         public static final boolean SATANMODE = false; // Can't be "Godmode" cuz' we're in hell ;)

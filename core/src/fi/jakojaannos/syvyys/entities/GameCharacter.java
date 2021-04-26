@@ -7,18 +7,17 @@ import fi.jakojaannos.syvyys.SyvyysGame;
 import fi.jakojaannos.syvyys.TimerHandle;
 import fi.jakojaannos.syvyys.systems.CharacterTickSystem;
 
-public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth {
+public class GameCharacter extends TracksPlayerContact.Simple implements CharacterTickSystem.InputEntity, HasHealth {
     private final float attackDuration;
     private final float attackInitialDelay;
-    private final int shotsPerAttack;
     private final float jumpForce;
     private final float width;
     private final float height;
     private final float maxHealth;
     private final float deathAnimationDuration;
     private final Body body;
-    private final float maxSpeed;
-
+    private final int soulReward;
+    public float maxSpeed;
     public float distanceTravelled = 0.0f;
     public float previousDistanceTravelled;
     public boolean grounded = false;
@@ -26,6 +25,7 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
     public boolean attacking;
     public TimerHandle attackTimer;
     public TimerHandle shotTimer;
+    private int shotsPerAttack;
     private TimerHandle deathTimer;
     private TimerHandle attackDelayTimer;
     private CharacterInput input = new CharacterInput(0.0f, false, false);
@@ -44,7 +44,8 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
             final int shotsPerAttack,
             final float attackInitialDelay,
             final float deathAnimationDuration,
-            final float maxSpeed
+            final float maxSpeed,
+            final int soulReward
     ) {
         this.attackDuration = attackDuration;
         this.shotsPerAttack = shotsPerAttack;
@@ -56,6 +57,7 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
         this.attackInitialDelay = attackInitialDelay;
         this.deathAnimationDuration = deathAnimationDuration;
         this.maxSpeed = maxSpeed;
+        this.soulReward = soulReward;
     }
 
     public float width() { return this.width; }
@@ -141,7 +143,7 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
     }
 
     @Override
-    public float shotsPerAttack() {
+    public int shotsPerAttack() {
         return this.shotsPerAttack;
     }
 
@@ -241,6 +243,11 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
     }
 
     @Override
+    public void onDeadCallback(GameState gameState) {
+        gameState.souls += this.soulReward;
+    }
+
+    @Override
     public void onStartDeathSequenceCallback(final GameState gameState) {
         body().getFixtureList()
               .forEach(fixture -> {
@@ -271,5 +278,10 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
         }
 
         return false;
+    }
+
+    @Override
+    public void shotsPerAttack(final int value) {
+        this.shotsPerAttack = value;
     }
 }

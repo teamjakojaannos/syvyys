@@ -10,17 +10,20 @@ import fi.jakojaannos.syvyys.TimerHandle;
 
 public final class Player extends GameCharacter {
     public final float dashCoolDown = 3.0f;
-    public final float dashDuration = 0.25f;
     public final float dashStrength = 150.0f;
     public final float meNoDieTime = 0.5f;
+    private final float weaponSelfKnockback = 75.0f;
     private final float damageKnockbackStrength = 100.0f;
     private final float damageStaggerDuration = 0.1f;
-
+    public float dashDuration = 0.25f;
     public TimerHandle dashTimer;
     public TimerHandle dashCooldownTimer;
     public TimerHandle meNoDieTimer;
     public boolean justAttacked;
     public boolean isHoldingAttack;
+    public float damage = 5.0f;
+    public boolean dashUnlocked;
+
     private AbilityInput abilityInput = new AbilityInput(false);
 
     public Player(final Body body) {
@@ -31,7 +34,8 @@ public final class Player extends GameCharacter {
               0.4f, 3,
               0.1f,
               3.0f,
-              3.0f);
+              3.0f,
+              0);
     }
 
     public AbilityInput abilityInput() {
@@ -71,6 +75,10 @@ public final class Player extends GameCharacter {
     public static Player copyFrom(final World physicsWorld, final Vector2 position, final Player other) {
         final var player = Player.create(physicsWorld, position);
         player.health(other.health());
+        player.dashUnlocked = other.dashUnlocked;
+        player.maxSpeed = other.maxSpeed;
+        player.damage = other.damage;
+        player.shotsPerAttack(other.shotsPerAttack());
 
         return player;
     }
@@ -115,6 +123,8 @@ public final class Player extends GameCharacter {
                 .add(position);
         final var temp = new Vector2(facingVec).scl(-1);
 
+        entity.body().applyLinearImpulse(new Vector2(temp).scl(entity.weaponSelfKnockback), entity.body().getPosition(), true);
+
         final var hitInfo = new HitInfo();
         hitInfo.closestFraction = 1.0f;
         hitInfo.closestPoint.set(rayEnd);
@@ -153,11 +163,11 @@ public final class Player extends GameCharacter {
         if (hitInfo.thereWasAHit && hitInfo.body != null) {
             final var target = hitInfo.body.getUserData();
             if (target instanceof HasHealth killable) {
-                killable.dealDamage(5.0f, gameState);
+                killable.dealDamage(entity.damage, gameState);
             }
             if (target instanceof HasCharacterInput characterInput) {
                 characterInput.disableInput();
-                gameState.getTimers().set(entity.damageStaggerDuration, false, () -> characterInput.enableInput());
+                gameState.getTimers().set(entity.damageStaggerDuration, false, characterInput::enableInput);
             }
 
             if (hitInfo.body.getType() == BodyType.DynamicBody) {

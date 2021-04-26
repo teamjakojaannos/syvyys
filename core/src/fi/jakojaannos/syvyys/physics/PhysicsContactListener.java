@@ -33,26 +33,19 @@ public class PhysicsContactListener implements ContactListener {
             }
 
             return true;
-        }
-        // TODO: interface TracksContactWithPlayer
-        else if (dataA instanceof Player && dataB instanceof SoulTrap trap) {
-            if (trap.state == SoulTrap.State.IDLE) {
-                trap.state = SoulTrap.State.BUBBLING;
+        } else if (dataA instanceof Player && dataB instanceof TracksPlayerContact contactTracker) {
+            if (contactTracker instanceof SoulTrap trap) {
+                if (trap.state == SoulTrap.State.IDLE) {
+                    trap.state = SoulTrap.State.BUBBLING;
+                }
             }
 
-            trap.isInContactWithPlayer = true;
+            contactTracker.beginContact();
 
             return true;
         } else if (dataA instanceof DemonBall ball && dataB instanceof Tile) {
             ball.collidedWithWall = true;
             return true;
-        } else if (dataA instanceof DemonBall ball && dataB instanceof Player) {
-            ball.isInContactWithPlayer = true;
-            return true;
-        } else if (dataA instanceof Hellspider hellspider && dataB instanceof Player) {
-            if (hellspider.state == Hellspider.State.DASHING) {
-                hellspider.isInContactWithPlayer = true;
-            }
         }
 
         return false;
@@ -71,9 +64,8 @@ public class PhysicsContactListener implements ContactListener {
     }
 
     private boolean resolveEndContact(final WorldManifold manifold, final Object dataA, final Object dataB) {
-        if (dataA instanceof Player && dataB instanceof SoulTrap trap) {
-            trap.isInContactWithPlayer = false;
-
+        if (dataA instanceof Player && dataB instanceof TracksPlayerContact contactTracker) {
+            contactTracker.endContact();
             return true;
         }
 

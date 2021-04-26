@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import fi.jakojaannos.syvyys.TimerHandle;
 
-public class SoulTrap implements Entity {
+public class SoulTrap extends TracksPlayerContact.Simple implements Entity {
     public static final float SIZE = 2.0f;
 
     private final Body body;
@@ -14,7 +14,6 @@ public class SoulTrap implements Entity {
     public TimerHandle damageTimer;
     public float bubblingDuration;
     public float attackDuration;
-    public boolean isInContactWithPlayer;
     public float damageTickInterval;
 
     public SoulTrap(final Body body) {

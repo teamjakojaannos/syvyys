@@ -11,7 +11,7 @@ public class HellspiderCollideWithPlayerSystem implements EcsSystem<Hellspider> 
     @Override
     public void tick(final Stream<Hellspider> spooders, final GameState gameState) {
         spooders.forEach(spoder -> {
-            if (spoder.isInContactWithPlayer) {
+            if (spoder.isInContactWithPlayer && spoder.state == Hellspider.State.DASHING) {
                 gameState.getPlayer().ifPresent(player -> {
                     player.dealDamage(spoder.attackDamage, gameState);
                     final var position = player.body().getPosition();

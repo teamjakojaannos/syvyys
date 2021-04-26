@@ -4,8 +4,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import fi.jakojaannos.syvyys.GameState;
 import fi.jakojaannos.syvyys.SyvyysGame;
+import fi.jakojaannos.syvyys.Upgrade;
 import fi.jakojaannos.syvyys.entities.*;
+import fi.jakojaannos.syvyys.stages.RegularCircleStage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +47,7 @@ public class TileLevelGenerator extends LevelGenerator {
     }
 
     @Override
-    public Level generateLevel(final World world) {
+    public Level generateLevel(final World world, final GameState gameState) {
         final var worldStart = -7;
         final List<Tile> tiles = new ArrayList<>();
         final List<Entity> entities = new ArrayList<>();
@@ -52,11 +55,12 @@ public class TileLevelGenerator extends LevelGenerator {
         int generated = 0;
         int previousHeight = 200;
         int lastEndX = worldStart;
-        boolean isFirst = SyvyysGame.Constants.GENERATE_SHOP;
+        final var isFirstCircle = gameState.getCurrentStage() instanceof RegularCircleStage circle && circle.circleN == 1;
+        boolean isFirst = SyvyysGame.Constants.GENERATE_SHOP && !isFirstCircle;
         while (generated < this.worldLength) {
             final var startX = worldStart + generated;
             final var stripLength = this.random.nextInt(16) + 4;
-            previousHeight = generateStrip(world, tiles, entities, startX, startX + stripLength, previousHeight, isFirst);
+            previousHeight = generateStrip(world, tiles, entities, startX, startX + stripLength, previousHeight, isFirst, gameState);
 
             generated += stripLength;
             lastEndX = startX + stripLength;
@@ -76,7 +80,8 @@ public class TileLevelGenerator extends LevelGenerator {
             final int stripStartTileX,
             final int stripEndTileX,
             final int previousStripTileY,
-            final boolean isFirst
+            final boolean isFirst,
+            final GameState gameState
     ) {
         final var tileWidth = 0.5f;
         final var tileHeight = 0.5f;
@@ -115,6 +120,25 @@ public class TileLevelGenerator extends LevelGenerator {
             final int shopCeilingY = stripTileY + shopHeight;
             generateWall(world, tiles, shopLeftX, stripTileY, shopCeilingY, false);
             generateWall(world, tiles, shopRightX, shopCeilingY, stripTileY + SHOP_HALLWAY_HEIGHT, false);
+
+            final var shopItemCount = 3;
+            final int shopItemMargin = 2;
+            final var shopItemWidth = (shopWidth - shopItemMargin) / (float) shopItemCount;
+            final var shopItemStartX = shopLeftX + shopItemMargin;
+            final var added = new ArrayList<Upgrade>();
+            for (int i = 0; i < shopItemCount; i++) {
+                final var itemX = (shopItemStartX + i * shopItemWidth) * tileWidth + 0.5f;
+
+                // HACK: remove from pool instead of get to make sure we get no duplicates. Added back after selection
+                if (gameState.upgradePool.size() == 0) {
+                    break;
+                }
+                final var upgrade = gameState.upgradePool.remove(MathUtils.random(gameState.upgradePool.size() - 1));
+                added.add(upgrade);
+
+                entities.add(ShopItem.create(world, new Vector2(itemX, (stripTileY + 2) * tileHeight + 0.25f), upgrade));
+            }
+            gameState.upgradePool.addAll(added);
         }
 
         final var n = stripEndTileX - stripStartTileX;

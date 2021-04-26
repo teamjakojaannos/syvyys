@@ -2,6 +2,7 @@ package fi.jakojaannos.syvyys.level.garbage;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import fi.jakojaannos.syvyys.GameState;
 import fi.jakojaannos.syvyys.entities.Tile;
 import fi.jakojaannos.syvyys.level.Level;
 import fi.jakojaannos.syvyys.level.LevelGenerator;
@@ -18,7 +19,7 @@ public class DefaultLevelGenerator extends LevelGenerator {
     }
 
     @Override
-    public Level generateLevel(final World world) {
+    public Level generateLevel(final World world, GameState gameState) {
         generateFloor(world);
         return new Level();
     }

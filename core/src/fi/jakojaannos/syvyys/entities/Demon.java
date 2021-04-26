@@ -17,12 +17,12 @@ public class Demon extends GameCharacter implements HasEnemyAI {
     public Demon(final Body body) {
         super(body,
               1.0f, 1.0f,
-              6.5f,
               10.0f,
-              2.0f, 3,
-              0.75f,
+              10.0f,
+              3.0f, 3,
+              0.1f,
               1.0f,
-              2.5f);
+              2.5f, 10);
     }
 
     @Override

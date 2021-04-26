@@ -4,15 +4,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import fi.jakojaannos.syvyys.SyvyysGame;
 
-public class DemonBall implements Entity, HasBody {
+public class DemonBall extends TracksPlayerContact.Simple implements Entity, HasBody {
     public final Vector2 direction;
     public final float timeStamp;
     public final float maxLifeTime;
+    public final float damage;
     private final Body body;
     public float acceleration;
     public boolean collidedWithWall;
-    public final float damage;
-    public boolean isInContactWithPlayer;
 
     public DemonBall(
             final Body body,

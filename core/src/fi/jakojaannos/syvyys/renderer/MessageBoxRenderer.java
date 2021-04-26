@@ -57,6 +57,7 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
         this.fontGothic = genGothic.generateFont(paramGothic);
 
         genRegular.dispose();
+        genGothic.dispose();
     }
 
     @Override
@@ -108,13 +109,25 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
                 context.batch().draw(this.healthBarFrames[1], startX + unit, startY, currentHpWidth, height);
                 context.batch().draw(this.healthBarFrames[2], startX + unit + currentHpWidth, startY, missingHpWidth, height);
 
-                final var abilitiesStartX = startX + width + unit;
-                final var abilityUnit = unit; // scale to match with hp bar
-                for (int ability = 0; ability < this.abilityFrames.length; ++ability) {
-                    final var abilitySize = abilityUnit * 16.0f;
+                this.fontGothic.draw(context.batch(),
+                                     String.format("%d souls", context.gameState().souls),
+                                     0.0f,
+                                     screenHeight,
+                                     screenWidth - 15.0f,
+                                     Align.topRight,
+                                     false);
 
-                    final var isOnCooldown = isAbilityOnCooldown(context.gameState(), maybePlayer.get(), ability);
-                    final var tryingToForceIt = abilityInput(maybePlayer.get(), ability);
+                final var abilitiesStartX = startX + width + unit;
+                final var player = maybePlayer.get();
+                for (int ability = 0; ability < this.abilityFrames.length; ++ability) {
+                    if (!isAbilityUnlocked(player, ability)) {
+                        continue;
+                    }
+
+                    final var abilitySize = unit * 16.0f;
+
+                    final var isOnCooldown = isAbilityOnCooldown(context.gameState(), player, ability);
+                    final var tryingToForceIt = abilityInput(player, ability);
 
                     final var offset = tryingToForceIt ? -unit : 0.0f;
 
@@ -123,7 +136,7 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
                                                      : Color.WHITE);
                     context.batch().draw(this.abilityFrames[ability],
                                          abilitiesStartX + (ability * (abilitySize + unit)) + offset,
-                                         startY - abilityUnit * 4.0f + offset,
+                                         startY - unit * 4.0f + offset,
                                          abilitySize + offset * -2,
                                          abilitySize + offset * -2);
                 }
@@ -165,6 +178,14 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
 
         context.batch().setProjectionMatrix(proj);
         context.batch().begin();
+    }
+
+    private boolean isAbilityUnlocked(final Player player, final int ability) {
+        return switch (ability) {
+            case 0 -> true;
+            case 1 -> player.dashUnlocked;
+            default -> false;
+        };
     }
 
     private boolean isAbilityOnCooldown(final GameState gameState, final Player player, final int ability) {

@@ -14,6 +14,7 @@ import fi.jakojaannos.syvyys.entities.intro.IntroDemonicSpawn;
 import fi.jakojaannos.syvyys.renderer.Camera;
 import fi.jakojaannos.syvyys.renderer.Renderer;
 
+import java.util.Collections;
 import java.util.List;
 
 public class IntroStage implements GameStage {
@@ -52,7 +53,7 @@ public class IntroStage implements GameStage {
                 this.demonicSpawn,
                 this.player,
                 this.ui
-        ), this.player, camera);
+        ), this.player, camera, Collections.emptyList());
         camera.setLocation(new Vector2(0, 2));
 
         this.ukkoKuoriutuuPisteWav = Gdx.audio.newSound(Gdx.files.internal("ukko_kuoriutuu.wav"));

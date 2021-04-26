@@ -12,24 +12,30 @@ public class PlayerAbilityTickSystem implements EcsSystem<Player> {
     @Override
     public void tick(final Stream<Player> entities, final GameState gameState) {
         entities.forEach(player -> {
-            final var input = player.abilityInput();
-
-            if (input.dashInput()) {
-                doDashAction(gameState, player);
-            }
-
-            if (player.isDashing(gameState)) {
-                final var dashProgress = MathUtils.clamp(
-                        gameState.getTimers().getTimeElapsed(player.dashTimer) / player.dashTimer.duration(),
-                        0.0f,
-                        1.0f
-                );
-
-                final var facingVec = new Vector2(player.facingRight ? 1.0f : -1.0f, 0.0f)
-                        .scl(MathUtils.lerp(player.dashStrength, 0.0f, dashProgress) * (player.grounded() ? 1.0f : 0.5f));
-                player.body().applyLinearImpulse(facingVec, player.body().getPosition(), true);
+            if (player.dashUnlocked) {
+                handleDash(gameState, player);
             }
         });
+    }
+
+    private void handleDash(final GameState gameState, final Player player) {
+        final var input = player.abilityInput();
+
+        if (input.dashInput()) {
+            doDashAction(gameState, player);
+        }
+
+        if (player.isDashing(gameState)) {
+            final var dashProgress = MathUtils.clamp(
+                    gameState.getTimers().getTimeElapsed(player.dashTimer) / player.dashTimer.duration(),
+                    0.0f,
+                    1.0f
+            );
+
+            final var facingVec = new Vector2(player.facingRight ? 1.0f : -1.0f, 0.0f)
+                    .scl(MathUtils.lerp(player.dashStrength, 0.0f, dashProgress) * (player.grounded() ? 1.0f : 0.5f));
+            player.body().applyLinearImpulse(facingVec, player.body().getPosition(), true);
+        }
     }
 
     private void doDashAction(final GameState gameState, final Player player) {

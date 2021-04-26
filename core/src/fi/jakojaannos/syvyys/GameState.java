@@ -13,16 +13,16 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class GameState {
+    public final List<Upgrade> upgradePool = new ArrayList<>();
     private final GameStage gameStage;
     private final Timers timers = new Timers();
     private final World physicsWorld;
-
     private final List<Entity> entities;
     private final List<Entity> entitiesToBeSpawned = new ArrayList<>();
     private final List<Entity> entitiesToBeRemoved = new ArrayList<>();
-
     private final Camera camera;
     private final List<ParticleEmitter> particleEmittersPool = new ArrayList<>();
+    public int souls = 0;
     private Player player;
     private float currentTime;
     private GameStage nextStage;
@@ -30,16 +30,19 @@ public class GameState {
     private Color backgroundColor = new Color(0.3f, 0.3f, 0.3f, 1.0f);
 
     public GameState(
-            final GameStage gameStage, final World physicsWorld,
+            final GameStage gameStage,
+            final World physicsWorld,
             final Collection<Entity> entities,
             final Player player,
-            final Camera camera
+            final Camera camera,
+            final List<Upgrade> upgradePool
     ) {
         this.gameStage = gameStage;
         this.physicsWorld = physicsWorld;
         this.entities = new ArrayList<>(entities);
         this.player = player;
         this.camera = camera;
+        this.upgradePool.addAll(upgradePool);
     }
 
     public void changeStage(final GameStage nextStage, final boolean hardReset) {

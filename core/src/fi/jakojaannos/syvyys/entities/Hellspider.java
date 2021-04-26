@@ -17,7 +17,6 @@ public class Hellspider extends GameCharacter implements HasEnemyAI {
     public boolean justDashed;
 
     public State state = State.RUNNING;
-    public boolean isInContactWithPlayer;
 
     public Hellspider(final Body body) {
         super(body,
@@ -27,7 +26,7 @@ public class Hellspider extends GameCharacter implements HasEnemyAI {
               3.0f, 2,
               1.0f,
               1.5f,
-              3.1f);
+              3.1f, 10);
     }
 
     @Override

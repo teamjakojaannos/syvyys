@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import fi.jakojaannos.syvyys.GameState;
+import fi.jakojaannos.syvyys.SyvyysGame;
+import fi.jakojaannos.syvyys.Upgrade;
 import fi.jakojaannos.syvyys.entities.*;
 import fi.jakojaannos.syvyys.level.TileLevelGenerator;
 import fi.jakojaannos.syvyys.physics.PhysicsContactListener;
@@ -14,7 +16,7 @@ import fi.jakojaannos.syvyys.renderer.Renderer;
 import fi.jakojaannos.syvyys.systems.*;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Optional;
 
 public class RegularCircleStage implements GameStage {
@@ -45,7 +47,7 @@ public class RegularCircleStage implements GameStage {
         final var physicsWorld = new World(new Vector2(0.0f, -20.0f), true);
         physicsWorld.setContactListener(new PhysicsContactListener());
 
-        final var playerStartPos = new Vector2(0.0f, 80.0f);
+        final var playerStartPos = new Vector2(0.0f, SyvyysGame.Constants.FAST_INTRO ? 30.0f : 80.0f);
         this.player = Optional.ofNullable(previousState)
                               .flatMap(GameState::getPlayer)
                               .map(player -> Player.copyFrom(physicsWorld, playerStartPos, player))
@@ -57,14 +59,6 @@ public class RegularCircleStage implements GameStage {
         camera.setLocation(new Vector2(0, 90.0f));
         camera.lockedToPlayer = true;
 
-        final var level = new TileLevelGenerator(
-                666L * this.circleN,
-                0.10f + this.circleN * 0.01f,
-                0.035f + this.circleN * 0.01f,
-                0.035f + this.circleN * 0.0075f,
-                200 + 15 * this.circleN
-        ).generateLevel(physicsWorld);
-
         this.characterTick = new CharacterTickSystem();
         this.soulTrapTick = new SoulTrapTickSystem();
         this.demonAiTick = new DemonAiSystem();
@@ -75,20 +69,33 @@ public class RegularCircleStage implements GameStage {
         this.playerAbilityTick = new PlayerAbilityTickSystem();
         this.spooderCollisionTick = new HellspiderCollideWithPlayerSystem();
 
-        final List<Entity> entities = new ArrayList<>(level.getAllTiles());
-        entities.addAll(level.getAllEntities());
-        //entities.add(Hellspider.create(physicsWorld, new Vector2(20.0f, 40.0f)));
+        // Pass null player to disable AI for the "fall sequence". Player is set in TransitionStageSystem once
+        // the player touches down.
+        final var upgrades = Optional
+                .ofNullable(previousState)
+                .map((s) -> s.upgradePool)
+                .orElseGet(() -> Arrays.asList(Upgrade.getAllInitialUpgrades()));
+        final var state = new GameState(gameStage, physicsWorld, new ArrayList<>(), null, camera, upgrades);
+        state.souls = Optional.ofNullable(previousState).map(s -> s.souls).orElse(0);
+        state.setBackgroundColor(new Color(0.01f, 0f, 0f, 1.0f));
 
-        entities.add(this.player);
+        final var level = new TileLevelGenerator(
+                666L * this.circleN,
+                0.10f + this.circleN * 0.01f,
+                0.035f + this.circleN * 0.01f,
+                0.035f + this.circleN * 0.0075f,
+                200 + 15 * this.circleN
+        ).generateLevel(physicsWorld, state);
+
         final var ui = new UI();
         ui.showPlayerHp = true;
         ui.messageText = null;
-        entities.add(ui);
+        state.spawn(ui);
+        state.spawn(this.player);
 
-        // Pass null player to disable AI for the "fall sequence". Player is set in TransitionStageSystem once
-        // the player touches down.
-        final var state = new GameState(gameStage, physicsWorld, entities, null, camera);
-        state.setBackgroundColor(new Color(0.01f, 0f, 0f, 1.0f));
+        level.getAllTiles().forEach(state::spawn);
+        level.getAllEntities().forEach(state::spawn);
+
         return state;
     }
 
@@ -135,7 +142,7 @@ public class RegularCircleStage implements GameStage {
         this.player.input(new CharacterInput(
                 this.player.input().horizontalInput(),
                 this.player.input().attack() && !this.player.isHoldingAttack,
-                this.player.input().jump()
+                this.player.input().jump() && this.player.body().getPosition().x > -10.0f
         ));
 
         this.playerAbilityTick.tick(gameState.getEntities(Player.class), gameState);
