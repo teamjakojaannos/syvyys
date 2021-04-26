@@ -10,7 +10,10 @@ public class GolemAiTickSystem implements EcsSystem<Golem> {
     @Override
     public void tick(final Stream<Golem> entities, final GameState gameState) {
         entities.forEach(golem -> {
+            var optPlayer = gameState.getPlayer();
+            if (optPlayer.isPresent()) {
 
+            }
         });
     }
 }

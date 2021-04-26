@@ -1,7 +1,7 @@
 package fi.jakojaannos.syvyys.stages;
 
-import fi.jakojaannos.syvyys.GameState;
-import fi.jakojaannos.syvyys.renderer.Camera;
+import fi.jakojaannos.syvyys.level.BossLevelGenerator;
+import fi.jakojaannos.syvyys.level.TileLevelGenerator;
 
 public class BossStage extends RegularCircleStage {
     public BossStage(final int circleN) {
@@ -9,11 +9,7 @@ public class BossStage extends RegularCircleStage {
     }
 
     @Override
-    public GameState createState(
-            final GameStage gameStage,
-            final GameState previousState,
-            final Camera camera
-    ) {
-        return super.createState(gameStage, previousState, camera);
+    protected TileLevelGenerator createLevelGenerator() {
+        return new BossLevelGenerator();
     }
 }

@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.utils.ScreenUtils;
 import fi.jakojaannos.syvyys.renderer.Renderer;
+import fi.jakojaannos.syvyys.stages.BossStage;
 import fi.jakojaannos.syvyys.stages.GameStage;
 import fi.jakojaannos.syvyys.stages.IntroStage;
 import fi.jakojaannos.syvyys.stages.RegularCircleStage;
@@ -30,7 +31,9 @@ public class SyvyysGame extends ApplicationAdapter {
         this.kauhuambianssiPisteÄmPeeKolme.setLooping(true);
 
         // Initialize game
-        if (Constants.FAST_INTRO) {
+        if (Constants.BOSSRUSH) {
+            changeStage(new BossStage(10));
+        } else if (Constants.FAST_INTRO) {
             changeStage(new RegularCircleStage(1));
         } else {
             changeStage(new IntroStage());
@@ -111,6 +114,7 @@ public class SyvyysGame extends ApplicationAdapter {
 
         // Debug
         public static final boolean FAST_INTRO = true;
+        public static final boolean BOSSRUSH = true;
         public static final boolean DEBUG_PHYSICS = false;
         public static final boolean DEBUG_ATTACK_RAYCAST = false;
         public static final boolean SATANMODE = false; // Can't be "Godmode" cuz' we're in hell ;)

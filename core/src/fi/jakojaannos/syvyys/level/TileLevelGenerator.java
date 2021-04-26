@@ -15,11 +15,11 @@ import java.util.List;
 import java.util.Random;
 
 public class TileLevelGenerator extends LevelGenerator {
-    private static final int[] TILE_ID_FLOOR = {0, 0, 0, 1, 2};
-    private static final int TILE_ID_WALL_RIGHT = 3;
-    private static final int TILE_ID_WALL_LEFT = 4;
-    private static final int[] TILE_ID_CEILING = {5, 5, 5, 6, 7};
-    private static final int[] TILE_ID_DECORATIVE = {8, 9};
+    protected static final int[] TILE_ID_FLOOR = {0, 0, 0, 1, 2};
+    protected static final int TILE_ID_WALL_RIGHT = 3;
+    protected static final int TILE_ID_WALL_LEFT = 4;
+    protected static final int[] TILE_ID_CEILING = {5, 5, 5, 6, 7};
+    protected static final int[] TILE_ID_DECORATIVE = {8, 9};
 
     private static final int SHOP_HALLWAY_HEIGHT = 4;
 
@@ -73,7 +73,7 @@ public class TileLevelGenerator extends LevelGenerator {
     }
 
 
-    private int generateStrip(
+    protected int generateStrip(
             final World world,
             final List<Tile> tiles,
             final List<Entity> entities,
@@ -192,11 +192,11 @@ public class TileLevelGenerator extends LevelGenerator {
         return stripTileY;
     }
 
-    private int randomTile(final int[] tiles) {
+    protected int randomTile(final int[] tiles) {
         return tiles[MathUtils.random(tiles.length - 1)];
     }
 
-    private void generateWall(
+    protected void generateWall(
             final World world,
             final List<Tile> tiles,
             final int stripStartTileX,
