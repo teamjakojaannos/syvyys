@@ -30,6 +30,7 @@ public class RegularCircleStage implements GameStage {
     private UpdateParticleEmittersSystem emitterTick;
     private DemonBallTickSystem projectileTick;
     private PlayerAbilityTickSystem playerAbilityTick;
+    private SpikeTickSystem spikeTickSystem;
 
     private Player player;
     private HellspiderCollideWithPlayerSystem spooderCollisionTick;
@@ -68,6 +69,7 @@ public class RegularCircleStage implements GameStage {
         this.projectileTick = new DemonBallTickSystem();
         this.playerAbilityTick = new PlayerAbilityTickSystem();
         this.spooderCollisionTick = new HellspiderCollideWithPlayerSystem();
+        this.spikeTickSystem = new SpikeTickSystem();
 
         // Pass null player to disable AI for the "fall sequence". Player is set in TransitionStageSystem once
         // the player touches down.
@@ -79,13 +81,7 @@ public class RegularCircleStage implements GameStage {
         state.souls = Optional.ofNullable(previousState).map(s -> s.souls).orElse(0);
         state.setBackgroundColor(new Color(0.01f, 0f, 0f, 1.0f));
 
-        final var level = new TileLevelGenerator(
-                666L * this.circleN,
-                0.10f + this.circleN * 0.01f,
-                0.035f + this.circleN * 0.01f,
-                0.035f + this.circleN * 0.0075f,
-                200 + 15 * this.circleN
-        ).generateLevel(physicsWorld, state);
+        final var level = createLevelGenerator().generateLevel(physicsWorld, state);
 
         final var ui = new UI();
         ui.showPlayerHp = true;
@@ -97,6 +93,16 @@ public class RegularCircleStage implements GameStage {
         level.getAllEntities().forEach(state::spawn);
 
         return state;
+    }
+
+    protected TileLevelGenerator createLevelGenerator() {
+        return new TileLevelGenerator(
+                666L * this.circleN,
+                0.10f + this.circleN * 0.01f,
+                0.035f + this.circleN * 0.01f,
+                0.035f + this.circleN * 0.0075f,
+                200 + 15 * this.circleN
+        );
     }
 
     @Override
@@ -127,6 +133,11 @@ public class RegularCircleStage implements GameStage {
             this.player.dealDamage(999999.0f, gameState);
         }
 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+            // TODO: Boss attack-->
+            spawnBossShockwave(gameState);
+        }
+
         this.player.input(new CharacterInput(
                 rightPressed - leftPressed,
                 attackPressed,
@@ -135,6 +146,36 @@ public class RegularCircleStage implements GameStage {
 
         final boolean dash = Gdx.input.isKeyPressed(Input.Keys.X);
         this.player.abilityInput(new AbilityInput(dash));
+    }
+
+    private void spawnBossShockwave(final GameState gameState) {
+        final var a = new boolean[]{true, false};
+        for (final var right : a) {
+            final float echoDelay = 0.75f;
+            final float size = 1.0f;
+            final var factorStep = 1.5f;
+
+            float factor = 1.0f;
+            final int nEchoes = 3;
+            for (int i = 0; i < nEchoes; i++) {
+                final float finalFactor = factor; // HACK: make factor effectively final
+                gameState.getTimers().set(i * echoDelay, false, () -> {
+                    final var entities = SpikeNode.spawnSpikeStrip(
+                            gameState.getPhysicsWorld(),
+                            new Vector2(this.player.body().getPosition()).add(right ? 2.0f : -2.0f, 0.0f),
+                            (size / 2.0f) * finalFactor, size * finalFactor,
+                            8,
+                            0.75f,
+                            0.0f,
+                            0.25f,
+                            right
+                    );
+                    entities.forEach(gameState::spawn);
+                });
+
+                factor *= factorStep;
+            }
+        }
     }
 
     @Override
@@ -154,6 +195,7 @@ public class RegularCircleStage implements GameStage {
         this.reaperTick.tick(gameState.getEntities(HasHealth.class, true), gameState);
         this.emitterTick.tick(gameState.getEntities(ParticleEmitter.class), gameState);
         this.transitionTick.tick(gameState.getEntities(Player.class, true), gameState);
+        this.spikeTickSystem.tick(gameState.getEntities(SpikeNode.class), gameState);
 
         if (this.player.input().attack()) {
             this.player.isHoldingAttack = true;

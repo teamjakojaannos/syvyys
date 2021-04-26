@@ -37,8 +37,8 @@ public class Renderer implements AutoCloseable {
                 Map.entry(UI.class, new MessageBoxRenderer()),
                 Map.entry(SoulTrap.class, new SoulTrapRenderer()),
                 Map.entry(DemonBall.class, new DemonBallRenderer()),
-                Map.entry(ShopItem.class, new ShopItemRenderer())
-
+                Map.entry(ShopItem.class, new ShopItemRenderer()),
+                Map.entry(SpikeNode.class, new SpikeRenderer())
         );
 
         this.physicsDebugRenderer = new Box2DDebugRenderer();

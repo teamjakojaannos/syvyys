@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import fi.jakojaannos.syvyys.GameState;
 import fi.jakojaannos.syvyys.SyvyysGame;
 import fi.jakojaannos.syvyys.TimerHandle;
+import fi.jakojaannos.syvyys.util.RayCast;
 
 public final class Player extends GameCharacter {
     public final float dashCoolDown = 3.0f;
@@ -125,40 +126,8 @@ public final class Player extends GameCharacter {
 
         entity.body().applyLinearImpulse(new Vector2(temp).scl(entity.weaponSelfKnockback), entity.body().getPosition(), true);
 
-        final var hitInfo = new HitInfo();
-        hitInfo.closestFraction = 1.0f;
-        hitInfo.closestPoint.set(rayEnd);
-        hitInfo.normal.set(facingVec).scl(-1.0f);
-        hitInfo.thereWasAHit = false;
-        gameState.getPhysicsWorld().rayCast((fixture, point, normal, fraction) -> {
-            if (SyvyysGame.Constants.DEBUG_ATTACK_RAYCAST) {
-                System.out.println("Hit:\t" + fixture.toString());
-                System.out.println("Point:\t" + point.toString());
-                System.out.println("Player:\t" + position.toString());
-                System.out.println("Fraction:\t" + fraction);
-                System.out.println("isSensor:\t" + fixture.isSensor());
-            }
-
-            // Ignore any sensors
-            if (fixture.isSensor()) {
-                return -1;
-            }
-
-            // Ignore corpses
-            if (fixture.getBody().getUserData() instanceof HasHealth killable && killable.dead()) {
-                return -1;
-            }
-
-            hitInfo.thereWasAHit = true;
-            if (fraction < hitInfo.closestFraction) {
-                hitInfo.closestPoint.set(point);
-                hitInfo.normal.set(normal);
-                hitInfo.closestFraction = fraction;
-                hitInfo.body = fixture.getBody();
-            }
-
-            return 1;
-        }, position, rayEnd);
+        final var hitInfo = RayCast.nearestHit(gameState.getPhysicsWorld(), position, rayEnd, RayCast.Filter.everything());
+        hitInfo.normal.set(facingVec).scl(-1.0f); // Hackety hack :shrug:
 
         if (hitInfo.thereWasAHit && hitInfo.body != null) {
             final var target = hitInfo.body.getUserData();
@@ -247,11 +216,4 @@ public final class Player extends GameCharacter {
                  );
     }
 
-    private static class HitInfo {
-        public final Vector2 closestPoint = new Vector2();
-        public final Vector2 normal = new Vector2();
-        public Body body;
-        public float closestFraction = 1.0f;
-        public boolean thereWasAHit = false;
-    }
 }
