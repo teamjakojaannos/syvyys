@@ -71,7 +71,7 @@ public class IntroDemonicSpawnRenderer implements EntityRenderer<IntroDemonicSpa
                     ? 0.0f
                     : entity.stage == IntroDemonicSpawn.Stage.TIMPPA_HUOLLOSTA ?
                     context.gameState().getCurrentTime()
-                    : timers.getTimeElapsed(entity.stageTimer) / entity.stageTimer.duration();
+                    : timers.isActiveAndValid(entity.stageTimer) ? timers.getTimeElapsed(entity.stageTimer) / entity.stageTimer.duration() : 0.0f;
 
             final var frame = animation.getKeyFrame(stageProgress * loops, true);
 

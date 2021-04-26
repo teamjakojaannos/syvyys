@@ -22,11 +22,31 @@ public class IntroStage implements GameStage {
     public static final float TREMBLE_FLASH_DURATION = 0.03f;
 
     private static final String[] INTRO_DIALOGUE = new String[]{
-            "Hello world!",
-            "More text!",
-            "Even more!"
+            "So, I had a friend.",
+            "His name was Frank",
+            "He was kind of a goof",
+            "But yeah",
+            "One time he came to me",
+            "Told me he had made...",
+            "...a deal.",
+            "...",
+            "with",
+            "...",
+            "THE DARN DEVIL HIMSELF",
+            "Well, lucky me, I got a gun!",
     };
 
+    private static final String[] INTRO_DIALOGUE_B = new String[]{
+            "Well...",
+            "...fuck."
+    };
+
+    private static final String[] INTRO_DIALOGUE_C = new String[]{
+            "Dammit Frank",
+            "This time you've really done it",
+    };
+
+    private String[] dialogueStrings = INTRO_DIALOGUE;
     private Sound ukkoKuoriutuuPisteWav;
     private UI ui;
     private IntroDemonicSpawn demonicSpawn;
@@ -48,7 +68,7 @@ public class IntroStage implements GameStage {
 
         this.ui = new UI();
         this.ui.showPlayerHp = false;
-        this.ui.messageText = "Hello world!";
+        this.ui.messageText = this.dialogueStrings[0];
         final var state = new GameState(gameStage, physicsWorld, List.of(
                 this.demonicSpawn,
                 this.player,
@@ -62,7 +82,7 @@ public class IntroStage implements GameStage {
         return state;
     }
 
-    private void introAnimationSequence(
+    private void introAnimationSequenceA(
             final Player player,
             final IntroDemonicSpawn demonicSpawn,
             final GameState state
@@ -80,58 +100,11 @@ public class IntroStage implements GameStage {
             demonicSpawn.stageTimer = timers.set(3.0f, false, () -> {
                 demonicSpawn.stage = IntroDemonicSpawn.Stage.HATS_OFF;
 
-                final var colorA = new Color(0.3f, 0.3f, 0.3f, 1.0f);
                 timers.clear(demonicSpawn.flashTimer);
-                demonicSpawn.flashTimer = timers.set(2.25f, false, () -> {
-                    tremblingFlash(demonicSpawn, state, colorA, new Color(0.2f, 0f, 0f, 1.0f));
-                    this.ukkoKuoriutuuPisteWav.play();
-                });
 
-                state.setBackgroundColor(colorA);
-
-                demonicSpawn.stageTimer = timers.set(4.0f, false, () -> {
-                    demonicSpawn.stage = IntroDemonicSpawn.Stage.SPLIT;
-                    timers.clear(demonicSpawn.flashTimer);
-
-                    state.setBackgroundColor(new Color(0.2f, 0f, 0f, 1.0f));
-
-                    demonicSpawn.stageTimer = timers.set(1.75f, false, () -> {
-                        state.setBackgroundColor(new Color(0.1f, 0.0f, 0.0f, 1.0f));
-
-                        demonicSpawn.stage = IntroDemonicSpawn.Stage.SPLURT;
-
-
-                        demonicSpawn.stageTimer = timers.set(1.75f, false, () -> {
-                            demonicSpawn.stage = IntroDemonicSpawn.Stage.HATCHING;
-                            final var soulTrap = SoulTrap.create(
-                                    state.getPhysicsWorld(),
-                                    new Vector2(player.body().getPosition())
-                                            .add(-1.0f, -0.5f)
-                            );
-                            timers.set(1.5f, false, () -> {
-                                state.setBackgroundColor(new Color(0.05f, 0.0f, 0.0f, 1.0f));
-                                state.spawn(soulTrap);
-                            });
-
-                            timers.set(2.5f, false, () -> {
-                                soulTrap.state = SoulTrap.State.BUBBLING;
-                            });
-
-                            demonicSpawn.stageTimer = timers.set(5.0f, false, () -> {
-                                demonicSpawn.stage = IntroDemonicSpawn.Stage.IDLE_HATCHED;
-                                soulTrap.state = SoulTrap.State.I_WANT_OUT;
-                                state.setBackgroundColor(new Color(0.025f, 0.0f, 0.0f, 1.0f));
-
-                                player.dealDamage(999999.0f, state);
-                                player.deathTimer(timers.set(3.0f, false, () -> {
-                                    player.deathSequenceHasFinished(true);
-                                }));
-
-                                timers.set(7.5f, false, () -> state.changeStage(new RegularCircleStage(1), true));
-                            });
-                        });
-                    });
-                });
+                this.dialogueStrings = INTRO_DIALOGUE_B;
+                this.ui.messageText = this.dialogueStrings[0];
+                this.iDialogue = 0;
             });
         });
     }
@@ -152,17 +125,85 @@ public class IntroStage implements GameStage {
         });
     }
 
+    private void introAnimationSequenceB(
+            final Player player,
+            final IntroDemonicSpawn demonicSpawn,
+            final GameState state
+    ) {
+        final var timers = state.getTimers();
+
+        final var colorA = new Color(0.3f, 0.3f, 0.3f, 1.0f);
+
+        demonicSpawn.flashTimer = timers.set(2.25f, false, () -> {
+            tremblingFlash(demonicSpawn, state, colorA, new Color(0.2f, 0f, 0f, 1.0f));
+            this.ukkoKuoriutuuPisteWav.play();
+        });
+
+        state.setBackgroundColor(colorA);
+
+        demonicSpawn.stageTimer = timers.set(4.0f, false, () -> {
+            demonicSpawn.stage = IntroDemonicSpawn.Stage.SPLIT;
+            timers.clear(demonicSpawn.flashTimer);
+
+            state.setBackgroundColor(new Color(0.2f, 0f, 0f, 1.0f));
+
+            demonicSpawn.stageTimer = timers.set(1.75f, false, () -> {
+                state.setBackgroundColor(new Color(0.1f, 0.0f, 0.0f, 1.0f));
+
+                demonicSpawn.stage = IntroDemonicSpawn.Stage.SPLURT;
+
+
+                demonicSpawn.stageTimer = timers.set(1.75f, false, () -> {
+                    demonicSpawn.stage = IntroDemonicSpawn.Stage.HATCHING;
+                    final var soulTrap = SoulTrap.create(
+                            state.getPhysicsWorld(),
+                            new Vector2(player.body().getPosition())
+                                    .add(-1.0f, -0.5f)
+                    );
+                    timers.set(1.5f, false, () -> {
+                        state.setBackgroundColor(new Color(0.05f, 0.0f, 0.0f, 1.0f));
+                        state.spawn(soulTrap);
+                    });
+
+                    timers.set(2.5f, false, () -> {
+                        soulTrap.state = SoulTrap.State.BUBBLING;
+                    });
+
+                    demonicSpawn.stageTimer = timers.set(5.0f, false, () -> {
+                        demonicSpawn.stage = IntroDemonicSpawn.Stage.IDLE_HATCHED;
+                        soulTrap.state = SoulTrap.State.I_WANT_OUT;
+                        state.setBackgroundColor(new Color(0.025f, 0.0f, 0.0f, 1.0f));
+
+                        player.dealDamage(999999.0f, state);
+                        player.deathTimer(timers.set(3.0f, false, () -> player.deathSequenceHasFinished(true)));
+
+                        this.dialogueStrings = INTRO_DIALOGUE_C;
+                        this.ui.messageText = this.dialogueStrings[0];
+                        this.iDialogue = 0;
+                    });
+                });
+            });
+        });
+    }
+
     @Override
     public void tick(final float deltaSeconds, final GameState gameState) {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.Z) && this.iDialogue < INTRO_DIALOGUE.length) {
+        if (this.dialogueStrings != null && Gdx.input.isKeyJustPressed(Input.Keys.Z) && this.iDialogue < this.dialogueStrings.length) {
             ++this.iDialogue;
-            if (this.iDialogue == INTRO_DIALOGUE.length) {
+            if (this.iDialogue == this.dialogueStrings.length) {
                 this.ui.messageText = null;
-                introAnimationSequence(this.player, this.demonicSpawn, gameState);
+
+                if (this.dialogueStrings == INTRO_DIALOGUE) {
+                    introAnimationSequenceA(this.player, this.demonicSpawn, gameState);
+                } else if (this.dialogueStrings == INTRO_DIALOGUE_B) {
+                    introAnimationSequenceB(this.player, this.demonicSpawn, gameState);
+                } else if (this.dialogueStrings == INTRO_DIALOGUE_C) {
+                    gameState.changeStage(new RegularCircleStage(1), true);
+                }
                 return;
             }
 
-            this.ui.messageText = INTRO_DIALOGUE[this.iDialogue];
+            this.ui.messageText = this.dialogueStrings[this.iDialogue];
         }
     }
 

@@ -81,6 +81,7 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
 
                 this.fontRegular.setColor(0f, 0f, 0f, 1.0f);
                 this.fontRegular.draw(context.batch(), ui.messageText, 25, screenHeight - 25);
+                this.fontRegular.draw(context.batch(), "z", -25, screenHeight - 50, screenWidth, Align.bottomRight, false);
             }
 
             if (ui.showPlayerHp && context.gameState().getPlayer().map(player -> !player.dead()).orElse(false)) {
