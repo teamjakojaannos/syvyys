@@ -27,7 +27,7 @@ public final class Player extends GameCharacter {
               10.0f,
               100.0f,
               0.4f, 3,
-              0.0f,
+              0.1f,
               3.0f);
     }
 
@@ -93,6 +93,8 @@ public final class Player extends GameCharacter {
     }
 
     public static void tickAttack(final GameState gameState, final Player entity) {
+        entity.justAttacked = true;
+
         final var barrelOffsetX = 0.33f * (entity.facingRight ? 1 : -1);
         final var position = new Vector2(entity.body().getPosition())
                 .add(barrelOffsetX, -0.15f);

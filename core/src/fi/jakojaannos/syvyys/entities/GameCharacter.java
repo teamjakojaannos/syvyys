@@ -31,6 +31,7 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
     private CharacterInput input = new CharacterInput(0.0f, false, false);
     private float health;
     private boolean deathSequenceHasFinished;
+    private int nShots;
 
     public GameCharacter(
             final Body body,
@@ -151,6 +152,11 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
     }
 
     @Override
+    public TimerHandle attackDelayTimer() {
+        return this.attackDelayTimer;
+    }
+
+    @Override
     public void attackDelayTimer(final TimerHandle timer) {
         this.attackDelayTimer = timer;
     }
@@ -235,5 +241,16 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
     @Override
     public float maxSpeed() {
         return this.maxSpeed;
+    }
+
+    @Override
+    public boolean checkShouldContinueShootingAfterShot() {
+        ++this.nShots;
+        if (this.nShots >= this.shotsPerAttack()) {
+            this.nShots = 0;
+            return true;
+        }
+
+        return false;
     }
 }

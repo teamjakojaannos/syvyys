@@ -37,7 +37,11 @@ public interface HasCharacterState {
 
     float attackDelay();
 
+    TimerHandle attackDelayTimer();
+
     void attackDelayTimer(TimerHandle timer);
 
     float maxSpeed();
+
+    boolean checkShouldContinueShootingAfterShot();
 }

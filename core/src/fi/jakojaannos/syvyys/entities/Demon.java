@@ -6,7 +6,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import fi.jakojaannos.syvyys.GameState;
 import fi.jakojaannos.syvyys.SyvyysGame;
 
-public class Demon extends GameCharacter {
+public class Demon extends GameCharacter implements HasEnemyAI {
     public final float maxChaseDistance = 15f;
     public final float attackDistance = 5f;
     private final float projectileLifetime = 10.0f;
@@ -17,11 +17,26 @@ public class Demon extends GameCharacter {
     public Demon(final Body body) {
         super(body,
               1.0f, 1.0f,
-              10.0f,
+              6.5f,
               10.0f,
               2.0f, 3,
               0.75f,
               1.0f);
+    }
+
+    @Override
+    public float maxChaseDistance() {
+        return this.maxChaseDistance;
+    }
+
+    @Override
+    public float attackDistance() {
+        return this.attackDistance;
+    }
+
+    @Override
+    public boolean canAttackFromDifferentY() {
+        return false;
     }
 
     public static Demon create(final World physicsWorld, final Vector2 position) {
@@ -74,7 +89,7 @@ public class Demon extends GameCharacter {
                 .getPlayer()
                 .map(GameCharacter::body)
                 .map(Body::getPosition)
-                .map(playerPos -> new Vector2(playerPos).sub(position))
+                .map(playerPos -> new Vector2(playerPos).sub(position).nor())
                 .orElseGet(() -> new Vector2().setToRandomDirection());
 
         gameState.spawn(DemonBall.create(

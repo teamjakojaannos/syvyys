@@ -14,9 +14,21 @@ public class Timers {
     private long idCounter = 0;
 
     public TimerHandle set(final float duration, final boolean looping, final Action action) {
+        return set(duration, looping, action, false);
+    }
+
+    public TimerHandle set(
+            final float duration,
+            final boolean looping,
+            final Action action,
+            final boolean tickFirstImmediately
+    ) {
         final var timer = new TimerHandle(++this.idCounter, duration, action, looping);
         this.timers.add(timer);
-        this.states.put(timer.id(), new TimerState());
+        final var state = new TimerState();
+        state.forceTick = tickFirstImmediately;
+
+        this.states.put(timer.id(), state);
 
         return timer;
     }
@@ -35,8 +47,11 @@ public class Timers {
             if (!state.paused) {
                 state.progress += delta;
 
-                while (state.progress >= timer.duration()) {
-                    state.progress -= timer.duration();
+                while (state.progress >= timer.duration() || state.forceTick) {
+                    if (!state.forceTick) {
+                        state.progress -= timer.duration();
+                    }
+                    state.forceTick = false;
 
                     timer.action().execute();
 
@@ -80,6 +95,7 @@ public class Timers {
     }
 
     private static class TimerState {
+        boolean forceTick = false;
         float progress = 0.0f;
         boolean paused = false;
     }

@@ -30,6 +30,7 @@ public class RegularCircleStage implements GameStage {
     private PlayerAbilityTickSystem playerAbilityTick;
 
     private Player player;
+    private HellspiderCollideWithPlayerSystem spooderCollisionTick;
 
     public RegularCircleStage(final int circleN) {
         this.circleN = circleN;
@@ -59,7 +60,7 @@ public class RegularCircleStage implements GameStage {
         final var level = new TileLevelGenerator(
                 666L * this.circleN,
                 0.10f + this.circleN * 0.01f,
-                0.15f + this.circleN * 0.01f,
+                0 * (0.15f + this.circleN * 0.01f),
                 200 + 15 * this.circleN
         ).generateLevel(physicsWorld);
 
@@ -71,9 +72,11 @@ public class RegularCircleStage implements GameStage {
         this.emitterTick = new UpdateParticleEmittersSystem();
         this.projectileTick = new DemonBallTickSystem();
         this.playerAbilityTick = new PlayerAbilityTickSystem();
+        this.spooderCollisionTick = new HellspiderCollideWithPlayerSystem();
 
         final List<Entity> entities = new ArrayList<>(level.getAllTiles());
         entities.addAll(level.getAllEntities());
+        entities.add(Hellspider.create(physicsWorld, new Vector2(20.0f, 40.0f)));
 
         entities.add(this.player);
         final var ui = new UI();
@@ -122,8 +125,9 @@ public class RegularCircleStage implements GameStage {
         this.playerAbilityTick.tick(gameState.getEntities(Player.class), gameState);
         this.characterTick.tick(gameState.getEntities(CharacterTickSystem.InputEntity.class), gameState);
         this.soulTrapTick.tick(gameState.getEntities(SoulTrap.class), gameState);
-        this.demonAiTick.tick(gameState.getEntities(Demon.class), gameState);
+        this.demonAiTick.tick(gameState.getEntities(HasEnemyAI.class), gameState);
         this.projectileTick.tick(gameState.getEntities(DemonBall.class), gameState);
+        this.spooderCollisionTick.tick(gameState.getEntities(Hellspider.class), gameState);
         this.reaperTick.tick(gameState.getEntities(HasHealth.class, true), gameState);
         this.emitterTick.tick(gameState.getEntities(ParticleEmitter.class), gameState);
         this.transitionTick.tick(gameState.getEntities(Player.class, true), gameState);

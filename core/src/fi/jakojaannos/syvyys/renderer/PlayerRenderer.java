@@ -53,7 +53,7 @@ public class PlayerRenderer implements EntityRenderer<Player> {
 
         entities.forEach(player -> {
             if (player.justAttacked) {
-                this.pew.play(0.5f, 1.75f + MathUtils.random(0.0f, 0.25f), 0.0f);
+                //this.pew.play(0.5f, 1.75f + MathUtils.random(0.0f, 0.25f), 0.0f);
                 player.justAttacked = false;
             }
 

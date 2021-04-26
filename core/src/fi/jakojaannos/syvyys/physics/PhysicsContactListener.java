@@ -2,10 +2,7 @@ package fi.jakojaannos.syvyys.physics;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import fi.jakojaannos.syvyys.entities.DemonBall;
-import fi.jakojaannos.syvyys.entities.Player;
-import fi.jakojaannos.syvyys.entities.SoulTrap;
-import fi.jakojaannos.syvyys.entities.Tile;
+import fi.jakojaannos.syvyys.entities.*;
 import fi.jakojaannos.syvyys.systems.HasCharacterState;
 
 public class PhysicsContactListener implements ContactListener {
@@ -45,10 +42,13 @@ public class PhysicsContactListener implements ContactListener {
         } else if (dataA instanceof DemonBall ball && dataB instanceof Tile) {
             ball.collidedWithWall = true;
             return true;
-        } else if (dataA instanceof DemonBall ball && dataB instanceof Player player) {
-            ball.collidedWithWall = true;
+        } else if (dataA instanceof DemonBall ball && dataB instanceof Player) {
             ball.isInContactWithPlayer = true;
             return true;
+        } else if (dataA instanceof Hellspider hellspider && dataB instanceof Player) {
+            if (hellspider.state == Hellspider.State.DASHING) {
+                hellspider.isInContactWithPlayer = true;
+            }
         }
 
         return false;
