@@ -46,7 +46,7 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
                                    .flatMap(Arrays::stream)
                                    .toArray(TextureRegion[]::new);
 
-        final var genRegular = new FreeTypeFontGenerator(Gdx.files.internal("pixeled.ttf"));
+        final var genRegular = new FreeTypeFontGenerator(Gdx.files.internal("Pixeled.ttf"));
         final var paramRegular = new FreeTypeFontGenerator.FreeTypeFontParameter();
         paramRegular.size = 24;
         this.fontRegular = genRegular.generateFont(paramRegular);

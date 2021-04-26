@@ -22,7 +22,7 @@ public class ShopItemRenderer implements EntityRenderer<ShopItem> {
     public ShopItemRenderer() {
         this.abilityIcons = new Texture("ui_ability_icons.png");
 
-        final var genRegular = new FreeTypeFontGenerator(Gdx.files.internal("pixeled.ttf"));
+        final var genRegular = new FreeTypeFontGenerator(Gdx.files.internal("Pixeled.ttf"));
         final var paramRegular = new FreeTypeFontGenerator.FreeTypeFontParameter();
         paramRegular.size = 24;
         this.fontRegular = genRegular.generateFont(paramRegular);
