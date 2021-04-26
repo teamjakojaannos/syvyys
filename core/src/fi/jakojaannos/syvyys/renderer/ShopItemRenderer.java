@@ -105,7 +105,7 @@ public class ShopItemRenderer implements EntityRenderer<ShopItem> {
 
                     // Update pool
                     context.gameState().upgradePool.remove(shopItem.upgrade);
-                    context.gameState().upgradePool.addAll(Arrays.asList(shopItem.upgrade.unlocks()));
+                    context.gameState().upgradePool.addAll(Arrays.asList(shopItem.upgrade.unlocks().get()));
 
                     // Delete the item
                     context.gameState().deletThis(shopItem);
