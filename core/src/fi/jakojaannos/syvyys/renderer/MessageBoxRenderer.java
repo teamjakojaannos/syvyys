@@ -122,7 +122,10 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
                 final var y = screenHeight * 0.8f;
                 final var y2 = screenHeight * 0.2f;
                 this.fontGothic.draw(context.batch(), String.format("You were slain on the %d%s Circle", circleN, postfix), 0.0f, y, screenWidth, Align.center, true);
-                this.fontRegular.draw(context.batch(), "Press space to continue", 0.0f, y2, screenWidth, Align.center, false);
+
+                if (context.gameState().getPlayer().map(GameCharacter::deathSequenceHasFinished).orElse(true)) {
+                    this.fontRegular.draw(context.batch(), "Press space to continue", 0.0f, y2, screenWidth, Align.center, false);
+                }
             }
         });
 

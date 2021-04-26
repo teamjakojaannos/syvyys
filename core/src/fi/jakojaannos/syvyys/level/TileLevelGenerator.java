@@ -1,12 +1,11 @@
 package fi.jakojaannos.syvyys.level;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import fi.jakojaannos.syvyys.entities.Demon;
-import fi.jakojaannos.syvyys.entities.Entity;
-import fi.jakojaannos.syvyys.entities.SoulTrap;
-import fi.jakojaannos.syvyys.entities.Tile;
+import fi.jakojaannos.syvyys.SyvyysGame;
+import fi.jakojaannos.syvyys.entities.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,24 +16,30 @@ public class TileLevelGenerator extends LevelGenerator {
     private static final int TILE_ID_WALL_RIGHT = 3;
     private static final int TILE_ID_WALL_LEFT = 4;
     private static final int[] TILE_ID_CEILING = {5, 5, 5, 6, 7};
+    private static final int[] TILE_ID_DECORATIVE = {8, 9};
 
     private static final int SHOP_HALLWAY_HEIGHT = 4;
 
 
     private final Random random;
+    private final Random enemyRandom;
     private final float createTrapChance;
     private final float spawnDemonChance;
+    private final float spawnHellspiderChance;
     private final int worldLength;
 
     public TileLevelGenerator(
             final long seed,
             final float createTrapChance,
             final float spawnDemonChance,
+            final float spawnHellspiderChance,
             final int worldLength
     ) {
         this.random = new Random(seed);
+        this.enemyRandom = new Random();
         this.createTrapChance = createTrapChance;
         this.spawnDemonChance = spawnDemonChance;
+        this.spawnHellspiderChance = spawnHellspiderChance;
         this.worldLength = worldLength;
     }
 
@@ -47,7 +52,7 @@ public class TileLevelGenerator extends LevelGenerator {
         int generated = 0;
         int previousHeight = 200;
         int lastEndX = worldStart;
-        boolean isFirst = true;
+        boolean isFirst = SyvyysGame.Constants.GENERATE_SHOP;
         while (generated < this.worldLength) {
             final var startX = worldStart + generated;
             final var stripLength = this.random.nextInt(16) + 4;
@@ -117,16 +122,22 @@ public class TileLevelGenerator extends LevelGenerator {
             final var tileX = (stripStartTileX + x);
             final var position = new Vector2(tileX * tileWidth, stripTileY * tileHeight);
 
-            final var isNotInSpawn = Math.abs(position.x) > 15.0f;
+            final var isNotInSpawn = position.x > 15.0f;
+            final var isFarInTheLevel = position.x > 100.0f;
             final var isNotOnEdge = x > 3 && x + 3 < n;
             final var isSuitablePositionForTrap = isNotInSpawn && isNotOnEdge;
-            if (isSuitablePositionForTrap && this.random.nextFloat() < this.createTrapChance) {
+            if (isSuitablePositionForTrap && this.enemyRandom.nextFloat() < this.createTrapChance) {
                 entities.add(SoulTrap.create(world, new Vector2(position).add(0.0f, tileHeight)));
             }
 
             final var isSuitablePositionForDemon = isNotInSpawn;
-            if (isSuitablePositionForDemon && this.random.nextFloat() < this.spawnDemonChance) {
+            if (isSuitablePositionForDemon && this.enemyRandom.nextFloat() < this.spawnDemonChance) {
                 entities.add(Demon.create(world, new Vector2(position).add(0.0f, tileHeight)));
+            }
+
+            final var isSuitablePositionForSpoder = isNotInSpawn && isFarInTheLevel;
+            if (isSuitablePositionForSpoder && this.enemyRandom.nextFloat() < this.spawnHellspiderChance) {
+                entities.add(Hellspider.create(world, new Vector2(position).add(0.0f, tileHeight)));
             }
 
             tiles.add(Tile.create(
@@ -135,6 +146,23 @@ public class TileLevelGenerator extends LevelGenerator {
                     position,
                     randomTile(TILE_ID_FLOOR))
             );
+
+            // Spawn decor
+            if (this.enemyRandom.nextFloat() < 0.5f && !SyvyysGame.Constants.DEBUG_PHYSICS) {
+                final var decorYOffset = MathUtils.random(-5, 10);
+                if (decorYOffset != 0) {
+                    tiles.add(Tile.create(
+                            world,
+                            tileWidth, tileHeight,
+                            position.add(0.0f, decorYOffset * tileHeight),
+                            randomTile(TILE_ID_DECORATIVE),
+                            false,
+                            decorYOffset < 0
+                                    ? new Color(1.0f, 1.0f, 1.0f, 1.0f)
+                                    : new Color(0.2f, 0.2f, 0.2f, 0.2f))
+                    );
+                }
+            }
         }
 
         return stripTileY;

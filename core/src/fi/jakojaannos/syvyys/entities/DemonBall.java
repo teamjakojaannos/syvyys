@@ -60,7 +60,7 @@ public class DemonBall implements Entity, HasBody {
 
         final var body = physicsWorld.createBody(bodyDef);
         final var hitBox = new CircleShape();
-        hitBox.setRadius(0.25f);
+        hitBox.setRadius(0.125f);
         final var fixture = new FixtureDef();
         fixture.filter.categoryBits = SyvyysGame.Constants.Collision.CATEGORY_PROJECTILE_ENEMY;
         fixture.filter.maskBits = SyvyysGame.Constants.Collision.MASK_PROJECTILE_ENEMY;

@@ -12,7 +12,7 @@ public class TransitionStageSystem implements EcsSystem<Player> {
     @Override
     public void tick(final Stream<Player> players, final GameState gameState) {
         players.forEach(player -> {
-            if (player.dead()) {
+            if (player.deathSequenceHasFinished()) {
                 if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
                     gameState.changeStage(new RegularCircleStage(1), true);
                 }

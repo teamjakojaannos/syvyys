@@ -19,7 +19,11 @@ public class PhysicsContactListener implements ContactListener {
     }
 
     private boolean resolveBeginContact(final WorldManifold manifold, final Object dataA, final Object dataB) {
-        if (dataA instanceof HasCharacterState character && dataB instanceof Tile) {
+        if (dataA instanceof Hellspider hellspider && dataB instanceof Tile) {
+            if (hellspider.state != Hellspider.State.LEAPING) {
+                hellspider.state = Hellspider.State.RUNNING;
+            }
+        } else if (dataA instanceof HasCharacterState character && dataB instanceof Tile) {
             final var contactNormal = manifold.getNormal();
             final var directionUp = Vector2.Y;
 

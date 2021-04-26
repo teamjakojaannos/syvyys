@@ -10,9 +10,9 @@ import fi.jakojaannos.syvyys.TimerHandle;
 
 public final class Player extends GameCharacter {
     public final float dashCoolDown = 3.0f;
-    public final float dashDuration = 0.069f;
-    public final float dashStrength = 666.0f;
-    public final float meNoDieTime = 1.5f;
+    public final float dashDuration = 0.25f;
+    public final float dashStrength = 150.0f;
+    public final float meNoDieTime = 0.5f;
 
     public TimerHandle dashTimer;
     public TimerHandle dashCooldownTimer;
@@ -28,6 +28,7 @@ public final class Player extends GameCharacter {
               100.0f,
               0.4f, 3,
               0.1f,
+              3.0f,
               3.0f);
     }
 
@@ -49,6 +50,11 @@ public final class Player extends GameCharacter {
 
     public boolean isInvulnerable(final GameState gameState) {
         return gameState.getTimers().isActiveAndValid(this.meNoDieTimer);
+    }
+
+    @Override
+    public boolean inputDisabled(final GameState gameState) {
+        return isDashing(gameState);
     }
 
     @Override
@@ -143,8 +149,8 @@ public final class Player extends GameCharacter {
         }, position, rayEnd);
 
         if (hitInfo.thereWasAHit && hitInfo.body != null) {
-            if (hitInfo.body.getUserData() instanceof Demon demon) {
-                demon.dealDamage(99999.0f, gameState);
+            if (hitInfo.body.getUserData() instanceof HasHealth killable) {
+                killable.dealDamage(5.0f, gameState);
             }
 
             gameState.obtainParticleEmitter()

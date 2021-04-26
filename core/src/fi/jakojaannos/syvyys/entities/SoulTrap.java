@@ -44,12 +44,12 @@ public class SoulTrap implements Entity {
     public static SoulTrap create(final World physicsWorld, final Vector2 position) {
         final var bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;
-        bodyDef.position.set(position).add(SIZE / 2.0f, 0.5f);
+        bodyDef.position.set(position).add(SIZE / 2.0f, -0.25f);
         bodyDef.fixedRotation = true;
 
         final var body = physicsWorld.createBody(bodyDef);
-        final var hitBox = new PolygonShape();
-        hitBox.setAsBox(SIZE / 2.0f, 0.5f);
+        final var hitBox = new CircleShape();
+        hitBox.setRadius(SIZE / 2.25f);
 
         final var hbFixture = new FixtureDef();
         hbFixture.shape = hitBox;

@@ -61,7 +61,7 @@ public class SoulTrapRenderer implements EntityRenderer<SoulTrap> {
 
             final var position = trap.body().getPosition();
             final float x = position.x - trap.width() / 2.0f;
-            final float y = position.y - trap.height() / 2.0f + 0.5f; // HACK: hitbox has odd size by design
+            final float y = position.y - trap.height() / 2.0f + 1.25f; // HACK: hitbox has odd size by design
             final float originX = trap.width() / 2.0f;
             final float originY = 0.0f;
             context.batch().setColor(1.0f, 1.0f, 1.0f, 1.0f);

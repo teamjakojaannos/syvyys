@@ -24,6 +24,11 @@ public class ParticleEmitterRenderer implements EntityRenderer<ParticleEmitter> 
     }
 
     @Override
+    public boolean rendersLayer(final RenderLayer layer) {
+        return layer == RenderLayer.FOREGROUND;
+    }
+
+    @Override
     public <I extends Iterable<ParticleEmitter>> void render(
             final I emitters,
             final RenderContext context

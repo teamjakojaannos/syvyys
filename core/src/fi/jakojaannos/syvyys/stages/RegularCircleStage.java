@@ -60,7 +60,8 @@ public class RegularCircleStage implements GameStage {
         final var level = new TileLevelGenerator(
                 666L * this.circleN,
                 0.10f + this.circleN * 0.01f,
-                0 * (0.15f + this.circleN * 0.01f),
+                0.035f + this.circleN * 0.01f,
+                0.035f + this.circleN * 0.0075f,
                 200 + 15 * this.circleN
         ).generateLevel(physicsWorld);
 
@@ -76,7 +77,7 @@ public class RegularCircleStage implements GameStage {
 
         final List<Entity> entities = new ArrayList<>(level.getAllTiles());
         entities.addAll(level.getAllEntities());
-        entities.add(Hellspider.create(physicsWorld, new Vector2(20.0f, 40.0f)));
+        //entities.add(Hellspider.create(physicsWorld, new Vector2(20.0f, 40.0f)));
 
         entities.add(this.player);
         final var ui = new UI();
@@ -93,6 +94,11 @@ public class RegularCircleStage implements GameStage {
 
     @Override
     public void tick(final float deltaSeconds, final GameState gameState) {
+        if (gameState.getCamera().lockedToPlayer) {
+            this.player.input(new CharacterInput(0.0f, false, false));
+            this.player.abilityInput(new AbilityInput(false));
+            return;
+        }
         final int leftPressed = Gdx.input.isKeyPressed(Input.Keys.LEFT) ||
                 Gdx.input.isKeyPressed(Input.Keys.A)
                 ? 1 : 0;

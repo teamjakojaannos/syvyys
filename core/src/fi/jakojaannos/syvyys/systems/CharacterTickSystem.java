@@ -19,30 +19,31 @@ public class CharacterTickSystem implements EcsSystem<CharacterTickSystem.InputE
 
     @Override
     public void tick(final Stream<InputEntity> entities, final GameState gameState) {
-        entities.forEach(entity -> {
-            entity.distanceTravelled(entity.distanceTravelled() + Math.abs(entity.body().getLinearVelocity().x));
+        entities.filter(inputEntity -> !inputEntity.inputDisabled(gameState))
+                .forEach(entity -> {
+                    entity.distanceTravelled(entity.distanceTravelled() + Math.abs(entity.body().getLinearVelocity().x));
 
-            applyInputForceAndFriction(entity);
-            if (!(entity instanceof Player player) || !player.isDashing(gameState)) {
-                limitMaxHorizontalSpeed(entity);
-            }
+                    applyInputForceAndFriction(entity);
+                    if (!(entity instanceof Player player) || !player.isDashing(gameState)) {
+                        limitMaxHorizontalSpeed(entity);
+                    }
 
-            final var velocity = entity.body().getLinearVelocity();
+                    final var velocity = entity.body().getLinearVelocity();
 
-            final boolean isMoving = Math.abs(velocity.x) > 0.0f;
-            if (Math.abs(entity.input().horizontalInput()) > 0.0f && isMoving && !entity.attacking()) {
-                entity.facingRight(velocity.x > 0.0f);
-            }
+                    final boolean isMoving = Math.abs(velocity.x) > 0.0f;
+                    if (Math.abs(entity.input().horizontalInput()) > 0.0f && isMoving && !entity.attacking()) {
+                        entity.facingRight(velocity.x > 0.0f);
+                    }
 
-            // Attack
-            tickAttack(gameState, entity);
+                    // Attack
+                    tickAttack(gameState, entity);
 
-            // Jump
-            if (entity.input().jump() && entity.grounded()) {
-                entity.body().setLinearVelocity(entity.body().getLinearVelocity().x, entity.jumpForce());
-                entity.grounded(false);
-            }
-        });
+                    // Jump
+                    if (entity.input().jump() && entity.grounded()) {
+                        entity.body().setLinearVelocity(entity.body().getLinearVelocity().x, entity.jumpForce());
+                        entity.grounded(false);
+                    }
+                });
     }
 
     private void tickAttack(final GameState gameState, final InputEntity entity) {
@@ -56,9 +57,7 @@ public class CharacterTickSystem implements EcsSystem<CharacterTickSystem.InputE
         entity.attackDelayTimer(timers.set(entity.attackDelay(), false, () -> {
             final var shotDuration = entity.attackDuration() / entity.shotsPerAttack();
 
-            System.out.println("shot duration: " + shotDuration);
             entity.shotTimer(timers.set(shotDuration, true, () -> {
-                System.out.println("TICK!");
                 if (entity instanceof Player player) {
                     this.pew.play(0.5f, 1.75f + MathUtils.random(0.0f, 0.25f), 0.0f);
                     Player.tickAttack(gameState, player);
@@ -71,7 +70,6 @@ public class CharacterTickSystem implements EcsSystem<CharacterTickSystem.InputE
                 }
 
                 if (entity.checkShouldContinueShootingAfterShot()) {
-                    System.out.println("Clear!");
                     entity.attacking(false);
                     timers.clear(entity.shotTimer());
                 }

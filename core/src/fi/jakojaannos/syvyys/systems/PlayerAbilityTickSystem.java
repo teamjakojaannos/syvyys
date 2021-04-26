@@ -1,6 +1,7 @@
 package fi.jakojaannos.syvyys.systems;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import fi.jakojaannos.syvyys.GameState;
 import fi.jakojaannos.syvyys.entities.Player;
@@ -18,8 +19,14 @@ public class PlayerAbilityTickSystem implements EcsSystem<Player> {
             }
 
             if (player.isDashing(gameState)) {
+                final var dashProgress = MathUtils.clamp(
+                        gameState.getTimers().getTimeElapsed(player.dashTimer) / player.dashTimer.duration(),
+                        0.0f,
+                        1.0f
+                );
+
                 final var facingVec = new Vector2(player.facingRight ? 1.0f : -1.0f, 0.0f)
-                        .scl(player.dashStrength);
+                        .scl(MathUtils.lerp(player.dashStrength, 0.0f, dashProgress) * (player.grounded() ? 1.0f : 0.25f));
                 player.body().applyLinearImpulse(facingVec, player.body().getPosition(), true);
             }
         });
@@ -32,7 +39,7 @@ public class PlayerAbilityTickSystem implements EcsSystem<Player> {
 
         player.dashCooldownTimer = gameState.getTimers().set(player.dashCoolDown, false, () -> { });
         player.dashTimer = gameState.getTimers().set(player.dashDuration, false, () -> { });
-        player.meNoDieTimer = gameState.getTimers().set(player.meNoDieTime, false, () ->{});
+        player.meNoDieTimer = gameState.getTimers().set(player.meNoDieTime, false, () -> {});
 
         final var position = new Vector2(player.body().getPosition())
                 .add(0.0f, -0.5f);

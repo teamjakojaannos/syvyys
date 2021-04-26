@@ -8,4 +8,8 @@ public interface EntityRenderer<T extends Entity> extends AutoCloseable {
     // Override to remove `... throws Exception`
     @Override
     void close();
+
+    default boolean rendersLayer(final RenderLayer layer) {
+        return layer == RenderLayer.MAIN;
+    }
 }

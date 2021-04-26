@@ -61,21 +61,24 @@ public class Renderer implements AutoCloseable {
         this.batch.setProjectionMatrix(this.camera.getCombinedMatrix());
         this.batch.begin();
 
-        final var context = new RenderContext(this.batch, gameState, this.camera);
-        entitiesByClass.forEach((clazz, entitiesOfClazz) -> {
-            // UI is hardcoded last
-            if (clazz == UI.class) {
-                return;
-            }
+        for (final var layer : RenderLayer.backToFront()) {
+            final var context = new RenderContext(this.batch, gameState, this.camera, layer);
+            entitiesByClass.forEach((clazz, entitiesOfClazz) -> {
+                // UI is hardcoded last
+                if (clazz == UI.class) {
+                    return;
+                }
 
-            final EntityRenderer renderer = this.renderers.get(clazz);
-            if (renderer != null) {
-                renderer.render(entitiesOfClazz, context);
-            }
-        });
+                final EntityRenderer renderer = this.renderers.get(clazz);
+                if (renderer != null && renderer.rendersLayer(layer)) {
+                    renderer.render(entitiesOfClazz, context);
+                }
+            });
+        }
 
         final EntityRenderer renderer = this.renderers.get(UI.class);
         if (renderer != null) {
+            final var context = new RenderContext(this.batch, gameState, this.camera, null);
             renderer.render(entitiesByClass.get(UI.class), context);
         }
 

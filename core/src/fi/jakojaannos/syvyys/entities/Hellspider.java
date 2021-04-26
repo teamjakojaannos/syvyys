@@ -26,7 +26,8 @@ public class Hellspider extends GameCharacter implements HasEnemyAI {
               10.0f,
               3.0f, 2,
               1.0f,
-              1.5f);
+              1.5f,
+              3.1f);
     }
 
     @Override

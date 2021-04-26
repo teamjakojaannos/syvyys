@@ -102,8 +102,10 @@ public class SyvyysGame extends ApplicationAdapter {
         public static final int VELOCITY_ITERATIONS = 6;
         public static final int POSITION_ITERATIONS = 2;
 
+        public static final boolean GENERATE_SHOP = false;
+
         // Debug
-        public static final boolean DEBUG_PHYSICS = true;
+        public static final boolean DEBUG_PHYSICS = false;
         public static final boolean DEBUG_ATTACK_RAYCAST = false;
         public static final boolean SATANMODE = false; // Can't be "Godmode" cuz' we're in hell ;)
 

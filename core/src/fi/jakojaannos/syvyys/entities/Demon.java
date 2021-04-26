@@ -21,7 +21,8 @@ public class Demon extends GameCharacter implements HasEnemyAI {
               10.0f,
               2.0f, 3,
               0.75f,
-              1.0f);
+              1.0f,
+              2.5f);
     }
 
     @Override

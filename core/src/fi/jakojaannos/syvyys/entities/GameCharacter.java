@@ -17,7 +17,7 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
     private final float maxHealth;
     private final float deathAnimationDuration;
     private final Body body;
-    private final float maxSpeed = 5.0f;
+    private final float maxSpeed;
 
     public float distanceTravelled = 0.0f;
     public float previousDistanceTravelled;
@@ -41,7 +41,9 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
             final float health,
             final float attackDuration,
             final int shotsPerAttack,
-            final float attackInitialDelay, final float deathAnimationDuration
+            final float attackInitialDelay,
+            final float deathAnimationDuration,
+            final float maxSpeed
     ) {
         this.attackDuration = attackDuration;
         this.shotsPerAttack = shotsPerAttack;
@@ -52,6 +54,7 @@ public class GameCharacter implements CharacterTickSystem.InputEntity, HasHealth
         this.health = this.maxHealth = health;
         this.attackInitialDelay = attackInitialDelay;
         this.deathAnimationDuration = deathAnimationDuration;
+        this.maxSpeed = maxSpeed;
     }
 
     public float width() { return this.width; }

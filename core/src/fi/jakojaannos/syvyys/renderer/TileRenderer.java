@@ -18,11 +18,29 @@ public class TileRenderer implements EntityRenderer<Tile> {
     }
 
     @Override
+    public boolean rendersLayer(final RenderLayer layer) {
+        return switch (layer) {
+            case BACKGROUND, MAIN -> true;
+            case FOREGROUND -> false;
+        };
+    }
+
+    @Override
     public <I extends Iterable<Tile>> void render(
             final I tiles,
             final RenderContext context
     ) {
         tiles.forEach(tile -> {
+            final var shouldRender = switch (context.layer()) {
+                case BACKGROUND -> !tile.hasCollision();
+                case MAIN -> tile.hasCollision();
+                default -> false;
+            };
+
+            if (!shouldRender) {
+                return;
+            }
+
             final var frameIndex = Math.abs(tile.tileIndex()) % this.frames.length;
             final var frame = this.frames[frameIndex];
             final var position = tile.body().getPosition();
@@ -34,7 +52,7 @@ public class TileRenderer implements EntityRenderer<Tile> {
             final var rgb = distance < 0
                     ? 1.0f
                     : (1.0f - ((distance - fadeStart) / (fadeEnd - fadeStart)));
-            context.batch().setColor(rgb, rgb, rgb, 1.0f);
+            context.batch().setColor(tile.tint().r * rgb, tile.tint().g * rgb, tile.tint().b * rgb, 1.0f);
             context.batch()
                    .draw(frame,
                          position.x - tile.width() / 2.0f,
