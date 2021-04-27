@@ -206,7 +206,7 @@ public class BossStage extends RegularCircleStage {
                 .getPlayer()
                 .map(GameCharacter::body)
                 .map(Body::getPosition)
-                .map(playerPos -> new Vector2(playerPos).sub(position))
+                .map(playerPos -> new Vector2(playerPos).sub(position).nor())
                 .orElseGet(() -> new Vector2().setToRandomDirection());
     }
 }

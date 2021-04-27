@@ -3,6 +3,7 @@ package fi.jakojaannos.syvyys.systems;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import fi.jakojaannos.syvyys.GameState;
+import fi.jakojaannos.syvyys.entities.Boss;
 import fi.jakojaannos.syvyys.entities.DemonBall;
 
 import java.util.stream.Stream;
@@ -55,11 +56,13 @@ public class DemonBallTickSystem implements EcsSystem<DemonBall> {
                                  new Color(0.6f, 0.2f, 0.2f, 1.0f),
                                  new Vector2(0.0f, 0.0f));
 
-            ball.body().applyLinearImpulse(
-                    ball.direction,
-                    ball.body().getPosition(),
-                    true
-            );
+            if (Boss.INSTANCE == null || ball.body().getLinearVelocity().len2() < 8.0f) {
+                ball.body().applyLinearImpulse(
+                        ball.direction,
+                        ball.body().getPosition(),
+                        true
+                );
+            }
         });
     }
 }
