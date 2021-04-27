@@ -11,6 +11,8 @@ import com.badlogic.gdx.utils.Align;
 import fi.jakojaannos.syvyys.entities.ShopItem;
 
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ShopItemRenderer implements EntityRenderer<ShopItem> {
     private final BitmapFont fontRegular;
@@ -105,7 +107,7 @@ public class ShopItemRenderer implements EntityRenderer<ShopItem> {
 
                     // Update pool
                     context.gameState().upgradePool.remove(shopItem.upgrade);
-                    context.gameState().upgradePool.addAll(Arrays.asList(shopItem.upgrade.unlocks().get()));
+                    context.gameState().upgradePool.addAll(Arrays.stream(shopItem.upgrade.unlocks().get()).filter(Objects::nonNull).collect(Collectors.toList()));
 
                     // Delete the item
                     context.gameState().deletThis(shopItem);

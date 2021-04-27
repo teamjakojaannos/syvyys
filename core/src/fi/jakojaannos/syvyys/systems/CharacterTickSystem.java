@@ -24,7 +24,7 @@ public class CharacterTickSystem implements EcsSystem<CharacterTickSystem.InputE
 
                     final boolean isMoving = Math.abs(velocity.x) > 0.0f;
                     if (Math.abs(entity.input().horizontalInput()) > 0.0f && isMoving && !entity.attacking()) {
-                        entity.facingRight(velocity.x > 0.0f);
+                        entity.facingRight(entity.input().horizontalInput() > 0.0f);
                     }
 
                     // Attack

@@ -10,7 +10,7 @@ import fi.jakojaannos.syvyys.systems.CharacterTickSystem;
 public class GameCharacter extends TracksPlayerContact.Simple implements CharacterTickSystem.InputEntity, HasHealth {
     private final float attackDuration;
     private final float attackInitialDelay;
-    private final float jumpForce;
+    public float jumpForce;
     private final float width;
     private final float height;
     public float maxHealth;

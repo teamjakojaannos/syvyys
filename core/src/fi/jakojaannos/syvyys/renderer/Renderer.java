@@ -40,7 +40,8 @@ public class Renderer implements AutoCloseable {
                 Map.entry(ShopItem.class, new ShopItemRenderer()),
                 Map.entry(SpikeNode.class, new SpikeRenderer()),
                 Map.entry(SpikeBarrier.class, new SpikeBarrierRenderer()),
-                Map.entry(Golem.class, new GolemRenderer())
+                Map.entry(Golem.class, new GolemRenderer()),
+                Map.entry(Boss.class, new BossRenderer())
         );
 
         this.physicsDebugRenderer = new Box2DDebugRenderer();

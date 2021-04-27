@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Align;
 import fi.jakojaannos.syvyys.GameState;
+import fi.jakojaannos.syvyys.entities.Boss;
 import fi.jakojaannos.syvyys.entities.GameCharacter;
 import fi.jakojaannos.syvyys.entities.Player;
 import fi.jakojaannos.syvyys.entities.UI;
@@ -84,6 +85,36 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
                 this.fontRegular.draw(context.batch(), "z", -25, screenHeight - 50, screenWidth, Align.bottomRight, false);
             }
 
+            if (Boss.INSTANCE != null) {
+                final var height = screenHeight / 15.0f;
+                final var width = screenWidth - 20.0f;
+                final var unit = height / 9.0f;
+                final var fillAreaWidth = width - 2 * unit;
+
+                final var startX = 10.0f;
+                final var startY = screenHeight - 10.0f * unit;
+                context.batch().draw(this.healthBarFrames[0], startX, startY, unit, height);
+                context.batch().draw(this.healthBarFrames[3], startX + unit + fillAreaWidth, startY, unit, height);
+
+                final var currentHp = Boss.INSTANCE.health();
+                final var maxHp = Boss.INSTANCE.maxHealth();
+                final var progress = Math.max(0.0f, currentHp) / maxHp;
+
+
+                final var currentHpWidth = fillAreaWidth * progress;
+                final var missingHpWidth = fillAreaWidth - currentHpWidth;
+                context.batch().draw(this.healthBarFrames[1], startX + unit, startY, currentHpWidth, height);
+                context.batch().draw(this.healthBarFrames[2], startX + unit + currentHpWidth, startY, missingHpWidth, height);
+
+                this.fontGothic.draw(context.batch(),
+                                     String.format("%d / %d", (int) Math.ceil(Boss.INSTANCE.health()), (int) Math.ceil(Boss.INSTANCE.maxHealth())),
+                                     0.0f,
+                                     screenHeight - 10.0f,
+                                     screenWidth - 15.0f,
+                                     Align.center,
+                                     false);
+            }
+
             if (ui.showPlayerHp && context.gameState().getPlayer().map(player -> !player.dead()).orElse(false)) {
                 final var height = screenHeight / 15.0f;
                 final var width = screenWidth / 4.0f;
@@ -110,13 +141,15 @@ public class MessageBoxRenderer implements EntityRenderer<UI> {
                 context.batch().draw(this.healthBarFrames[1], startX + unit, startY, currentHpWidth, height);
                 context.batch().draw(this.healthBarFrames[2], startX + unit + currentHpWidth, startY, missingHpWidth, height);
 
-                this.fontGothic.draw(context.batch(),
-                                     String.format("%d souls", context.gameState().souls),
-                                     0.0f,
-                                     screenHeight,
-                                     screenWidth - 15.0f,
-                                     Align.topRight,
-                                     false);
+                if (Boss.INSTANCE == null) {
+                    this.fontGothic.draw(context.batch(),
+                                         String.format("%d souls", context.gameState().souls),
+                                         0.0f,
+                                         screenHeight,
+                                         screenWidth - 15.0f,
+                                         Align.topRight,
+                                         false);
+                }
 
                 final var abilitiesStartX = startX + width + unit;
                 final var player = maybePlayer.get();

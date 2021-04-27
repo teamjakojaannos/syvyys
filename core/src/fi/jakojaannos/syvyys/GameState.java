@@ -17,7 +17,6 @@ import java.util.stream.Stream;
 public class GameState {
     public final List<Upgrade> upgradePool = new ArrayList<>();
     private final GameStage gameStage;
-    private final Timers timers = new Timers();
     private final World physicsWorld;
     private final List<Entity> entities;
     private final List<Entity> entitiesToBeSpawned = new ArrayList<>();
@@ -26,6 +25,7 @@ public class GameState {
     private final List<ParticleEmitter> particleEmittersPool = new ArrayList<>();
     public int souls = 0;
     public Vector2 getLastKnownPlayerLocation = new Vector2();
+    private Timers timers = new Timers();
     private Player player;
     private float currentTime;
     private GameStage nextStage;
@@ -169,5 +169,10 @@ public class GameState {
         }
 
         return this.getLastKnownPlayerLocation;
+    }
+
+    public void forceKillTimers() {
+        // ":D"
+        this.timers = new Timers();
     }
 }

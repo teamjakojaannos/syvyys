@@ -22,6 +22,7 @@ import java.util.Optional;
 public class RegularCircleStage implements GameStage {
     public final int circleN;
     protected Player player;
+    protected UI ui;
     private CharacterTickSystem characterTick;
     private SoulTrapTickSystem soulTrapTick;
     private DemonAiSystem demonAiTick;
@@ -83,7 +84,7 @@ public class RegularCircleStage implements GameStage {
 
         final var level = createLevelGenerator().generateLevel(physicsWorld, state);
 
-        final var ui = new UI();
+        this.ui = new UI();
         ui.showPlayerHp = true;
         ui.messageText = null;
         state.spawn(ui);
@@ -113,12 +114,10 @@ public class RegularCircleStage implements GameStage {
             this.player.abilityInput(new AbilityInput(false));
             return;
         }
-        final int leftPressed = Gdx.input.isKeyPressed(Input.Keys.LEFT) ||
-                Gdx.input.isKeyPressed(Input.Keys.A)
+        final int leftPressed = Gdx.input.isKeyPressed(Input.Keys.LEFT)
                 ? 1 : 0;
 
-        final int rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT) ||
-                Gdx.input.isKeyPressed(Input.Keys.D)
+        final int rightPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT)
                 ? 1 : 0;
 
         final boolean attackPressed = Gdx.input.isKeyPressed(Input.Keys.Z) ||
@@ -130,11 +129,15 @@ public class RegularCircleStage implements GameStage {
 
         final boolean jumpPressed = Gdx.input.isKeyPressed(Input.Keys.SPACE);
 
-        if (Gdx.input.isKeyPressed(Input.Keys.K)) {
-            this.player.dealDamage(999999.0f, gameState);
-        }
-
         if (SyvyysGame.Constants.CHEAT_CODES_ENABLED) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.K)) {
+                if (Boss.INSTANCE != null) {
+                    Boss.INSTANCE.dealDamage(99999999.0f, gameState);
+                } else {
+                    this.player.dealDamage(999999.0f, gameState);
+                }
+            }
+
             if (Gdx.input.isKeyJustPressed(Input.Keys.G)) {
                 final var pos = new Vector2(this.player.body().getPosition())
                         .add(0.0f, 0.0f);

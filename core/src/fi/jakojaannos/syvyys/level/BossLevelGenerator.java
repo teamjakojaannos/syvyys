@@ -67,10 +67,12 @@ public class BossLevelGenerator extends TileLevelGenerator {
         final List<Entity> entities = new ArrayList<>();
 
         final var arenaStartX = 20;
+        final var arenaEndX = 60;
 
-        final var platformY = 4;
+        final var firstPlatformY = 4;
 
-        generateFloor(world, tiles, arenaStartX + 4, arenaStartX + 8, platformY, TILE_ID_FLOOR);
+        generateFloor(world, tiles, arenaStartX + 4, arenaStartX + 8, firstPlatformY, TILE_ID_FLOOR);
+        generateFloor(world, tiles, arenaEndX - 8, arenaEndX - 4, firstPlatformY, TILE_ID_FLOOR);
 
         return new Level(tiles, entities);
     }

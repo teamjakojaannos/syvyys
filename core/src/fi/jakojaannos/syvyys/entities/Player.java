@@ -11,11 +11,11 @@ import fi.jakojaannos.syvyys.util.RayCast;
 
 public final class Player extends GameCharacter {
     public final float dashCoolDown = 3.0f;
-    public final float dashStrength = 150.0f;
-    public final float meNoDieTime = 0.5f;
     private final float weaponSelfKnockback = 75.0f;
     private final float damageKnockbackStrength = 100.0f;
     private final float damageStaggerDuration = 0.1f;
+    public float dashStrength = 75.0f;
+    public float meNoDieTime = 0.5f;
     public float dashDuration = 0.25f;
     public TimerHandle dashTimer;
     public TimerHandle dashCooldownTimer;
@@ -75,9 +75,17 @@ public final class Player extends GameCharacter {
 
     public static Player copyFrom(final World physicsWorld, final Vector2 position, final Player other) {
         final var player = Player.create(physicsWorld, position);
+
         player.health(other.health());
-        player.dashUnlocked = other.dashUnlocked;
+        player.maxHealth = other.maxHealth;
+
         player.maxSpeed = other.maxSpeed;
+        player.jumpForce = other.jumpForce;
+
+        player.dashUnlocked = other.dashUnlocked;
+        player.meNoDieTime = other.meNoDieTime;
+        player.dashStrength = other.dashStrength;
+
         player.damage = other.damage;
         player.shotsPerAttack(other.shotsPerAttack());
 

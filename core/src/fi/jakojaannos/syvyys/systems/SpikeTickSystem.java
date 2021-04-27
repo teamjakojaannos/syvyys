@@ -14,7 +14,7 @@ public class SpikeTickSystem implements EcsSystem<SpikeNode> {
             if (spike.state == SpikeNode.State.UP_IN_THE_ASS_OF_TIMO && spike.isInContactWithPlayer) {
                 gameState.getPlayer().ifPresent(player -> {
                     player.dealDamage(spike.damage, gameState);
-                    player.body().applyLinearImpulse(new Vector2(Vector2.Y).scl(17.5f * player.body().getMass()), player.body().getPosition(), true);
+                    player.body().applyLinearImpulse(new Vector2(Vector2.Y).scl(10.0f * player.body().getMass()), player.body().getPosition(), true);
                 });
 
                 spike.isInContactWithPlayer = false;
