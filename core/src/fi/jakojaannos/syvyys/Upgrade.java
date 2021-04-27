@@ -90,6 +90,7 @@ public record Upgrade(int iconIndex, int cost, Label label, Action action, Suppl
 
         return new Upgrade[]{
                 new Upgrade(0, 100 + 300 * lvl, (s, p) -> String.format("x1 shot per attack (%d)", p.shotsPerAttack()), (s, p) -> p.shotsPerAttack(p.shotsPerAttack() + 1), () -> createSPAUnlocks(lvl + 1)),
+                lvl % 2 == 0 ? new Upgrade(0, 300, (s, p) -> "Halve weapon recoil", (s, p) -> p.weaponSelfKnockback /= 2.0f) : null,
         };
     }
 

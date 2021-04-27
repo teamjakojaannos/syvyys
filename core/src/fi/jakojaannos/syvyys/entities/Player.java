@@ -11,7 +11,7 @@ import fi.jakojaannos.syvyys.util.RayCast;
 
 public final class Player extends GameCharacter {
     public final float dashCoolDown = 3.0f;
-    private final float weaponSelfKnockback = 75.0f;
+    public float weaponSelfKnockback = 75.0f;
     private final float damageKnockbackStrength = 100.0f;
     private final float damageStaggerDuration = 0.1f;
     public float dashStrength = 75.0f;

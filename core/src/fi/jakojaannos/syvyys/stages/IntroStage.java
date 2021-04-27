@@ -33,6 +33,7 @@ public class IntroStage implements GameStage {
             "with",
             "...",
             "THE DARN DEVIL HIMSELF",
+            "So, the hellhounds are comin'",
             "Well, lucky me, I got a gun!",
     };
 
